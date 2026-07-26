@@ -41,7 +41,7 @@ dependencyResolutionManagement {
         mavenCentral()
         maven("https://jitpack.io") {
             content {
-                includeGroup("com.github.seatlayer.seatlayer-android")
+                includeGroup("com.github.seatlayer")
             }
         }
     }
@@ -54,7 +54,7 @@ Add the SDK:
 // app/build.gradle.kts
 dependencies {
     implementation(
-        "com.github.seatlayer.seatlayer-android:seatlayer:v0.1.0",
+        "com.github.seatlayer:seatlayer-android:v0.1.0",
     )
 }
 ```
