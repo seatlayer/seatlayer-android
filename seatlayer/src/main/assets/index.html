@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no,viewport-fit=cover"
+  >
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'none'; script-src 'self' 'unsafe-inline'; connect-src https: wss: http://localhost:* ws://localhost:*; style-src 'unsafe-inline'; img-src data: blob: https:; font-src data: https:;"
+  >
+  <title>SeatLayer</title>
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+      overscroll-behavior: none;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #seatlayer-root {
+      position: absolute;
+      inset: 0;
+      touch-action: none;
+    }
+  </style>
+  <script src="seatlayer.js"></script>
+</head>
+<body>
+  <div id="seatlayer-root"></div>
+  <script>
+    (function () {
+      if (window.seatlayerAndroid &&
+          typeof window.seatlayerAndroid.postMessage === "function") {
+        window.SeatLayerNative = {
+          post: function (value) {
+            window.seatlayerAndroid.postMessage(value);
+          }
+        };
+      }
+
+      if (!window.seatlayer ||
+          typeof window.seatlayer.startBridge !== "function") {
+        return;
+      }
+
+      window.__slHandle = window.seatlayer.startBridge({
+        container: document.getElementById("seatlayer-root")
+      });
+    })();
+  </script>
+</body>
+</html>
