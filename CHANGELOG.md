@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Re-vendored the buyer bundle at `seatlayer-js@0.35.0` (sha256 `814657ba…`),
+  up from 0.30.1.
+
 ## 0.1.0 — 2026-07-26
 
 - Initial public preview.
