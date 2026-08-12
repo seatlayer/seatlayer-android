@@ -9,7 +9,7 @@ seating map in an Android app.
 [AI toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit) ·
 [Web and React SDKs](https://github.com/seatlayer/seatlayer-sdk)
 
-> **Public preview:** `0.1.0` is available from JitPack while the permanent
+> **Public preview:** `0.1.2` is available from JitPack while the permanent
 > `io.seatlayer:seatlayer-android` Maven Central namespace is completed.
 
 ## What is included
@@ -54,7 +54,7 @@ Add the SDK:
 // app/build.gradle.kts
 dependencies {
     implementation(
-        "com.github.seatlayer:seatlayer-android:v0.1.0",
+        "com.github.seatlayer:seatlayer-android:v0.1.2",
     )
 }
 ```
@@ -214,10 +214,18 @@ Releases follow semantic versioning. See [CHANGELOG.md](CHANGELOG.md).
 
 ## Other SeatLayer SDKs
 
-- [JavaScript and React](https://github.com/seatlayer/seatlayer-sdk)
-- [React Native](https://github.com/seatlayer/seatlayer-react-native)
-- [Flutter](https://github.com/seatlayer/seatlayer-flutter)
-- [iOS / Swift](https://github.com/seatlayer/seatlayer-ios)
+| Surface | Package or source |
+| --- | --- |
+| JavaScript | [`@seatlayer/js`](https://www.npmjs.com/package/@seatlayer/js) |
+| React | [`@seatlayer/react`](https://www.npmjs.com/package/@seatlayer/react) |
+| React Native | [`@seatlayer/react-native`](https://www.npmjs.com/package/@seatlayer/react-native) |
+| Flutter | [`seatlayer`](https://pub.dev/packages/seatlayer) |
+| iOS | [`seatlayer-ios`](https://github.com/seatlayer/seatlayer-ios) |
+| Server SDKs | [Node.js, Python, PHP, Ruby, .NET, Java, and Go](https://docs.seatlayer.io/server-sdk/install/) |
+
+The [mobile SDK guide](https://docs.seatlayer.io/buyer-sdk/mobile/) compares
+native choices. Crawlers and coding agents can use the canonical
+[`llms.txt`](https://docs.seatlayer.io/llms.txt) documentation index.
 
 ## License
 

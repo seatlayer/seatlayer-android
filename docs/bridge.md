@@ -85,7 +85,7 @@ blocked, and no remote page receives the native channel.
 
 | Component | Version |
 | --- | --- |
-| Android SDK | `0.1.0` |
+| Android SDK | `0.1.2` |
 | Vendored SeatLayer Web SDK | `0.30.1` |
 | Bridge protocol | `1` |
 
