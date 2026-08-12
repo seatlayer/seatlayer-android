@@ -1,5 +1,9 @@
 # SeatLayer Android SDK
 
+[![CI](https://github.com/seatlayer/seatlayer-android/actions/workflows/ci.yml/badge.svg)](https://github.com/seatlayer/seatlayer-android/actions/workflows/ci.yml)
+[![JitPack](https://jitpack.io/v/seatlayer/seatlayer-android.svg)](https://jitpack.io/#seatlayer/seatlayer-android)
+[![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)
+
 The official native Kotlin SDK for embedding an interactive SeatLayer reserved-
 seating map in an Android app.
 
