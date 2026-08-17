@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.1.3
+
+- Updated the vendored buyer runtime to `seatlayer-js@0.59.0` (sha256
+  `89bc29fb…`), pulled from the production CDN and byte-verified against the
+  published release. Brings the mobile buyer round and the engine fixes that
+  reach every surface — section focus frames the section rather than its whole
+  zone, the price filter dims section blocks and not only seats, and map type
+  is sized for the device.
+- Fixed `SEATLAYER_BUNDLED_WEB_VERSION`, which still read `0.30.1` while the
+  package actually shipped `0.48.1`. Anything reading that constant for
+  diagnostics was being told the wrong runtime. `docs/bridge.md` carried the
+  same stale number.
+
 ## 0.1.2
 
 - Updated the vendored buyer runtime to `seatlayer-js@0.48.1` (sha256

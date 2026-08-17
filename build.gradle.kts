@@ -5,7 +5,7 @@ plugins {
 }
 
 val expectedWebSdkSha256 =
-    "b459b0b6e7bd39f990e7c11a18816316c645e9b29e0a386815dfe88278d2bad4"
+    "89bc29fbccad5d3c30e52cf5381c974b95ac034b32c28b400248b4ebb4ee22a9"
 
 tasks.register("verifyVendoredWebSdk") {
     group = "verification"

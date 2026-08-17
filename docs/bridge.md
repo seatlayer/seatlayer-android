@@ -86,7 +86,7 @@ blocked, and no remote page receives the native channel.
 | Component | Version |
 | --- | --- |
 | Android SDK | `0.1.2` |
-| Vendored SeatLayer Web SDK | `0.30.1` |
+| Vendored SeatLayer Web SDK | `0.59.0` |
 | Bridge protocol | `1` |
 
 The Web SDK asset is pinned by SHA-256 and checked by `./gradlew validate`.
