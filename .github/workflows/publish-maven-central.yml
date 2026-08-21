@@ -2,6 +2,11 @@ name: Publish to Maven Central
 
 on:
   workflow_dispatch:
+    inputs:
+      version:
+        description: Exact SDK version whose vX.Y.Z tag should be published
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -13,11 +18,27 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+        with:
+          ref: refs/tags/v${{ inputs.version }}
       - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
       - uses: gradle/actions/setup-gradle@v6
+      - name: Verify tag, package version, and hosted runtime
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+        run: |
+          test "$(git describe --tags --exact-match)" = "v$RELEASE_VERSION"
+          test "$(sed -n 's/^VERSION_NAME=//p' gradle.properties)" = "$RELEASE_VERSION"
+          runtime="$(sed -n 's/.*SEATLAYER_HOSTED_WEB_VERSION: String = "\(.*\)".*/\1/p' seatlayer/src/main/kotlin/io/seatlayer/android/SeatLayerConfiguration.kt)"
+          metadata="$(curl --fail --silent --show-error "https://cdn.seatlayer.io/seatlayer-js@$runtime/release.json")"
+          test "$(printf '%s' "$metadata" | python3 -c 'import json,sys; print(json.load(sys.stdin)["version"])')" = "$runtime"
+          test "$(printf '%s' "$metadata" | python3 -c 'import json,sys; print(str(json.load(sys.stdin)["promotable"]).lower())')" = true
+          curl --fail --silent --show-error --output /dev/null \
+            "https://cdn.seatlayer.io/seatlayer-js@$runtime/mobile.html"
+      - name: Validate release source and consumer sample
+        run: ./gradlew validate
       - name: Publish and release
         run: ./gradlew :seatlayer:publishAndReleaseToMavenCentral
         env:

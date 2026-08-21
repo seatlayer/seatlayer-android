@@ -10,12 +10,10 @@ import android.webkit.CookieManager
 import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
-import android.webkit.WebResourceResponse
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.FrameLayout
-import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
 import kotlinx.coroutines.Dispatchers
@@ -29,13 +27,6 @@ public class SeatLayerView @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     public val controller: SeatLayerController = SeatLayerController()
-
-    private val assetLoader = WebViewAssetLoader.Builder()
-        .addPathHandler(
-            "/assets/",
-            WebViewAssetLoader.AssetsPathHandler(context),
-        )
-        .build()
 
     private val webView = WebView(context)
     private val bridgeSupported: Boolean
@@ -78,15 +69,10 @@ public class SeatLayerView @JvmOverloads constructor(
         }
         CookieManager.getInstance().setAcceptThirdPartyCookies(webView, false)
         webView.webViewClient = object : WebViewClient() {
-            override fun shouldInterceptRequest(
-                view: WebView,
-                request: WebResourceRequest,
-            ): WebResourceResponse? = assetLoader.shouldInterceptRequest(request.url)
-
             override fun shouldOverrideUrlLoading(
                 view: WebView,
                 request: WebResourceRequest,
-            ): Boolean = request.url.host != APP_HOST
+            ): Boolean = request.url.toString() != PAGE_URL
 
             override fun onReceivedError(
                 view: WebView,
@@ -170,9 +156,8 @@ public class SeatLayerView @JvmOverloads constructor(
     }
 
     private companion object {
-        const val APP_HOST = "appassets.androidplatform.net"
-        const val APP_ORIGIN = "https://$APP_HOST"
-        const val PAGE_URL = "$APP_ORIGIN/assets/index.html"
+        const val APP_ORIGIN = SEATLAYER_MOBILE_ORIGIN
+        const val PAGE_URL = SEATLAYER_MOBILE_PAGE_URL
         const val BRIDGE_OBJECT = "seatlayerAndroid"
     }
 }
