@@ -30,6 +30,63 @@ public value class SeatLayerViewMode(public val raw: String) {
     }
 }
 
+@JvmInline
+public value class BuyerAccessRefreshReason(public val raw: String) {
+    public companion object {
+        public val Initial: BuyerAccessRefreshReason = BuyerAccessRefreshReason("initial")
+        public val Expiring: BuyerAccessRefreshReason = BuyerAccessRefreshReason("expiring")
+        public val Expired: BuyerAccessRefreshReason = BuyerAccessRefreshReason("expired")
+        public val Unauthorized: BuyerAccessRefreshReason = BuyerAccessRefreshReason("unauthorized")
+        public val Reconnect: BuyerAccessRefreshReason = BuyerAccessRefreshReason("reconnect")
+        public val Manual: BuyerAccessRefreshReason = BuyerAccessRefreshReason("manual")
+    }
+}
+
+@JvmInline
+public value class BuyerAccessUnavailableReason(public val raw: String) {
+    public companion object {
+        public val Revoked: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("revoked")
+        public val Paused: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("paused")
+        public val Invalid: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("invalid")
+        public val OriginMismatch: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("origin_mismatch")
+        public val EventMismatch: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("event_mismatch")
+        public val GroupMismatch: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("group_mismatch")
+        public val ModeMismatch: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("mode_mismatch")
+        public val ChannelDenied: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("channel_denied")
+        public val InvalidScope: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("invalid_scope")
+        public val ProviderFailed: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("provider_failed")
+        public val NoToken: BuyerAccessUnavailableReason = BuyerAccessUnavailableReason("no_token")
+    }
+}
+
+@JvmInline
+public value class SelectionViolation(public val raw: String)
+
+@JvmInline
+public value class SelectedObjectUnavailableReason(public val raw: String)
+
+public data class BuyerAccessToken(
+    val token: String,
+    /** Epoch milliseconds. Omit to refresh reactively after server rejection. */
+    val expiresAt: Double? = null,
+)
+
+public data class BuyerAccessRequestContext(
+    val reason: BuyerAccessRefreshReason,
+)
+
+public fun interface BuyerAccessTokenProvider {
+    public suspend fun provide(context: BuyerAccessRequestContext): BuyerAccessToken
+}
+
+public sealed interface SelectionValidator {
+    public data class MinimumSelectedPlaces(val minimum: Int) : SelectionValidator {
+        init { require(minimum > 0) { "minimum must be positive" } }
+    }
+    public data object ConsecutiveSeats : SelectionValidator
+    public data object NoOrphanSeats : SelectionValidator
+}
+
 public data class CategoryTier(
     val id: String,
     val name: String,
@@ -47,6 +104,34 @@ public data class SelectedSeat(
 ) {
     public val buyerFacingLabel: String get() = displayLabel ?: label
 }
+
+public data class SelectionValidity(
+    val isValid: Boolean,
+    val count: Int,
+    val required: Int,
+    val remaining: Int,
+    val seats: List<SelectedSeat>,
+    val violations: List<SelectionViolation>,
+)
+
+public data class BuyerAccessExpiredEvent(
+    val reason: BuyerAccessRefreshReason,
+    val code: String?,
+    val refreshed: Boolean,
+)
+
+public data class BuyerAccessUnavailableEvent(
+    val reason: BuyerAccessUnavailableReason,
+    val code: String?,
+    val status: Int?,
+    val retryable: Boolean,
+)
+
+public data class SelectedObjectUnavailableEvent(
+    val labels: List<String>,
+    val reason: SelectedObjectUnavailableReason,
+    val code: String?,
+)
 
 public data class HoldLineItem(
     val label: String,
@@ -114,6 +199,15 @@ public data class BundleInfo(
 
 public sealed interface SeatLayerEvent {
     public data class SelectionChanged(val seats: List<SelectedSeat>) : SeatLayerEvent
+    public data class SelectionValidityChanged(val validity: SelectionValidity) : SeatLayerEvent
+    public data class SelectionValid(val seats: List<SelectedSeat>) : SeatLayerEvent
+    public data class SelectionInvalid(val validity: SelectionValidity) : SeatLayerEvent
+    public data class SelectionLimitReached(val maximum: Int) : SeatLayerEvent
+    public data class BuyerAccessExpired(val event: BuyerAccessExpiredEvent) : SeatLayerEvent
+    public data class BuyerAccessUnavailable(val event: BuyerAccessUnavailableEvent) : SeatLayerEvent
+    public data class SelectedObjectsUnavailable(
+        val event: SelectedObjectUnavailableEvent,
+    ) : SeatLayerEvent
     public data class HoldChanged(val hold: HoldResult) : SeatLayerEvent
     public data class HoldRestored(val hold: HoldResult) : SeatLayerEvent
     public data object HoldExpired : SeatLayerEvent
@@ -160,6 +254,46 @@ internal fun decodeSelectedSeat(value: JsonElement): SelectedSeat? {
         price = root.double("price"),
         tiers = root.array("tiers").orEmpty().mapNotNull(::decodeTier),
         tierId = root.string("tierId"),
+    )
+}
+
+internal fun decodeSelectionValidity(value: JsonElement?): SelectionValidity? {
+    val root = value as? JsonObject ?: return null
+    return SelectionValidity(
+        isValid = root.boolean("isValid") ?: return null,
+        count = root.int("count") ?: return null,
+        required = root.int("required") ?: return null,
+        remaining = root.int("remaining") ?: return null,
+        seats = root.array("seats").orEmpty().mapNotNull(::decodeSelectedSeat),
+        violations = root.stringList("violations").map(::SelectionViolation),
+    )
+}
+
+internal fun decodeBuyerAccessExpired(value: JsonElement?): BuyerAccessExpiredEvent? {
+    val root = value as? JsonObject ?: return null
+    return BuyerAccessExpiredEvent(
+        reason = BuyerAccessRefreshReason(root.string("reason") ?: return null),
+        code = root.string("code"),
+        refreshed = root.boolean("refreshed") ?: return null,
+    )
+}
+
+internal fun decodeBuyerAccessUnavailable(value: JsonElement?): BuyerAccessUnavailableEvent? {
+    val root = value as? JsonObject ?: return null
+    return BuyerAccessUnavailableEvent(
+        reason = BuyerAccessUnavailableReason(root.string("reason") ?: return null),
+        code = root.string("code"),
+        status = root.int("status"),
+        retryable = root.boolean("retryable") ?: return null,
+    )
+}
+
+internal fun decodeSelectedObjectsUnavailable(value: JsonElement?): SelectedObjectUnavailableEvent? {
+    val root = value as? JsonObject ?: return null
+    return SelectedObjectUnavailableEvent(
+        labels = root.stringList("labels"),
+        reason = SelectedObjectUnavailableReason(root.string("reason") ?: return null),
+        code = root.string("code"),
     )
 }
 

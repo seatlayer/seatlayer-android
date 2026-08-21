@@ -1,6 +1,11 @@
 package io.seatlayer.android
 
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -8,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -19,6 +25,7 @@ public class SeatLayerController {
     private var configuration: SeatLayerConfiguration? = null
     private var readyDeferred: CompletableDeferred<ReadyInfo>? = null
     private var destroyed = false
+    private var generationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private val mutableReady = MutableStateFlow<ReadyInfo?>(null)
     private val mutableBundle = MutableStateFlow<BundleInfo?>(null)
@@ -37,6 +44,8 @@ public class SeatLayerController {
     ) {
         check(!destroyed) { "SeatLayerController was destroyed" }
         client?.close()
+        generationScope.cancel()
+        generationScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         this.configuration = configuration
         mutableReady.value = null
         mutableBundle.value = null
@@ -113,6 +122,30 @@ public class SeatLayerController {
             return
         }
         val config = configuration ?: return
+        if (config.usesPrivateAccess && !info.supportsCapability("native-access-provider")) {
+            finishFailure(
+                SeatLayerException.Incompatible(
+                    ProtocolRange.Native,
+                    info.protocolRange,
+                    "The web bundle does not support private buyer access.",
+                ),
+            )
+            return
+        }
+        if (
+            config.usesSelectionPolicy &&
+            (!info.supportsCapability("selection-controls") ||
+                !info.supportsCapability("selection-validity"))
+        ) {
+            finishFailure(
+                SeatLayerException.Incompatible(
+                    ProtocolRange.Native,
+                    info.protocolRange,
+                    "The web bundle does not support the configured selection policy.",
+                ),
+            )
+            return
+        }
         client?.sendInit(config.initPayload())
     }
 
@@ -145,6 +178,36 @@ public class SeatLayerController {
                     .mapNotNull(::decodeSelectedSeat)
                 mutableEvents.tryEmit(SeatLayerEvent.SelectionChanged(seats))
             }
+            "selection.validity.changed" -> decodeSelectionValidity(
+                (payload as? JsonObject)?.get("validity"),
+            )?.let {
+                mutableEvents.tryEmit(SeatLayerEvent.SelectionValidityChanged(it))
+            }
+            "selection.valid" -> {
+                val seats = (payload as? JsonObject)
+                    ?.array("seats")
+                    .orEmpty()
+                    .mapNotNull(::decodeSelectedSeat)
+                mutableEvents.tryEmit(SeatLayerEvent.SelectionValid(seats))
+            }
+            "selection.invalid" -> decodeSelectionValidity(
+                (payload as? JsonObject)?.get("validity"),
+            )?.let {
+                mutableEvents.tryEmit(SeatLayerEvent.SelectionInvalid(it))
+            }
+            "selection.limit" -> (payload as? JsonObject)?.int("maxSelection")?.let {
+                mutableEvents.tryEmit(SeatLayerEvent.SelectionLimitReached(it))
+            }
+            "access.token.request" -> provideBuyerAccessToken(payload)
+            "access.expired" -> decodeBuyerAccessExpired(payload)?.let {
+                mutableEvents.tryEmit(SeatLayerEvent.BuyerAccessExpired(it))
+            }
+            "access.unavailable" -> decodeBuyerAccessUnavailable(payload)?.let {
+                mutableEvents.tryEmit(SeatLayerEvent.BuyerAccessUnavailable(it))
+            }
+            "selection.unavailable" -> decodeSelectedObjectsUnavailable(payload)?.let {
+                mutableEvents.tryEmit(SeatLayerEvent.SelectedObjectsUnavailable(it))
+            }
             "hold.changed" -> decodeHold((payload as? JsonObject)?.get("hold"))
                 ?.let { mutableEvents.tryEmit(SeatLayerEvent.HoldChanged(it)) }
             "hold.restored" -> decodeHold((payload as? JsonObject)?.get("hold"))
@@ -171,6 +234,53 @@ public class SeatLayerController {
             }
             "checkout" -> mutableEvents.tryEmit(SeatLayerEvent.Checkout(payload))
             else -> mutableEvents.tryEmit(SeatLayerEvent.Unknown(name, payload))
+        }
+    }
+
+    private fun provideBuyerAccessToken(payload: JsonElement?) {
+        val root = payload as? JsonObject ?: return
+        val requestId = root.string("requestId") ?: return
+        val reason = BuyerAccessRefreshReason(
+            root.string("reason") ?: BuyerAccessRefreshReason.Initial.raw,
+        )
+        val provider = configuration?.buyerAccessTokenProvider
+        val activeClient = client ?: return
+
+        generationScope.launch {
+            if (provider == null) {
+                runCatching {
+                    activeClient.command(
+                        "access.token.unavailable",
+                        jsonObject("requestId" to JsonPrimitive(requestId)),
+                    )
+                }
+                return@launch
+            }
+
+            try {
+                val token = provider.provide(BuyerAccessRequestContext(reason))
+                check(token.token.isNotBlank() && token.expiresAt?.isFinite() != false) {
+                    "buyer access provider returned an invalid token"
+                }
+                activeClient.command(
+                    "access.token.provide",
+                    jsonObject(
+                        "requestId" to JsonPrimitive(requestId),
+                        "token" to JsonPrimitive(token.token),
+                        "expiresAt" to jsonNumber(token.expiresAt),
+                    ),
+                )
+            } catch (error: CancellationException) {
+                throw error
+            } catch (_: Throwable) {
+                // Never cross provider errors or bearer content into diagnostics.
+                runCatching {
+                    activeClient.command(
+                        "access.token.unavailable",
+                        jsonObject("requestId" to JsonPrimitive(requestId)),
+                    )
+                }
+            }
         }
     }
 
@@ -266,6 +376,53 @@ public class SeatLayerController {
             .orEmpty()
             .mapNotNull(::decodeSelectedSeat)
 
+    public suspend fun selectObjects(objects: List<String>): List<SelectedSeat> =
+        ((run(
+            "selectObjects",
+            jsonObject("objects" to jsonStrings(objects)),
+        ) as? JsonObject)?.get("seats") as? JsonArray)
+            .orEmpty()
+            .mapNotNull(::decodeSelectedSeat)
+
+    public suspend fun deselectObjects(objects: List<String>) {
+        run("deselectObjects", jsonObject("objects" to jsonStrings(objects)))
+    }
+
+    public suspend fun clearSelection(): Unit = run("clearSelection").let {}
+
+    public suspend fun selectCategories(categoryKeys: List<String>): List<SelectedSeat> =
+        ((run(
+            "selectCategories",
+            jsonObject("categoryKeys" to jsonStrings(categoryKeys)),
+        ) as? JsonObject)?.get("seats") as? JsonArray)
+            .orEmpty()
+            .mapNotNull(::decodeSelectedSeat)
+
+    public suspend fun deselectCategories(categoryKeys: List<String>) {
+        run(
+            "deselectCategories",
+            jsonObject("categoryKeys" to jsonStrings(categoryKeys)),
+        )
+    }
+
+    public suspend fun setSelectableObjects(objects: List<String>?) {
+        run(
+            "setSelectableObjects",
+            jsonObject("objects" to (objects?.let(::jsonStrings) ?: JsonNull)),
+        )
+    }
+
+    public suspend fun setMaxSelection(maximum: Int) {
+        require(maximum > 0) { "maximum must be positive" }
+        run("setMaxSelection", jsonObject("maxSelection" to JsonPrimitive(maximum)))
+    }
+
+    public suspend fun getSelectionValidity(): SelectionValidity? =
+        decodeSelectionValidity((run("getSelectionValidity") as? JsonObject)?.get("validity"))
+
+    public suspend fun refreshAccess(): Boolean =
+        (run("refreshAccess") as? JsonObject)?.boolean("refreshed") ?: false
+
     public suspend fun getCurrentHold(): HoldResult? =
         decodeHold((run("getCurrentHold") as? JsonObject)?.get("hold"))
 
@@ -305,6 +462,7 @@ public class SeatLayerController {
         client?.close()
         client = null
         mutableReady.value = null
+        generationScope.cancel()
         destroyed = true
     }
 
@@ -312,5 +470,6 @@ public class SeatLayerController {
         client?.close()
         client = null
         mutableReady.value = null
+        generationScope.cancel()
     }
 }

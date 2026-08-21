@@ -13,7 +13,7 @@ seating map in an Android app.
 [AI toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit) ·
 [Web and React SDKs](https://github.com/seatlayer/seatlayer-sdk)
 
-> **Public preview:** `0.1.2` is available from JitPack while the permanent
+> **Public preview:** `0.2.0` is available from JitPack while the permanent
 > `io.seatlayer:seatlayer-android` Maven Central namespace is completed.
 
 ## What is included
@@ -24,7 +24,7 @@ seating map in an Android app.
 - Typed Kotlin models, `StateFlow` readiness, and `SharedFlow` events.
 - An origin-restricted AndroidX WebKit bridge with no unrestricted
   `addJavascriptInterface`.
-- A pinned, checksummed SeatLayer Web SDK bundle for deterministic builds.
+- A pinned immutable `seatlayer-js@0.66.0/mobile.html` production document.
 - A runnable sample app and protocol/unit tests.
 
 ## Requirements
@@ -58,7 +58,7 @@ Add the SDK:
 // app/build.gradle.kts
 dependencies {
     implementation(
-        "com.github.seatlayer:seatlayer-android:v0.1.2",
+        "com.github.seatlayer:seatlayer-android:v0.2.0",
     )
 }
 ```
@@ -152,13 +152,16 @@ val best = controller.bestAvailable(quantity = 4)
 val ga = controller.holdGeneralAdmission(areaId = "floor", quantity = 2)
 
 controller.setSeatTier(seatId = "A-12", tierId = "adult")
+controller.selectObjects(listOf("A-12", "A-13"))
+controller.setSelectableObjects(listOf("A-12", "A-13", "A-14"))
+val validity = controller.getSelectionValidity()
 controller.setFloor("balcony")
 controller.setViewMode(SeatLayerViewMode.Isometric)
 controller.setColorblindSafe(true)
 controller.zoomToFit()
 ```
 
-Before using a newly introduced command with an older bundled Web SDK, inspect
+Before using a newly introduced command with an older Web runtime, inspect
 the negotiated capability:
 
 ```kotlin
@@ -180,6 +183,9 @@ the full command surface.
 | `apiBase` | Optional SeatLayer API endpoint override. |
 | `publicKey` | Optional public SDK key. Never provide a secret key. |
 | `maxSelection` | Maximum buyer selection. |
+| `selectedObjects`, `selectableObjects` | Initial selection and selectable allow-list. |
+| `numberOfPlacesToSelect`, `selectionValidators` | Exact-count and adjacency/orphan rules. |
+| `buyerAccessToken`, `buyerAccessTokenProvider` | One-shot or renewable private buyer access. |
 | `locale`, `messages` | Locale and UI message overrides. |
 | `currency` | Buyer-facing currency. |
 | `colorblindSafe` | Accessible palette preference. |
@@ -190,10 +196,13 @@ the full command surface.
 
 ## Security model
 
-The SDK loads only app-packaged content from
-`https://appassets.androidplatform.net`. Native communication uses AndroidX
-WebKit's origin-restricted message listener. File/content access, mixed content,
-popups, external navigation, and third-party cookies are disabled.
+The SDK loads only the exact immutable
+`https://cdn.seatlayer.io/seatlayer-js@0.66.0/mobile.html` page. Native
+communication uses AndroidX WebKit's origin-restricted message listener for
+`https://cdn.seatlayer.io`. File/content access, mixed content, popups, external
+navigation, and third-party cookies are disabled. Private buyer sessions must
+be minted by your backend for that exact allowed origin; bearer values remain
+in memory and are never placed in URLs or events.
 
 The bridge is still a client boundary. Treat every event as untrusted input,
 authorize inventory changes on your server, and finalize bookings server-side.
@@ -206,7 +215,7 @@ authorize inventory changes on your server, and finalize bookings server-side.
 ```
 
 `validate` runs unit tests, Android lint, release/sample builds, Maven metadata
-generation, and the vendored Web SDK checksum.
+generation, and the retained legacy fixture checksum.
 
 ## Package status
 

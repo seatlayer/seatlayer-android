@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.2.0
+
+- Uses pinned `seatlayer-js@0.66.0/mobile.html` at `https://cdn.seatlayer.io`.
+  Buyer access must be minted for that exact allowed origin.
+- Separates the hosted runtime version (`0.66.0`) from the retained verified
+  fixture version (`0.59.0`) while preserving the old constant as deprecated.
+- Adds renewable private buyer access, programmatic selection/category
+  controls, exact-count validators, typed validity/access events, and
+  fail-closed capability negotiation.
+- Locks both bridge messages and top-level navigation to the hosted origin/page.
+- Restores the runnable consumer sample and compiles it against the new
+  selection-policy API as part of the release validation task.
+
 ## 0.1.3
 
 - Updated the vendored buyer runtime to `seatlayer-js@0.59.0` (sha256
