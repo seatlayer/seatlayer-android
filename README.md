@@ -13,8 +13,9 @@ seating map in an Android app.
 [AI toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit) ·
 [Web and React SDKs](https://github.com/seatlayer/seatlayer-sdk)
 
-> **Public preview:** `0.2.0` is available from JitPack while the permanent
-> `io.seatlayer:seatlayer-android` Maven Central namespace is completed.
+> **Production SDK:** `0.2.0` is available from JitPack. Pin the exact release
+> tag while the permanent `io.seatlayer:seatlayer-android` Maven Central
+> namespace is completed.
 
 ## What is included
 
@@ -219,7 +220,7 @@ generation, and the retained legacy fixture checksum.
 
 ## Package status
 
-- Public preview: JitPack release tags and GitHub release artifacts.
+- Production releases: immutable JitPack tags and GitHub release artifacts.
 - Permanent coordinate: `io.seatlayer:seatlayer-android` on Maven Central after
   SeatLayer's Central Portal namespace and signing credentials are activated.
 
