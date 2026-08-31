@@ -1,0 +1,267 @@
+{
+  "$schema": "https://seatlayer.io/schema/picker-tokens-1.json",
+  "version": 1,
+  "description": "Platform-neutral design tokens for the SeatLayer buyer picker chrome. The Flutter package generates its defaults from this file; the iOS, Android and React Native SDKs are expected to generate theirs from the same file so the four implementations cannot drift.",
+  "color": {
+    "light": {
+      "background": "#F6F7FB",
+      "surface": "#FFFFFF",
+      "text": "#172033",
+      "mutedText": "#667085",
+      "divider": "#29172033",
+      "error": "#B42318",
+      "warning": "#F4B740",
+      "accent": "#5B4B8A",
+      "onAccent": "#FFFFFF",
+      "mapBackground": "#E9EDF4",
+      "mapRowLabel": "#334155",
+      "mapText": "#172033",
+      "mapSelection": "#5B4B8A"
+    },
+    "dark": {
+      "background": "#0F1522",
+      "surface": "#1A2234",
+      "text": "#EEF1F8",
+      "mutedText": "#A5AEC2",
+      "divider": "#3DA5AEC2",
+      "error": "#FF6B6B",
+      "warning": "#F4B740",
+      "accent": "#9B8AFB",
+      "onAccent": "#110D20",
+      "mapBackground": "#0F1522",
+      "mapRowLabel": "#D7DEEA",
+      "mapText": "#F4F7FB",
+      "mapSelection": "#9B8AFB"
+    }
+  },
+  "size": {
+    "phoneBreakpoint": 640,
+    "wideBreakpoint": 840,
+    "headerHeight": 56,
+    "headerLogoSize": 28,
+    "dockBarHeight": 52,
+    "peekHeight": 44,
+    "sheetMaxHeightFraction": 0.6,
+    "emptyTrayMaxHeight": 150,
+    "denseLineHeight": 40,
+    "denseVisibleLines": 5,
+    "confirmCardGutter": 16,
+    "confirmCardMaxWidth": 360,
+    "confirmIdentityHeight": 44,
+    "confirmPhotoHeight": 64,
+    "confirmActionHeight": 40,
+    "selectorHeight": 40,
+    "accessibilityControlSize": 44,
+    "mapControlSize": 36,
+    "attributionHeight": 18,
+    "legendChipFontSize": 11,
+    "minimumHitTarget": 44
+  },
+  "radius": {
+    "base": 14,
+    "card": 18,
+    "sheet": 14,
+    "button": 8,
+    "chip": 999,
+    "pill": 999
+  },
+  "elevation": {
+    "header": 0,
+    "dockBar": 8,
+    "sheet": 12,
+    "confirmCard": 18,
+    "pill": 0
+  },
+  "type": {
+    "headerTitle": {
+      "size": 16,
+      "weight": 800
+    },
+    "dockSection": {
+      "size": 14,
+      "weight": 800
+    },
+    "dockCount": {
+      "size": 13,
+      "weight": 600
+    },
+    "confirmIdentity": {
+      "size": 14,
+      "weight": 800
+    },
+    "confirmAction": {
+      "size": 14,
+      "weight": 800
+    },
+    "denseLine": {
+      "size": 13,
+      "weight": 600
+    },
+    "peekSummary": {
+      "size": 13,
+      "weight": 800
+    },
+    "bookButton": {
+      "size": 15,
+      "weight": 800
+    },
+    "legendChip": {
+      "size": 11,
+      "weight": 800
+    },
+    "pill": {
+      "size": 12,
+      "weight": 800
+    }
+  },
+  "motion": {
+    "budgetMs": 420,
+    "reducedMotion": "Every duration collapses to 0 ms when the viewer asks for less movement; motion with no reduced form (fly-to-tray, staggered arrival) is skipped rather than played instantly.",
+    "duration": {
+      "enter": 260,
+      "exit": 180,
+      "dock": 240,
+      "sheet": 300,
+      "fly": 420,
+      "pop": 180,
+      "stagger": 60,
+      "crossfade": 120,
+      "toast": 200,
+      "immersive": 300
+    },
+    "durationOutsideBudget": {
+      "undoWindow": 4000
+    },
+    "curve": {
+      "spring": {
+        "name": "easeOutBack",
+        "cubicBezier": [
+          0.34,
+          1.56,
+          0.64,
+          1.0
+        ]
+      },
+      "easeEnter": {
+        "name": "easeOutCubic",
+        "cubicBezier": [
+          0.215,
+          0.61,
+          0.355,
+          1.0
+        ]
+      },
+      "easeExit": {
+        "name": "easeInCubic",
+        "cubicBezier": [
+          0.55,
+          0.055,
+          0.675,
+          0.19
+        ]
+      }
+    }
+  },
+  "haptics": {
+    "selectionAdded": "selection",
+    "sectionFocused": "light",
+    "holdCreated": "medium",
+    "holdExpired": "heavy",
+    "note": "The first snapshot of a session never fires a cue: a resumed focus or hold is not something the buyer just did."
+  },
+  "strings": {
+    "close": "Close seat selection",
+    "chooseSeats": "Choose your seats",
+    "overview": "Venue",
+    "allFloors": "All floors",
+    "previousSection": "Previous section",
+    "nextSection": "Next section",
+    "backToVenue": "Back to venue",
+    "cancel": "Cancel",
+    "select": "Select",
+    "viewFromHere": "View from here",
+    "venue3D": "3D",
+    "openVenue360": "Open venue 360°",
+    "previousSeat": "Previous seat",
+    "nextSeat": "Next seat",
+    "recentre": "Recentre the view",
+    "viewFromYourSeat": "view from your seat",
+    "chooseTickets": "Choose tickets",
+    "emptyTrayHint": "Tap a seat on the map, or let us pick the best available for you.",
+    "anyTicketType": "Any ticket type",
+    "anyVenueZone": "Any venue zone",
+    "ticketType": "Ticket type",
+    "venueZone": "Venue zone",
+    "fewerTickets": "Fewer tickets",
+    "moreTickets": "More tickets",
+    "bestSeats": "Best seats",
+    "showLess": "Show less",
+    "undo": "Undo",
+    "holdAndCheckout": "Hold seats & checkout",
+    "poweredBy": "Powered by SeatLayer",
+    "testMode": "TEST MODE",
+    "accessibility": "Accessibility and view filters",
+    "fitVenue": "Fit venue",
+    "mapView": "Seat map",
+    "seatRemoved": "Ticket removed",
+    "loading": "Loading seat map…",
+    "errorMessage": "The seat map could not be loaded.",
+    "retry": "Try again",
+    "accessibilityTitle": "Accessibility and view",
+    "hideLimitedView": "Hide limited-view seats",
+    "colorblindSafe": "Colourblind-friendly colours",
+    "applyFilters": "Apply filters",
+    "accessWheelchair": "Wheelchair",
+    "accessCompanion": "Companion",
+    "accessSemiAmbulatory": "Semi-ambulatory",
+    "accessDesignatedAisle": "Aisle seat",
+    "accessStepFree": "Step-free",
+    "accessHearing": "Hearing support",
+    "accessCart": "Mobility cart",
+    "accessSignLanguage": "Sign language view",
+    "accessLowVision": "Low vision",
+    "accessSensoryFriendly": "Sensory-friendly",
+    "accessPlusSize": "Plus-size seat",
+    "accessLiftArmrest": "Lift armrest",
+    "accessNeedWithCount": "{need} \u00b7 {count}",
+    "holdLapsedTitle": "Your seats were released.",
+    "holdLapsedBody": "They were held for {n} minutes.",
+    "reselectSeatsOne": "Select it again",
+    "reselectSeatsOther": "Select them again",
+    "seatsNotRecovered": "{n} could not be recovered",
+    "removeSeat": "Remove ticket",
+    "expandCart": "Expand cart",
+    "collapseCart": "Collapse cart",
+    "orbitMode": "Rotate venue",
+    "panMode": "Move venue",
+    "generalAdmission": "General admission",
+    "chooseTableGuests": "Choose the number of guests for this table",
+    "confirmTable": "Confirm table",
+    "addTickets": "Add tickets",
+    "selectTicketTier": "Select a ticket type",
+    "tierCompanionGuidance": "Requires the adjacent wheelchair place.",
+    "placesAvailable": "{count} places currently available",
+    "continueWithTotal": "Continue · {money}",
+    "continueWord": "Continue",
+    "fromPrice": "From {price}",
+    "findBestSeats": "Find {count} best seats",
+    "findBestSeatsOne": "Find {count} best seat",
+    "findBestSeatsOther": "Find {count} best seats",
+    "heldFor": "{clock}",
+    "moreCount": "+{count} more",
+    "moveVenue": "Drag to move venue",
+    "placeNumberIdentity": "Place {place}",
+    "reselectSeats": "Select them again",
+    "seatIdentity": "{parts}",
+    "seatsFree": "{count} seats",
+    "seatsFreeOne": "{count} seat",
+    "seatsFreeOther": "{count} seats",
+    "seatsLeft": "{count} left",
+    "ticketCount": "{count} tickets",
+    "ticketCountOne": "{count} ticket",
+    "ticketCountOther": "{count} tickets",
+    "rowIdentity": "Row {row}",
+    "rotateVenue": "Drag to rotate venue",
+    "seatNumberIdentity": "Seat {seat}"
+  }
+}

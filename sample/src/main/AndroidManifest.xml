@@ -3,16 +3,25 @@
 
     <application
         android:allowBackup="false"
+        android:enableOnBackInvokedCallback="true"
         android:label="SeatLayer Android"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
+        <profileable android:shell="true" />
         <activity
-            android:name=".MainActivity"
+            android:name=".PrewarmActivity"
+            android:exported="true" />
+        <activity
+            android:name=".HostedValidationActivity"
+            android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true" />
     </application>
 </manifest>

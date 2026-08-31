@@ -40,7 +40,9 @@ jobs:
       - name: Validate release source and consumer sample
         run: ./gradlew validate
       - name: Publish and release
-        run: ./gradlew :seatlayer:publishAndReleaseToMavenCentral
+        # The unqualified aggregate selector publishes both seatlayer and
+        # seatlayer-compose in one Central Portal deployment.
+        run: ./gradlew publishAndReleaseToMavenCentral
         env:
           ORG_GRADLE_PROJECT_mavenCentralUsername: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           ORG_GRADLE_PROJECT_mavenCentralPassword: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}

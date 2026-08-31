@@ -1,0 +1,192 @@
+{
+  "$schema": "https://seatlayer.io/schema/picker-protocol-lock-1.json",
+  "version": 1,
+  "surface": "picker",
+  "envelopeMarker": 1,
+  "protocolRange": {
+    "min": 2,
+    "max": 2
+  },
+  "snapshotSchema": "seatlayer.picker.snapshot/1",
+  "requiredCapabilities": [
+    "picker-session-v2",
+    "picker-snapshot-v1",
+    "picker-actions-v1",
+    "native-picker-chrome-v1",
+    "native-chrome-contract-v1",
+    "checkout-handoff-v1",
+    "checkout-handoff-reject-v1",
+    "hold-ownership-v1",
+    "cart-line-remove-v1",
+    "table-quantity-v1"
+  ],
+  "optionalCapabilities": [
+    "native-seat-view-chrome-v1",
+    "viewport-insets-v1",
+    "floor-stack-v1",
+    "chart-load-trace-v1",
+    "availability-refresh-v1",
+    "access-needs-v1",
+    "hold-selection-v1"
+  ],
+  "requiredCommands": [
+    "picker.getSnapshot",
+    "picker.selectObjects",
+    "picker.deselectObjects",
+    "picker.clearSelection",
+    "picker.selectCategories",
+    "picker.deselectCategories",
+    "picker.setSeatTier",
+    "picker.removeCartLine",
+    "picker.setTableQuantity",
+    "picker.setSelectableObjects",
+    "picker.setMaxSelection",
+    "picker.setCategoryFilter",
+    "picker.setAccessibilityFilter",
+    "picker.setLimitedViewFilter",
+    "picker.focusSection",
+    "picker.overview",
+    "picker.setRung",
+    "picker.setFloor",
+    "picker.setColorblindSafe",
+    "picker.setThemeMode",
+    "picker.setViewMode",
+    "picker.setInteractionEnabled",
+    "picker.zoomIn",
+    "picker.zoomOut",
+    "picker.zoomToFit",
+    "picker.holdGA",
+    "picker.bestAvailable",
+    "picker.resumeHold",
+    "picker.extendHold",
+    "picker.continue",
+    "picker.rejectHandoff",
+    "picker.abort",
+    "picker.lifecycle",
+    "picker.destroy"
+  ],
+  "requiredEvents": [
+    "picker.snapshot"
+  ],
+  "optionalEvents": [
+    "seatView.changed",
+    "selection.changed",
+    "selection.validity.changed",
+    "hold.changed",
+    "hold.restored",
+    "hold.expired",
+    "ga.click",
+    "access.token.request",
+    "access.expired",
+    "access.unavailable",
+    "selection.unavailable",
+    "error"
+  ],
+  "conditionalRequirements": {
+    "enable3D": {
+      "default": true,
+      "capabilities": ["venue-3d-v1", "venue-3d-controls-v1"],
+      "commands": ["picker.setBuyerView", "picker.setVenue3DNavigationMode"]
+    },
+    "enableSeatView": {
+      "default": true,
+      "capabilities": ["seat-view-v1"],
+      "commands": ["picker.openSeatView"]
+    }
+  },
+  "examples": {
+    "hello": {
+      "sl": 1,
+      "k": "hello",
+      "t": "sys.hello",
+      "p": {
+        "bundle": "0.71.5",
+        "protocol": {
+          "min": 2,
+          "max": 2
+        },
+        "capabilities": ["picker-session-v2", "picker-snapshot-v1"],
+        "commands": ["picker.getSnapshot"],
+        "events": ["picker.snapshot"]
+      }
+    },
+    "initialize": {
+      "sl": 1,
+      "k": "init",
+      "t": "sys.init",
+      "p": {
+        "protocol": {
+          "min": 2,
+          "max": 2
+        },
+        "host": {
+          "platform": "ios",
+          "sdk": "0.3.0"
+        },
+        "surface": {
+          "kind": "picker",
+          "stateContract": 1,
+          "chromeOwner": "native"
+        },
+        "chrome": {
+          "owner": "native",
+          "seatTooltip": false,
+          "testModeIndicator": false,
+          "attribution": false
+        },
+        "config": {
+          "event": "<host-event>"
+        }
+      }
+    },
+    "ready": {
+      "sl": 1,
+      "k": "evt",
+      "n": 1,
+      "t": "sys.ready",
+      "p": {
+        "protocol": 2,
+        "mode": "test",
+        "transport": "ios",
+        "chart": {
+          "event": "<host-event>"
+        },
+        "snapshot": {
+          "schema": "seatlayer.picker.snapshot/1",
+          "sessionId": "<runtime-session>",
+          "revision": 1,
+          "event": {
+            "key": "<host-event>",
+            "name": "Example event",
+            "currency": "EUR"
+          },
+          "futureOptionalField": {
+            "mustRemainTolerated": true
+          }
+        }
+      }
+    },
+    "error": {
+      "sl": 1,
+      "k": "err",
+      "id": "request-1",
+      "t": "picker.continue",
+      "p": {
+        "code": "sold_out",
+        "message": "Inventory changed",
+        "details": {
+          "futureOptionalField": true
+        }
+      }
+    }
+  },
+  "tolerance": {
+    "unknownObjectFields": "preserve or ignore without failing known fields",
+    "unknownEnumValues": "preserve raw value where the public type is open",
+    "eventSequence": "accept finite integral JSON numbers; drop stale or equal sequence values",
+    "snapshotRevision": "within one session accept only strictly higher revisions",
+    "foreignSessionSnapshot": "drop",
+    "unknownEnvelopeKind": "decode then ignore on native ingress",
+    "unknownErrorCode": "pass through unchanged"
+  }
+}

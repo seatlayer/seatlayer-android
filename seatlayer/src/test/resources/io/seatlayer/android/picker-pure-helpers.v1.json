@@ -1,0 +1,114 @@
+{
+  "$schema": "https://seatlayer.io/schema/picker-pure-helper-fixtures-1.json",
+  "version": 1,
+  "cases": [
+    {
+      "id": "ticket-identity-addressed-v1",
+      "helper": "ticketIdentity",
+      "input": {
+        "line": {
+          "lineKey": "line-1",
+          "label": "A-1",
+          "objectId": "row-a",
+          "objectType": "seat",
+          "categoryKey": "standard",
+          "unitPrice": 25,
+          "currency": "EUR",
+          "quantity": 1,
+          "seatId": "seat-1"
+        }
+      },
+      "expected": {
+        "lineKey": "line-1",
+        "removalLabel": "A-1",
+        "objectId": "row-a",
+        "seatId": "seat-1"
+      }
+    },
+    {
+      "id": "confirmed-cart-per-line-addressing-v1",
+      "helper": "confirmedCart",
+      "input": {
+        "items": [
+          { "lineKey": "one", "label": "same", "objectId": "object-one", "objectType": "seat", "categoryKey": "standard", "unitPrice": 25, "currency": "EUR", "quantity": 1, "seatId": "seat-1" },
+          { "lineKey": "two", "label": "same", "objectId": "object-two", "objectType": "seat", "categoryKey": "standard", "unitPrice": 30, "currency": "EUR", "quantity": 1, "seatId": "seat-2" },
+          { "lineKey": "three", "label": "same", "objectId": "object-three", "objectType": "seat", "categoryKey": "standard", "unitPrice": 20, "currency": "EUR", "quantity": 1 },
+          { "lineKey": "four", "label": "other", "objectId": "object-four", "objectType": "seat", "categoryKey": "standard", "unitPrice": 15, "currency": "EUR", "quantity": 1 }
+        ],
+        "pending": { "id": "seat-2", "label": "same", "objectId": "row-a" }
+      },
+      "expected": {
+        "lineKeys": ["one", "four"],
+        "quantity": 2,
+        "total": 40,
+        "currency": "EUR",
+        "hasMixedCurrencies": false
+      }
+    },
+    {
+      "id": "totals-mixed-currency-v1",
+      "helper": "totals",
+      "input": {
+        "items": [
+          { "lineKey": "ga", "label": "GA", "objectId": "ga", "objectType": "ga", "categoryKey": "standing", "unitPrice": 12, "currency": "EUR", "quantity": 3 },
+          { "lineKey": "table", "label": "Table 1", "objectId": "table", "objectType": "table", "categoryKey": "table", "unitPrice": 20, "currency": "USD", "quantity": 4 }
+        ]
+      },
+      "expected": {
+        "quantity": 7,
+        "total": 116,
+        "currency": null,
+        "hasMixedCurrencies": true
+      }
+    },
+    {
+      "id": "dense-runs-adjacent-fold-and-order-v1",
+      "helper": "denseRuns",
+      "input": {
+        "display": { "categoryLabel": "Adult", "amountText": "€25" },
+        "items": [
+          { "lineKey": "three", "label": "A-3", "objectId": "object-three", "objectType": "seat", "categoryKey": "standard", "unitPrice": 25, "currency": "EUR", "quantity": 1, "sectionLabel": "Gallery", "rowLabel": "A", "seatNumber": "3" },
+          { "lineKey": "one", "label": "A-1", "objectId": "object-one", "objectType": "seat", "categoryKey": "standard", "unitPrice": 25, "currency": "EUR", "quantity": 1, "sectionLabel": "Gallery", "rowLabel": "A", "seatNumber": "1" },
+          { "lineKey": "two", "label": "A-2", "objectId": "object-two", "objectType": "seat", "categoryKey": "standard", "unitPrice": 25, "currency": "EUR", "quantity": 1, "sectionLabel": "Gallery", "rowLabel": "A", "seatNumber": "2" }
+        ]
+      },
+      "expected": {
+        "runs": [
+          {
+            "memberLineKeys": ["three", "one", "two"],
+            "orderedMemberLineKeys": ["one", "two", "three"],
+            "seatsLabel": "1–3",
+            "quantity": 3,
+            "total": 75
+          }
+        ]
+      }
+    },
+    {
+      "id": "seat-run-label-never-invents-gaps-v1",
+      "helper": "seatRunLabel",
+      "input": { "labels": ["1", "2", "4", "5", "6"] },
+      "expected": { "label": "1, 2, 4 +2" }
+    },
+    {
+      "id": "undo-requires-same-session-absence-v1",
+      "helper": "canUndoRemoval",
+      "input": {
+        "line": { "lineKey": "one", "label": "A-1", "objectId": "object-one", "objectType": "seat", "categoryKey": "standard", "unitPrice": 25, "currency": "EUR", "quantity": 1 },
+        "checks": [
+          { "phase": "undoWindow", "sameSession": true, "stillAbsent": true },
+          { "phase": "awaitingRemove", "sameSession": true, "stillAbsent": true },
+          { "phase": "undoWindow", "sameSession": false, "stillAbsent": true },
+          { "phase": "undoWindow", "sameSession": true, "stillAbsent": false }
+        ]
+      },
+      "expected": { "values": [true, false, false, false] }
+    },
+    {
+      "id": "structural-seat-identity-v1",
+      "helper": "seatIdentity",
+      "input": { "seat": { "id": "seat-1", "label": "A-1", "objectId": "row-a" } },
+      "expected": { "identity": "[\"seat-1\",\"A-1\",\"row-a\"]" }
+    }
+  ]
+}

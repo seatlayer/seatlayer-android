@@ -1,0 +1,1470 @@
+public final class io.seatlayer.android.BestAvailableResult {
+  public io.seatlayer.android.BestAvailableResult(java.lang.String, long, java.util.List<java.lang.String>, java.util.List<io.seatlayer.android.SelectedSeat>, java.util.List<io.seatlayer.android.HoldLineItem>);
+    descriptor: (Ljava/lang/String;JLjava/util/List;Ljava/util/List;Ljava/util/List;)V
+  public final java.lang.String getHoldId();
+    descriptor: ()Ljava/lang/String;
+  public final long getExpiresAtMillis();
+    descriptor: ()J
+  public final java.util.List<java.lang.String> getLabels();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.SelectedSeat> getSeats();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.HoldLineItem> getItems();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final long component2();
+    descriptor: ()J
+  public final java.util.List<java.lang.String> component3();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.SelectedSeat> component4();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.HoldLineItem> component5();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.BestAvailableResult copy(java.lang.String, long, java.util.List<java.lang.String>, java.util.List<io.seatlayer.android.SelectedSeat>, java.util.List<io.seatlayer.android.HoldLineItem>);
+    descriptor: (Ljava/lang/String;JLjava/util/List;Ljava/util/List;Ljava/util/List;)Lio/seatlayer/android/BestAvailableResult;
+  public static io.seatlayer.android.BestAvailableResult copy$default(io.seatlayer.android.BestAvailableResult, java.lang.String, long, java.util.List, java.util.List, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BestAvailableResult;Ljava/lang/String;JLjava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/BestAvailableResult;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.BridgeErrorDetails {
+  public static final io.seatlayer.android.BridgeErrorDetails$Companion Companion;
+    descriptor: Lio/seatlayer/android/BridgeErrorDetails$Companion;
+  public io.seatlayer.android.BridgeErrorDetails(java.lang.String, java.lang.String, java.lang.Boolean, java.util.List<io.seatlayer.android.HoldConflict>, kotlinx.serialization.json.JsonElement);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;)V
+  public final java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getMessage();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Boolean getRetryable();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.util.List<io.seatlayer.android.HoldConflict> getConflicts();
+    descriptor: ()Ljava/util/List;
+  public final kotlinx.serialization.json.JsonElement getMetadata();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Boolean component3();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.util.List<io.seatlayer.android.HoldConflict> component4();
+    descriptor: ()Ljava/util/List;
+  public final kotlinx.serialization.json.JsonElement component5();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final io.seatlayer.android.BridgeErrorDetails copy(java.lang.String, java.lang.String, java.lang.Boolean, java.util.List<io.seatlayer.android.HoldConflict>, kotlinx.serialization.json.JsonElement);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;)Lio/seatlayer/android/BridgeErrorDetails;
+  public static io.seatlayer.android.BridgeErrorDetails copy$default(io.seatlayer.android.BridgeErrorDetails, java.lang.String, java.lang.String, java.lang.Boolean, java.util.List, kotlinx.serialization.json.JsonElement, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BridgeErrorDetails;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lio/seatlayer/android/BridgeErrorDetails;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.BridgeProtocolKt {
+  public static final int SEATLAYER_PROTOCOL_MIN;
+    descriptor: I
+  public static final int SEATLAYER_PROTOCOL_MAX;
+    descriptor: I
+  public static final java.lang.Integer negotiate(io.seatlayer.android.ProtocolRange, io.seatlayer.android.ProtocolRange);
+    descriptor: (Lio/seatlayer/android/ProtocolRange;Lio/seatlayer/android/ProtocolRange;)Ljava/lang/Integer;
+  public static java.lang.Integer negotiate$default(io.seatlayer.android.ProtocolRange, io.seatlayer.android.ProtocolRange, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/ProtocolRange;Lio/seatlayer/android/ProtocolRange;ILjava/lang/Object;)Ljava/lang/Integer;
+}
+public final class io.seatlayer.android.BundleInfo {
+  public io.seatlayer.android.BundleInfo(java.lang.String, io.seatlayer.android.ProtocolRange, java.util.List<java.lang.String>, java.util.List<java.lang.String>, java.util.List<java.lang.String>);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/ProtocolRange;Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+  public final java.lang.String getBundle();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.ProtocolRange getProtocolRange();
+    descriptor: ()Lio/seatlayer/android/ProtocolRange;
+  public final java.util.List<java.lang.String> getCapabilities();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> getEvents();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> getCommands();
+    descriptor: ()Ljava/util/List;
+  public final boolean supportsCommand(java.lang.String);
+    descriptor: (Ljava/lang/String;)Z
+  public final boolean supportsCapability(java.lang.String);
+    descriptor: (Ljava/lang/String;)Z
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.ProtocolRange component2();
+    descriptor: ()Lio/seatlayer/android/ProtocolRange;
+  public final java.util.List<java.lang.String> component3();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> component4();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> component5();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.BundleInfo copy(java.lang.String, io.seatlayer.android.ProtocolRange, java.util.List<java.lang.String>, java.util.List<java.lang.String>, java.util.List<java.lang.String>);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/ProtocolRange;Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/seatlayer/android/BundleInfo;
+  public static io.seatlayer.android.BundleInfo copy$default(io.seatlayer.android.BundleInfo, java.lang.String, io.seatlayer.android.ProtocolRange, java.util.List, java.util.List, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BundleInfo;Ljava/lang/String;Lio/seatlayer/android/ProtocolRange;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/BundleInfo;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.BuyerAccessExpiredEvent {
+  public final java.lang.String getReason-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+  public final boolean getRefreshed();
+    descriptor: ()Z
+  public final java.lang.String component1-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final boolean component3();
+    descriptor: ()Z
+  public final io.seatlayer.android.BuyerAccessExpiredEvent copy-Y_7fKQI(java.lang.String, java.lang.String, boolean);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Z)Lio/seatlayer/android/BuyerAccessExpiredEvent;
+  public static io.seatlayer.android.BuyerAccessExpiredEvent copy-Y_7fKQI$default(io.seatlayer.android.BuyerAccessExpiredEvent, java.lang.String, java.lang.String, boolean, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BuyerAccessExpiredEvent;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/seatlayer/android/BuyerAccessExpiredEvent;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.BuyerAccessExpiredEvent(java.lang.String, java.lang.String, boolean, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.BuyerAccessRefreshReason$Companion {
+  public final java.lang.String getInitial-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getExpiring-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getExpired-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getUnauthorized-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getReconnect-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getManual-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public io.seatlayer.android.BuyerAccessRefreshReason$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.BuyerAccessRefreshReason {
+  public static final io.seatlayer.android.BuyerAccessRefreshReason$Companion Companion;
+    descriptor: Lio/seatlayer/android/BuyerAccessRefreshReason$Companion;
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.BuyerAccessRefreshReason box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/BuyerAccessRefreshReason;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}
+public final class io.seatlayer.android.BuyerAccessRequestContext {
+  public final java.lang.String getReason-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1-31GvY4A();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.BuyerAccessRequestContext copy-y47EnMs(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/BuyerAccessRequestContext;
+  public static io.seatlayer.android.BuyerAccessRequestContext copy-y47EnMs$default(io.seatlayer.android.BuyerAccessRequestContext, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BuyerAccessRequestContext;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/BuyerAccessRequestContext;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.BuyerAccessRequestContext(java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.BuyerAccessToken {
+  public io.seatlayer.android.BuyerAccessToken(java.lang.String, java.lang.Double);
+    descriptor: (Ljava/lang/String;Ljava/lang/Double;)V
+  public io.seatlayer.android.BuyerAccessToken(java.lang.String, java.lang.Double, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/Double;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final java.lang.String getToken();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double getExpiresAt();
+    descriptor: ()Ljava/lang/Double;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double component2();
+    descriptor: ()Ljava/lang/Double;
+  public final io.seatlayer.android.BuyerAccessToken copy(java.lang.String, java.lang.Double);
+    descriptor: (Ljava/lang/String;Ljava/lang/Double;)Lio/seatlayer/android/BuyerAccessToken;
+  public static io.seatlayer.android.BuyerAccessToken copy$default(io.seatlayer.android.BuyerAccessToken, java.lang.String, java.lang.Double, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BuyerAccessToken;Ljava/lang/String;Ljava/lang/Double;ILjava/lang/Object;)Lio/seatlayer/android/BuyerAccessToken;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public interface io.seatlayer.android.BuyerAccessTokenProvider {
+  public abstract java.lang.Object provide(io.seatlayer.android.BuyerAccessRequestContext, kotlin.coroutines.Continuation<? super io.seatlayer.android.BuyerAccessToken>);
+    descriptor: (Lio/seatlayer/android/BuyerAccessRequestContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+public final class io.seatlayer.android.BuyerAccessUnavailableEvent {
+  public final java.lang.String getReason-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer getStatus();
+    descriptor: ()Ljava/lang/Integer;
+  public final boolean getRetryable();
+    descriptor: ()Z
+  public final java.lang.String component1-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer component3();
+    descriptor: ()Ljava/lang/Integer;
+  public final boolean component4();
+    descriptor: ()Z
+  public final io.seatlayer.android.BuyerAccessUnavailableEvent copy-KC1Te4I(java.lang.String, java.lang.String, java.lang.Integer, boolean);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Z)Lio/seatlayer/android/BuyerAccessUnavailableEvent;
+  public static io.seatlayer.android.BuyerAccessUnavailableEvent copy-KC1Te4I$default(io.seatlayer.android.BuyerAccessUnavailableEvent, java.lang.String, java.lang.String, java.lang.Integer, boolean, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/BuyerAccessUnavailableEvent;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZILjava/lang/Object;)Lio/seatlayer/android/BuyerAccessUnavailableEvent;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.BuyerAccessUnavailableEvent(java.lang.String, java.lang.String, java.lang.Integer, boolean, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZLkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.BuyerAccessUnavailableReason$Companion {
+  public final java.lang.String getRevoked-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getPaused-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getInvalid-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getOriginMismatch-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getEventMismatch-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getGroupMismatch-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getModeMismatch-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getChannelDenied-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getInvalidScope-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getProviderFailed-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getNoToken-uiTd6qE();
+    descriptor: ()Ljava/lang/String;
+  public io.seatlayer.android.BuyerAccessUnavailableReason$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.BuyerAccessUnavailableReason {
+  public static final io.seatlayer.android.BuyerAccessUnavailableReason$Companion Companion;
+    descriptor: Lio/seatlayer/android/BuyerAccessUnavailableReason$Companion;
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.BuyerAccessUnavailableReason box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/BuyerAccessUnavailableReason;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}
+public final class io.seatlayer.android.CategoryTier {
+  public io.seatlayer.android.CategoryTier(java.lang.String, java.lang.String, double);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;D)V
+  public final java.lang.String getId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getName();
+    descriptor: ()Ljava/lang/String;
+  public final double getPrice();
+    descriptor: ()D
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final double component3();
+    descriptor: ()D
+  public final io.seatlayer.android.CategoryTier copy(java.lang.String, java.lang.String, double);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;D)Lio/seatlayer/android/CategoryTier;
+  public static io.seatlayer.android.CategoryTier copy$default(io.seatlayer.android.CategoryTier, java.lang.String, java.lang.String, double, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/CategoryTier;Ljava/lang/String;Ljava/lang/String;DILjava/lang/Object;)Lio/seatlayer/android/CategoryTier;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.EventMode$Companion {
+  public final java.lang.String getLive-XS33BS8();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getTest-XS33BS8();
+    descriptor: ()Ljava/lang/String;
+  public io.seatlayer.android.EventMode$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.EventMode {
+  public static final io.seatlayer.android.EventMode$Companion Companion;
+    descriptor: Lio/seatlayer/android/EventMode$Companion;
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.EventMode box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/EventMode;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}
+public final class io.seatlayer.android.FloorInfo {
+  public io.seatlayer.android.FloorInfo(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)V
+  public final java.lang.String getId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getName();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.FloorInfo copy(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Lio/seatlayer/android/FloorInfo;
+  public static io.seatlayer.android.FloorInfo copy$default(io.seatlayer.android.FloorInfo, java.lang.String, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/FloorInfo;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/FloorInfo;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.GeneralAdmissionArea {
+  public io.seatlayer.android.GeneralAdmissionArea(java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Double, java.lang.String, java.util.List<io.seatlayer.android.CategoryTier>);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/util/List;)V
+  public final java.lang.String getId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer getCapacity();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.Integer getAvailable();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.String getCategoryKey();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double getPrice();
+    descriptor: ()Ljava/lang/Double;
+  public final java.lang.String getCurrency();
+    descriptor: ()Ljava/lang/String;
+  public final java.util.List<io.seatlayer.android.CategoryTier> getTiers();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer component3();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.Integer component4();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.String component5();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double component6();
+    descriptor: ()Ljava/lang/Double;
+  public final java.lang.String component7();
+    descriptor: ()Ljava/lang/String;
+  public final java.util.List<io.seatlayer.android.CategoryTier> component8();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.GeneralAdmissionArea copy(java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Double, java.lang.String, java.util.List<io.seatlayer.android.CategoryTier>);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/util/List;)Lio/seatlayer/android/GeneralAdmissionArea;
+  public static io.seatlayer.android.GeneralAdmissionArea copy$default(io.seatlayer.android.GeneralAdmissionArea, java.lang.String, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.Double, java.lang.String, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/GeneralAdmissionArea;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/GeneralAdmissionArea;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.HoldConflict {
+  public io.seatlayer.android.HoldConflict(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)V
+  public final java.lang.String getLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getStatus();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.HoldConflict copy(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Lio/seatlayer/android/HoldConflict;
+  public static io.seatlayer.android.HoldConflict copy$default(io.seatlayer.android.HoldConflict, java.lang.String, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/HoldConflict;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/HoldConflict;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.HoldLineItem {
+  public io.seatlayer.android.HoldLineItem(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Double, java.lang.String, java.lang.Integer);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/Integer;)V
+  public final java.lang.String getLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getObjectId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getObjectType();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getCategoryKey();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getTierId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double getUnitPrice();
+    descriptor: ()Ljava/lang/Double;
+  public final java.lang.String getCurrency();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer getQuantity();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component4();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component5();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double component6();
+    descriptor: ()Ljava/lang/Double;
+  public final java.lang.String component7();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer component8();
+    descriptor: ()Ljava/lang/Integer;
+  public final io.seatlayer.android.HoldLineItem copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Double, java.lang.String, java.lang.Integer);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/Integer;)Lio/seatlayer/android/HoldLineItem;
+  public static io.seatlayer.android.HoldLineItem copy$default(io.seatlayer.android.HoldLineItem, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Double, java.lang.String, java.lang.Integer, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/HoldLineItem;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/lang/String;Ljava/lang/Integer;ILjava/lang/Object;)Lio/seatlayer/android/HoldLineItem;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.HoldResult {
+  public io.seatlayer.android.HoldResult(java.lang.String, long, java.util.List<io.seatlayer.android.SelectedSeat>, java.util.List<io.seatlayer.android.HoldLineItem>);
+    descriptor: (Ljava/lang/String;JLjava/util/List;Ljava/util/List;)V
+  public final java.lang.String getHoldId();
+    descriptor: ()Ljava/lang/String;
+  public final long getExpiresAtMillis();
+    descriptor: ()J
+  public final java.util.List<io.seatlayer.android.SelectedSeat> getSeats();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.HoldLineItem> getItems();
+    descriptor: ()Ljava/util/List;
+  public final java.util.Date getExpiry();
+    descriptor: ()Ljava/util/Date;
+  public final long getTimeRemainingMillis();
+    descriptor: ()J
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final long component2();
+    descriptor: ()J
+  public final java.util.List<io.seatlayer.android.SelectedSeat> component3();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.HoldLineItem> component4();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.HoldResult copy(java.lang.String, long, java.util.List<io.seatlayer.android.SelectedSeat>, java.util.List<io.seatlayer.android.HoldLineItem>);
+    descriptor: (Ljava/lang/String;JLjava/util/List;Ljava/util/List;)Lio/seatlayer/android/HoldResult;
+  public static io.seatlayer.android.HoldResult copy$default(io.seatlayer.android.HoldResult, java.lang.String, long, java.util.List, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/HoldResult;Ljava/lang/String;JLjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/HoldResult;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.ProtocolRange$Companion {
+  public final io.seatlayer.android.ProtocolRange getNative();
+    descriptor: ()Lio/seatlayer/android/ProtocolRange;
+  public final io.seatlayer.android.ProtocolRange decode$seatlayer(kotlinx.serialization.json.JsonObject);
+    descriptor: (Lkotlinx/serialization/json/JsonObject;)Lio/seatlayer/android/ProtocolRange;
+  public io.seatlayer.android.ProtocolRange$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.ProtocolRange {
+  public static final io.seatlayer.android.ProtocolRange$Companion Companion;
+    descriptor: Lio/seatlayer/android/ProtocolRange$Companion;
+  public io.seatlayer.android.ProtocolRange(int, int);
+    descriptor: (II)V
+  public final int getMin();
+    descriptor: ()I
+  public final int getMax();
+    descriptor: ()I
+  public final kotlinx.serialization.json.JsonObject toJson$seatlayer();
+    descriptor: ()Lkotlinx/serialization/json/JsonObject;
+  public final int component1();
+    descriptor: ()I
+  public final int component2();
+    descriptor: ()I
+  public final io.seatlayer.android.ProtocolRange copy(int, int);
+    descriptor: (II)Lio/seatlayer/android/ProtocolRange;
+  public static io.seatlayer.android.ProtocolRange copy$default(io.seatlayer.android.ProtocolRange, int, int, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/ProtocolRange;IIILjava/lang/Object;)Lio/seatlayer/android/ProtocolRange;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.ReadyInfo {
+  public final int getProtocolRevision();
+    descriptor: ()I
+  public final java.lang.String getMode-XS33BS8();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getTransport-WduM2tE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getEventKey();
+    descriptor: ()Ljava/lang/String;
+  public final int component1();
+    descriptor: ()I
+  public final java.lang.String component2-XS33BS8();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3-WduM2tE();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component4();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.ReadyInfo copy-ji1H5cc(int, java.lang.String, java.lang.String, java.lang.String);
+    descriptor: (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/seatlayer/android/ReadyInfo;
+  public static io.seatlayer.android.ReadyInfo copy-ji1H5cc$default(io.seatlayer.android.ReadyInfo, int, java.lang.String, java.lang.String, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/ReadyInfo;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/ReadyInfo;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.ReadyInfo(int, java.lang.String, java.lang.String, java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.SeatLayerConfiguration {
+  public io.seatlayer.android.SeatLayerConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.String, java.util.Map, java.lang.String, java.lang.Boolean, java.lang.String, boolean, io.seatlayer.android.BuyerAccessToken, io.seatlayer.android.BuyerAccessTokenProvider, java.util.List, java.util.List, java.lang.Integer, java.util.List, long, long, java.util.Map, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;ZLio/seatlayer/android/BuyerAccessToken;Lio/seatlayer/android/BuyerAccessTokenProvider;Ljava/util/List;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;JJLjava/util/Map;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final java.lang.String getEvent();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getApiBase();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getPublicKey();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer getMaxSelection();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.String getLocale();
+    descriptor: ()Ljava/lang/String;
+  public final java.util.Map<java.lang.String, java.lang.String> getMessages();
+    descriptor: ()Ljava/util/Map;
+  public final java.lang.String getCurrency();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Boolean getColorblindSafe();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.String getInitialView-UwjUPPA();
+    descriptor: ()Ljava/lang/String;
+  public final boolean getShowsWebSeatTooltip();
+    descriptor: ()Z
+  public final io.seatlayer.android.BuyerAccessToken getBuyerAccessToken();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessToken;
+  public final io.seatlayer.android.BuyerAccessTokenProvider getBuyerAccessTokenProvider();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessTokenProvider;
+  public final java.util.List<java.lang.String> getSelectedObjects();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> getSelectableObjects();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.Integer getNumberOfPlacesToSelect();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.util.List<io.seatlayer.android.SelectionValidator> getSelectionValidators();
+    descriptor: ()Ljava/util/List;
+  public final long getCommandTimeoutMillis();
+    descriptor: ()J
+  public final long getHandshakeTimeoutMillis();
+    descriptor: ()J
+  public final java.util.Map<java.lang.String, java.lang.String> getHostInfo();
+    descriptor: ()Ljava/util/Map;
+  public final kotlinx.serialization.json.JsonObject initPayload$seatlayer();
+    descriptor: ()Lkotlinx/serialization/json/JsonObject;
+  public final boolean getUsesPrivateAccess$seatlayer();
+    descriptor: ()Z
+  public final boolean getUsesSelectionPolicy$seatlayer();
+    descriptor: ()Z
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer component4();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.lang.String component5();
+    descriptor: ()Ljava/lang/String;
+  public final java.util.Map<java.lang.String, java.lang.String> component6();
+    descriptor: ()Ljava/util/Map;
+  public final java.lang.String component7();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Boolean component8();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.String component9-UwjUPPA();
+    descriptor: ()Ljava/lang/String;
+  public final boolean component10();
+    descriptor: ()Z
+  public final io.seatlayer.android.BuyerAccessToken component11();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessToken;
+  public final io.seatlayer.android.BuyerAccessTokenProvider component12();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessTokenProvider;
+  public final java.util.List<java.lang.String> component13();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> component14();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.Integer component15();
+    descriptor: ()Ljava/lang/Integer;
+  public final java.util.List<io.seatlayer.android.SelectionValidator> component16();
+    descriptor: ()Ljava/util/List;
+  public final long component17();
+    descriptor: ()J
+  public final long component18();
+    descriptor: ()J
+  public final java.util.Map<java.lang.String, java.lang.String> component19();
+    descriptor: ()Ljava/util/Map;
+  public final io.seatlayer.android.SeatLayerConfiguration copy-I-XdLKE(java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.String, java.util.Map<java.lang.String, java.lang.String>, java.lang.String, java.lang.Boolean, java.lang.String, boolean, io.seatlayer.android.BuyerAccessToken, io.seatlayer.android.BuyerAccessTokenProvider, java.util.List<java.lang.String>, java.util.List<java.lang.String>, java.lang.Integer, java.util.List<? extends io.seatlayer.android.SelectionValidator>, long, long, java.util.Map<java.lang.String, java.lang.String>);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;ZLio/seatlayer/android/BuyerAccessToken;Lio/seatlayer/android/BuyerAccessTokenProvider;Ljava/util/List;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;JJLjava/util/Map;)Lio/seatlayer/android/SeatLayerConfiguration;
+  public static io.seatlayer.android.SeatLayerConfiguration copy-I-XdLKE$default(io.seatlayer.android.SeatLayerConfiguration, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.String, java.util.Map, java.lang.String, java.lang.Boolean, java.lang.String, boolean, io.seatlayer.android.BuyerAccessToken, io.seatlayer.android.BuyerAccessTokenProvider, java.util.List, java.util.List, java.lang.Integer, java.util.List, long, long, java.util.Map, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerConfiguration;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;ZLio/seatlayer/android/BuyerAccessToken;Lio/seatlayer/android/BuyerAccessTokenProvider;Ljava/util/List;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;JJLjava/util/Map;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerConfiguration;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.SeatLayerConfiguration(java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, java.lang.String, java.util.Map, java.lang.String, java.lang.Boolean, java.lang.String, boolean, io.seatlayer.android.BuyerAccessToken, io.seatlayer.android.BuyerAccessTokenProvider, java.util.List, java.util.List, java.lang.Integer, java.util.List, long, long, java.util.Map, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;ZLio/seatlayer/android/BuyerAccessToken;Lio/seatlayer/android/BuyerAccessTokenProvider;Ljava/util/List;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;JJLjava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.SeatLayerConfigurationKt {
+  public static final java.lang.String SEATLAYER_ANDROID_VERSION;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String SEATLAYER_HOSTED_WEB_VERSION;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String SEATLAYER_LEGACY_FIXTURE_WEB_VERSION;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String SEATLAYER_BUNDLED_WEB_VERSION;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String SEATLAYER_MOBILE_ORIGIN;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String SEATLAYER_MOBILE_PAGE_URL;
+    descriptor: Ljava/lang/String;
+  public static void getSEATLAYER_BUNDLED_WEB_VERSION$annotations();
+    descriptor: ()V
+}
+public final class io.seatlayer.android.SeatLayerController {
+  public io.seatlayer.android.SeatLayerController();
+    descriptor: ()V
+  public final kotlinx.coroutines.flow.StateFlow<io.seatlayer.android.ReadyInfo> getReady();
+    descriptor: ()Lkotlinx/coroutines/flow/StateFlow;
+  public final kotlinx.coroutines.flow.StateFlow<io.seatlayer.android.BundleInfo> getBundle();
+    descriptor: ()Lkotlinx/coroutines/flow/StateFlow;
+  public final kotlinx.coroutines.flow.SharedFlow<io.seatlayer.android.SeatLayerEvent> getEvents();
+    descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
+  public final boolean isReady();
+    descriptor: ()Z
+  public final void beginHandshake$seatlayer(io.seatlayer.android.BridgeChannel, io.seatlayer.android.SeatLayerConfiguration);
+    descriptor: (Lio/seatlayer/android/BridgeChannel;Lio/seatlayer/android/SeatLayerConfiguration;)V
+  public final java.lang.Object awaitReady$seatlayer(kotlin.coroutines.Continuation<? super io.seatlayer.android.ReadyInfo>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final void ingest$seatlayer(java.lang.String);
+    descriptor: (Ljava/lang/String;)V
+  public final void failTransport$seatlayer(java.lang.String, java.lang.Throwable);
+    descriptor: (Ljava/lang/String;Ljava/lang/Throwable;)V
+  public static void failTransport$seatlayer$default(io.seatlayer.android.SeatLayerController, java.lang.String, java.lang.Throwable, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerController;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+  public final java.lang.Object hold(java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.HoldResult>);
+    descriptor: (Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object hold$default(io.seatlayer.android.SeatLayerController, java.lang.Integer, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object resumeHold(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.HoldResult>);
+    descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object extendHold(java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.HoldResult>);
+    descriptor: (Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object extendHold$default(io.seatlayer.android.SeatLayerController, java.lang.Integer, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object release(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object releaseLabels(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
+    descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object bestAvailable(int, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.BestAvailableResult>);
+    descriptor: (ILjava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object bestAvailable$default(io.seatlayer.android.SeatLayerController, int, java.lang.String, java.lang.String, java.lang.Boolean, java.lang.Integer, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerController;ILjava/lang/String;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object holdGeneralAdmission(java.lang.String, int, java.lang.String, boolean, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.HoldResult>);
+    descriptor: (Ljava/lang/String;ILjava/lang/String;ZLjava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object holdGeneralAdmission$default(io.seatlayer.android.SeatLayerController, java.lang.String, int, java.lang.String, boolean, java.lang.Integer, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerController;Ljava/lang/String;ILjava/lang/String;ZLjava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object setSeatTier(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object getSelection(kotlin.coroutines.Continuation<? super java.util.List<io.seatlayer.android.SelectedSeat>>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object selectObjects(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super java.util.List<io.seatlayer.android.SelectedSeat>>);
+    descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object deselectObjects(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object clearSelection(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object selectCategories(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super java.util.List<io.seatlayer.android.SelectedSeat>>);
+    descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object deselectCategories(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setSelectableObjects(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setMaxSelection(int, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object getSelectionValidity(kotlin.coroutines.Continuation<? super io.seatlayer.android.SelectionValidity>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object refreshAccess(kotlin.coroutines.Continuation<? super java.lang.Boolean>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object getCurrentHold(kotlin.coroutines.Continuation<? super io.seatlayer.android.HoldResult>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object getGeneralAdmissionAreas(kotlin.coroutines.Continuation<? super java.util.List<io.seatlayer.android.GeneralAdmissionArea>>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object getFloors(kotlin.coroutines.Continuation<? super java.util.List<io.seatlayer.android.FloorInfo>>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setFloor(java.lang.String, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setColorblindSafe(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setViewMode-n80RVVY(java.lang.String, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object getViewMode-Fr_SJ1k(kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerViewMode>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object zoomIn(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object zoomOut(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object zoomToFit(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object destroy(kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final void closeForReload$seatlayer();
+    descriptor: ()V
+}
+public final class io.seatlayer.android.SeatLayerEvent$BuyerAccessExpired implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$BuyerAccessExpired(io.seatlayer.android.BuyerAccessExpiredEvent);
+    descriptor: (Lio/seatlayer/android/BuyerAccessExpiredEvent;)V
+  public final io.seatlayer.android.BuyerAccessExpiredEvent getEvent();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessExpiredEvent;
+  public final io.seatlayer.android.BuyerAccessExpiredEvent component1();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessExpiredEvent;
+  public final io.seatlayer.android.SeatLayerEvent$BuyerAccessExpired copy(io.seatlayer.android.BuyerAccessExpiredEvent);
+    descriptor: (Lio/seatlayer/android/BuyerAccessExpiredEvent;)Lio/seatlayer/android/SeatLayerEvent$BuyerAccessExpired;
+  public static io.seatlayer.android.SeatLayerEvent$BuyerAccessExpired copy$default(io.seatlayer.android.SeatLayerEvent$BuyerAccessExpired, io.seatlayer.android.BuyerAccessExpiredEvent, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$BuyerAccessExpired;Lio/seatlayer/android/BuyerAccessExpiredEvent;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$BuyerAccessExpired;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$BuyerAccessUnavailable implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$BuyerAccessUnavailable(io.seatlayer.android.BuyerAccessUnavailableEvent);
+    descriptor: (Lio/seatlayer/android/BuyerAccessUnavailableEvent;)V
+  public final io.seatlayer.android.BuyerAccessUnavailableEvent getEvent();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessUnavailableEvent;
+  public final io.seatlayer.android.BuyerAccessUnavailableEvent component1();
+    descriptor: ()Lio/seatlayer/android/BuyerAccessUnavailableEvent;
+  public final io.seatlayer.android.SeatLayerEvent$BuyerAccessUnavailable copy(io.seatlayer.android.BuyerAccessUnavailableEvent);
+    descriptor: (Lio/seatlayer/android/BuyerAccessUnavailableEvent;)Lio/seatlayer/android/SeatLayerEvent$BuyerAccessUnavailable;
+  public static io.seatlayer.android.SeatLayerEvent$BuyerAccessUnavailable copy$default(io.seatlayer.android.SeatLayerEvent$BuyerAccessUnavailable, io.seatlayer.android.BuyerAccessUnavailableEvent, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$BuyerAccessUnavailable;Lio/seatlayer/android/BuyerAccessUnavailableEvent;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$BuyerAccessUnavailable;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$Checkout implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$Checkout(kotlinx.serialization.json.JsonElement);
+    descriptor: (Lkotlinx/serialization/json/JsonElement;)V
+  public final kotlinx.serialization.json.JsonElement getPayload();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final kotlinx.serialization.json.JsonElement component1();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final io.seatlayer.android.SeatLayerEvent$Checkout copy(kotlinx.serialization.json.JsonElement);
+    descriptor: (Lkotlinx/serialization/json/JsonElement;)Lio/seatlayer/android/SeatLayerEvent$Checkout;
+  public static io.seatlayer.android.SeatLayerEvent$Checkout copy$default(io.seatlayer.android.SeatLayerEvent$Checkout, kotlinx.serialization.json.JsonElement, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$Checkout;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$Checkout;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$DeckTapped implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$DeckTapped(java.lang.String);
+    descriptor: (Ljava/lang/String;)V
+  public final java.lang.String getFloorId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.SeatLayerEvent$DeckTapped copy(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SeatLayerEvent$DeckTapped;
+  public static io.seatlayer.android.SeatLayerEvent$DeckTapped copy$default(io.seatlayer.android.SeatLayerEvent$DeckTapped, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$DeckTapped;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$DeckTapped;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$Error implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$Error(io.seatlayer.android.SeatLayerException$Bridge);
+    descriptor: (Lio/seatlayer/android/SeatLayerException$Bridge;)V
+  public final io.seatlayer.android.SeatLayerException$Bridge getError();
+    descriptor: ()Lio/seatlayer/android/SeatLayerException$Bridge;
+  public final io.seatlayer.android.SeatLayerException$Bridge component1();
+    descriptor: ()Lio/seatlayer/android/SeatLayerException$Bridge;
+  public final io.seatlayer.android.SeatLayerEvent$Error copy(io.seatlayer.android.SeatLayerException$Bridge);
+    descriptor: (Lio/seatlayer/android/SeatLayerException$Bridge;)Lio/seatlayer/android/SeatLayerEvent$Error;
+  public static io.seatlayer.android.SeatLayerEvent$Error copy$default(io.seatlayer.android.SeatLayerEvent$Error, io.seatlayer.android.SeatLayerException$Bridge, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$Error;Lio/seatlayer/android/SeatLayerException$Bridge;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$Error;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$GeneralAdmissionClicked implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$GeneralAdmissionClicked(io.seatlayer.android.GeneralAdmissionArea);
+    descriptor: (Lio/seatlayer/android/GeneralAdmissionArea;)V
+  public final io.seatlayer.android.GeneralAdmissionArea getArea();
+    descriptor: ()Lio/seatlayer/android/GeneralAdmissionArea;
+  public final io.seatlayer.android.GeneralAdmissionArea component1();
+    descriptor: ()Lio/seatlayer/android/GeneralAdmissionArea;
+  public final io.seatlayer.android.SeatLayerEvent$GeneralAdmissionClicked copy(io.seatlayer.android.GeneralAdmissionArea);
+    descriptor: (Lio/seatlayer/android/GeneralAdmissionArea;)Lio/seatlayer/android/SeatLayerEvent$GeneralAdmissionClicked;
+  public static io.seatlayer.android.SeatLayerEvent$GeneralAdmissionClicked copy$default(io.seatlayer.android.SeatLayerEvent$GeneralAdmissionClicked, io.seatlayer.android.GeneralAdmissionArea, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$GeneralAdmissionClicked;Lio/seatlayer/android/GeneralAdmissionArea;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$GeneralAdmissionClicked;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$Hint implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$Hint(java.lang.String);
+    descriptor: (Ljava/lang/String;)V
+  public final java.lang.String getMessage();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.SeatLayerEvent$Hint copy(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SeatLayerEvent$Hint;
+  public static io.seatlayer.android.SeatLayerEvent$Hint copy$default(io.seatlayer.android.SeatLayerEvent$Hint, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$Hint;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$Hint;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$HoldChanged implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$HoldChanged(io.seatlayer.android.HoldResult);
+    descriptor: (Lio/seatlayer/android/HoldResult;)V
+  public final io.seatlayer.android.HoldResult getHold();
+    descriptor: ()Lio/seatlayer/android/HoldResult;
+  public final io.seatlayer.android.HoldResult component1();
+    descriptor: ()Lio/seatlayer/android/HoldResult;
+  public final io.seatlayer.android.SeatLayerEvent$HoldChanged copy(io.seatlayer.android.HoldResult);
+    descriptor: (Lio/seatlayer/android/HoldResult;)Lio/seatlayer/android/SeatLayerEvent$HoldChanged;
+  public static io.seatlayer.android.SeatLayerEvent$HoldChanged copy$default(io.seatlayer.android.SeatLayerEvent$HoldChanged, io.seatlayer.android.HoldResult, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$HoldChanged;Lio/seatlayer/android/HoldResult;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$HoldChanged;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$HoldExpired implements io.seatlayer.android.SeatLayerEvent {
+  public static final io.seatlayer.android.SeatLayerEvent$HoldExpired INSTANCE;
+    descriptor: Lio/seatlayer/android/SeatLayerEvent$HoldExpired;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$HoldRestored implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$HoldRestored(io.seatlayer.android.HoldResult);
+    descriptor: (Lio/seatlayer/android/HoldResult;)V
+  public final io.seatlayer.android.HoldResult getHold();
+    descriptor: ()Lio/seatlayer/android/HoldResult;
+  public final io.seatlayer.android.HoldResult component1();
+    descriptor: ()Lio/seatlayer/android/HoldResult;
+  public final io.seatlayer.android.SeatLayerEvent$HoldRestored copy(io.seatlayer.android.HoldResult);
+    descriptor: (Lio/seatlayer/android/HoldResult;)Lio/seatlayer/android/SeatLayerEvent$HoldRestored;
+  public static io.seatlayer.android.SeatLayerEvent$HoldRestored copy$default(io.seatlayer.android.SeatLayerEvent$HoldRestored, io.seatlayer.android.HoldResult, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$HoldRestored;Lio/seatlayer/android/HoldResult;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$HoldRestored;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SeatHovered implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SeatHovered(kotlinx.serialization.json.JsonElement);
+    descriptor: (Lkotlinx/serialization/json/JsonElement;)V
+  public final kotlinx.serialization.json.JsonElement getDetails();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final kotlinx.serialization.json.JsonElement component1();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final io.seatlayer.android.SeatLayerEvent$SeatHovered copy(kotlinx.serialization.json.JsonElement);
+    descriptor: (Lkotlinx/serialization/json/JsonElement;)Lio/seatlayer/android/SeatLayerEvent$SeatHovered;
+  public static io.seatlayer.android.SeatLayerEvent$SeatHovered copy$default(io.seatlayer.android.SeatLayerEvent$SeatHovered, kotlinx.serialization.json.JsonElement, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SeatHovered;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SeatHovered;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SelectedObjectsUnavailable implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SelectedObjectsUnavailable(io.seatlayer.android.SelectedObjectUnavailableEvent);
+    descriptor: (Lio/seatlayer/android/SelectedObjectUnavailableEvent;)V
+  public final io.seatlayer.android.SelectedObjectUnavailableEvent getEvent();
+    descriptor: ()Lio/seatlayer/android/SelectedObjectUnavailableEvent;
+  public final io.seatlayer.android.SelectedObjectUnavailableEvent component1();
+    descriptor: ()Lio/seatlayer/android/SelectedObjectUnavailableEvent;
+  public final io.seatlayer.android.SeatLayerEvent$SelectedObjectsUnavailable copy(io.seatlayer.android.SelectedObjectUnavailableEvent);
+    descriptor: (Lio/seatlayer/android/SelectedObjectUnavailableEvent;)Lio/seatlayer/android/SeatLayerEvent$SelectedObjectsUnavailable;
+  public static io.seatlayer.android.SeatLayerEvent$SelectedObjectsUnavailable copy$default(io.seatlayer.android.SeatLayerEvent$SelectedObjectsUnavailable, io.seatlayer.android.SelectedObjectUnavailableEvent, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SelectedObjectsUnavailable;Lio/seatlayer/android/SelectedObjectUnavailableEvent;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SelectedObjectsUnavailable;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SelectionChanged implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SelectionChanged(java.util.List<io.seatlayer.android.SelectedSeat>);
+    descriptor: (Ljava/util/List;)V
+  public final java.util.List<io.seatlayer.android.SelectedSeat> getSeats();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.SelectedSeat> component1();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.SeatLayerEvent$SelectionChanged copy(java.util.List<io.seatlayer.android.SelectedSeat>);
+    descriptor: (Ljava/util/List;)Lio/seatlayer/android/SeatLayerEvent$SelectionChanged;
+  public static io.seatlayer.android.SeatLayerEvent$SelectionChanged copy$default(io.seatlayer.android.SeatLayerEvent$SelectionChanged, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SelectionChanged;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SelectionChanged;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SelectionInvalid implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SelectionInvalid(io.seatlayer.android.SelectionValidity);
+    descriptor: (Lio/seatlayer/android/SelectionValidity;)V
+  public final io.seatlayer.android.SelectionValidity getValidity();
+    descriptor: ()Lio/seatlayer/android/SelectionValidity;
+  public final io.seatlayer.android.SelectionValidity component1();
+    descriptor: ()Lio/seatlayer/android/SelectionValidity;
+  public final io.seatlayer.android.SeatLayerEvent$SelectionInvalid copy(io.seatlayer.android.SelectionValidity);
+    descriptor: (Lio/seatlayer/android/SelectionValidity;)Lio/seatlayer/android/SeatLayerEvent$SelectionInvalid;
+  public static io.seatlayer.android.SeatLayerEvent$SelectionInvalid copy$default(io.seatlayer.android.SeatLayerEvent$SelectionInvalid, io.seatlayer.android.SelectionValidity, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SelectionInvalid;Lio/seatlayer/android/SelectionValidity;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SelectionInvalid;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SelectionLimitReached implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SelectionLimitReached(int);
+    descriptor: (I)V
+  public final int getMaximum();
+    descriptor: ()I
+  public final int component1();
+    descriptor: ()I
+  public final io.seatlayer.android.SeatLayerEvent$SelectionLimitReached copy(int);
+    descriptor: (I)Lio/seatlayer/android/SeatLayerEvent$SelectionLimitReached;
+  public static io.seatlayer.android.SeatLayerEvent$SelectionLimitReached copy$default(io.seatlayer.android.SeatLayerEvent$SelectionLimitReached, int, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SelectionLimitReached;IILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SelectionLimitReached;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SelectionValid implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SelectionValid(java.util.List<io.seatlayer.android.SelectedSeat>);
+    descriptor: (Ljava/util/List;)V
+  public final java.util.List<io.seatlayer.android.SelectedSeat> getSeats();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.SelectedSeat> component1();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.SeatLayerEvent$SelectionValid copy(java.util.List<io.seatlayer.android.SelectedSeat>);
+    descriptor: (Ljava/util/List;)Lio/seatlayer/android/SeatLayerEvent$SelectionValid;
+  public static io.seatlayer.android.SeatLayerEvent$SelectionValid copy$default(io.seatlayer.android.SeatLayerEvent$SelectionValid, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SelectionValid;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SelectionValid;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$SelectionValidityChanged implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$SelectionValidityChanged(io.seatlayer.android.SelectionValidity);
+    descriptor: (Lio/seatlayer/android/SelectionValidity;)V
+  public final io.seatlayer.android.SelectionValidity getValidity();
+    descriptor: ()Lio/seatlayer/android/SelectionValidity;
+  public final io.seatlayer.android.SelectionValidity component1();
+    descriptor: ()Lio/seatlayer/android/SelectionValidity;
+  public final io.seatlayer.android.SeatLayerEvent$SelectionValidityChanged copy(io.seatlayer.android.SelectionValidity);
+    descriptor: (Lio/seatlayer/android/SelectionValidity;)Lio/seatlayer/android/SeatLayerEvent$SelectionValidityChanged;
+  public static io.seatlayer.android.SeatLayerEvent$SelectionValidityChanged copy$default(io.seatlayer.android.SeatLayerEvent$SelectionValidityChanged, io.seatlayer.android.SelectionValidity, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$SelectionValidityChanged;Lio/seatlayer/android/SelectionValidity;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$SelectionValidityChanged;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerEvent$Unknown implements io.seatlayer.android.SeatLayerEvent {
+  public io.seatlayer.android.SeatLayerEvent$Unknown(java.lang.String, kotlinx.serialization.json.JsonElement);
+    descriptor: (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)V
+  public final java.lang.String getName();
+    descriptor: ()Ljava/lang/String;
+  public final kotlinx.serialization.json.JsonElement getPayload();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final kotlinx.serialization.json.JsonElement component2();
+    descriptor: ()Lkotlinx/serialization/json/JsonElement;
+  public final io.seatlayer.android.SeatLayerEvent$Unknown copy(java.lang.String, kotlinx.serialization.json.JsonElement);
+    descriptor: (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;)Lio/seatlayer/android/SeatLayerEvent$Unknown;
+  public static io.seatlayer.android.SeatLayerEvent$Unknown copy$default(io.seatlayer.android.SeatLayerEvent$Unknown, java.lang.String, kotlinx.serialization.json.JsonElement, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerEvent$Unknown;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerEvent$Unknown;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public interface io.seatlayer.android.SeatLayerEvent {
+}
+public final class io.seatlayer.android.SeatLayerException$Bridge extends io.seatlayer.android.SeatLayerException {
+  public io.seatlayer.android.SeatLayerException$Bridge(io.seatlayer.android.BridgeErrorDetails);
+    descriptor: (Lio/seatlayer/android/BridgeErrorDetails;)V
+  public final io.seatlayer.android.BridgeErrorDetails getDetails();
+    descriptor: ()Lio/seatlayer/android/BridgeErrorDetails;
+  public java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+}
+public final class io.seatlayer.android.SeatLayerException$Destroyed extends io.seatlayer.android.SeatLayerException {
+  public io.seatlayer.android.SeatLayerException$Destroyed();
+    descriptor: ()V
+  public java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+}
+public final class io.seatlayer.android.SeatLayerException$Incompatible extends io.seatlayer.android.SeatLayerException {
+  public io.seatlayer.android.SeatLayerException$Incompatible(io.seatlayer.android.ProtocolRange, io.seatlayer.android.ProtocolRange, java.lang.String);
+    descriptor: (Lio/seatlayer/android/ProtocolRange;Lio/seatlayer/android/ProtocolRange;Ljava/lang/String;)V
+  public final io.seatlayer.android.ProtocolRange getNative();
+    descriptor: ()Lio/seatlayer/android/ProtocolRange;
+  public final io.seatlayer.android.ProtocolRange getWeb();
+    descriptor: ()Lio/seatlayer/android/ProtocolRange;
+  public java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+}
+public final class io.seatlayer.android.SeatLayerException$Timeout extends io.seatlayer.android.SeatLayerException {
+  public io.seatlayer.android.SeatLayerException$Timeout(java.lang.String, long);
+    descriptor: (Ljava/lang/String;J)V
+  public final java.lang.String getCommand();
+    descriptor: ()Ljava/lang/String;
+  public final long getTimeoutMillis();
+    descriptor: ()J
+  public java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+}
+public final class io.seatlayer.android.SeatLayerException$Transport extends io.seatlayer.android.SeatLayerException {
+  public io.seatlayer.android.SeatLayerException$Transport(java.lang.String, java.lang.Throwable);
+    descriptor: (Ljava/lang/String;Ljava/lang/Throwable;)V
+  public io.seatlayer.android.SeatLayerException$Transport(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+}
+public abstract class io.seatlayer.android.SeatLayerException extends java.lang.Exception {
+  public io.seatlayer.android.SeatLayerException(java.lang.String, java.lang.Throwable, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/Throwable;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public abstract java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+  public io.seatlayer.android.SeatLayerException(java.lang.String, java.lang.Throwable, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/Throwable;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.SeatLayerView extends android.widget.FrameLayout {
+  public static final java.lang.String APP_ORIGIN;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String PAGE_URL;
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String BRIDGE_OBJECT;
+    descriptor: Ljava/lang/String;
+  public io.seatlayer.android.SeatLayerView(android.content.Context, android.util.AttributeSet, int);
+    descriptor: (Landroid/content/Context;Landroid/util/AttributeSet;I)V
+  public io.seatlayer.android.SeatLayerView(android.content.Context, android.util.AttributeSet, int, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Landroid/content/Context;Landroid/util/AttributeSet;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final io.seatlayer.android.SeatLayerController getController();
+    descriptor: ()Lio/seatlayer/android/SeatLayerController;
+  public final java.lang.Object load(io.seatlayer.android.SeatLayerConfiguration, kotlin.coroutines.Continuation<? super io.seatlayer.android.ReadyInfo>);
+    descriptor: (Lio/seatlayer/android/SeatLayerConfiguration;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final void destroy();
+    descriptor: ()V
+  public io.seatlayer.android.SeatLayerView(android.content.Context, android.util.AttributeSet);
+    descriptor: (Landroid/content/Context;Landroid/util/AttributeSet;)V
+  public io.seatlayer.android.SeatLayerView(android.content.Context);
+    descriptor: (Landroid/content/Context;)V
+}
+public final class io.seatlayer.android.SeatLayerViewMode$Companion {
+  public final java.lang.String getFlat-FiVt_rw();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getIsometric-FiVt_rw();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getPerspective-FiVt_rw();
+    descriptor: ()Ljava/lang/String;
+  public io.seatlayer.android.SeatLayerViewMode$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.SeatLayerViewMode {
+  public static final io.seatlayer.android.SeatLayerViewMode$Companion Companion;
+    descriptor: Lio/seatlayer/android/SeatLayerViewMode$Companion;
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.SeatLayerViewMode box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SeatLayerViewMode;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}
+public final class io.seatlayer.android.SelectedObjectUnavailableEvent {
+  public final java.util.List<java.lang.String> getLabels();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.String getReason-GbiZQ_M();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getCode();
+    descriptor: ()Ljava/lang/String;
+  public final java.util.List<java.lang.String> component1();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.String component2-GbiZQ_M();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.SelectedObjectUnavailableEvent copy-LbXPuuE(java.util.List<java.lang.String>, java.lang.String, java.lang.String);
+    descriptor: (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)Lio/seatlayer/android/SelectedObjectUnavailableEvent;
+  public static io.seatlayer.android.SelectedObjectUnavailableEvent copy-LbXPuuE$default(io.seatlayer.android.SelectedObjectUnavailableEvent, java.util.List, java.lang.String, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SelectedObjectUnavailableEvent;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/SelectedObjectUnavailableEvent;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.SelectedObjectUnavailableEvent(java.util.List, java.lang.String, java.lang.String, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.SelectedObjectUnavailableReason {
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.SelectedObjectUnavailableReason box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SelectedObjectUnavailableReason;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}
+public final class io.seatlayer.android.SelectedSeat {
+  public io.seatlayer.android.SelectedSeat(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Double, java.util.List<io.seatlayer.android.CategoryTier>, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/String;)V
+  public final java.lang.String getId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getDisplayLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getCategoryKey();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double getPrice();
+    descriptor: ()Ljava/lang/Double;
+  public final java.util.List<io.seatlayer.android.CategoryTier> getTiers();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.String getTierId();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getBuyerFacingLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component4();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Double component5();
+    descriptor: ()Ljava/lang/Double;
+  public final java.util.List<io.seatlayer.android.CategoryTier> component6();
+    descriptor: ()Ljava/util/List;
+  public final java.lang.String component7();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.SelectedSeat copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Double, java.util.List<io.seatlayer.android.CategoryTier>, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/String;)Lio/seatlayer/android/SelectedSeat;
+  public static io.seatlayer.android.SelectedSeat copy$default(io.seatlayer.android.SelectedSeat, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Double, java.util.List, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SelectedSeat;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Double;Ljava/util/List;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/SelectedSeat;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SelectionValidator$ConsecutiveSeats implements io.seatlayer.android.SelectionValidator {
+  public static final io.seatlayer.android.SelectionValidator$ConsecutiveSeats INSTANCE;
+    descriptor: Lio/seatlayer/android/SelectionValidator$ConsecutiveSeats;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SelectionValidator$MinimumSelectedPlaces implements io.seatlayer.android.SelectionValidator {
+  public io.seatlayer.android.SelectionValidator$MinimumSelectedPlaces(int);
+    descriptor: (I)V
+  public final int getMinimum();
+    descriptor: ()I
+  public final int component1();
+    descriptor: ()I
+  public final io.seatlayer.android.SelectionValidator$MinimumSelectedPlaces copy(int);
+    descriptor: (I)Lio/seatlayer/android/SelectionValidator$MinimumSelectedPlaces;
+  public static io.seatlayer.android.SelectionValidator$MinimumSelectedPlaces copy$default(io.seatlayer.android.SelectionValidator$MinimumSelectedPlaces, int, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SelectionValidator$MinimumSelectedPlaces;IILjava/lang/Object;)Lio/seatlayer/android/SelectionValidator$MinimumSelectedPlaces;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SelectionValidator$NoOrphanSeats implements io.seatlayer.android.SelectionValidator {
+  public static final io.seatlayer.android.SelectionValidator$NoOrphanSeats INSTANCE;
+    descriptor: Lio/seatlayer/android/SelectionValidator$NoOrphanSeats;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public interface io.seatlayer.android.SelectionValidator {
+}
+public final class io.seatlayer.android.SelectionValidity {
+  public io.seatlayer.android.SelectionValidity(boolean, int, int, int, java.util.List<io.seatlayer.android.SelectedSeat>, java.util.List<io.seatlayer.android.SelectionViolation>);
+    descriptor: (ZIIILjava/util/List;Ljava/util/List;)V
+  public final boolean isValid();
+    descriptor: ()Z
+  public final int getCount();
+    descriptor: ()I
+  public final int getRequired();
+    descriptor: ()I
+  public final int getRemaining();
+    descriptor: ()I
+  public final java.util.List<io.seatlayer.android.SelectedSeat> getSeats();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.SelectionViolation> getViolations();
+    descriptor: ()Ljava/util/List;
+  public final boolean component1();
+    descriptor: ()Z
+  public final int component2();
+    descriptor: ()I
+  public final int component3();
+    descriptor: ()I
+  public final int component4();
+    descriptor: ()I
+  public final java.util.List<io.seatlayer.android.SelectedSeat> component5();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<io.seatlayer.android.SelectionViolation> component6();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.SelectionValidity copy(boolean, int, int, int, java.util.List<io.seatlayer.android.SelectedSeat>, java.util.List<io.seatlayer.android.SelectionViolation>);
+    descriptor: (ZIIILjava/util/List;Ljava/util/List;)Lio/seatlayer/android/SelectionValidity;
+  public static io.seatlayer.android.SelectionValidity copy$default(io.seatlayer.android.SelectionValidity, boolean, int, int, int, java.util.List, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SelectionValidity;ZIIILjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/SelectionValidity;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SelectionViolation {
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.SelectionViolation box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SelectionViolation;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}
+public final class io.seatlayer.android.TransportName$Companion {
+  public final java.lang.String getAndroid-WduM2tE();
+    descriptor: ()Ljava/lang/String;
+  public io.seatlayer.android.TransportName$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.TransportName {
+  public static final io.seatlayer.android.TransportName$Companion Companion;
+    descriptor: Lio/seatlayer/android/TransportName$Companion;
+  public final java.lang.String getRaw();
+    descriptor: ()Ljava/lang/String;
+  public static java.lang.String toString-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public static int hashCode-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)I
+  public int hashCode();
+    descriptor: ()I
+  public static boolean equals-impl(java.lang.String, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/Object;)Z
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public static java.lang.String constructor-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Ljava/lang/String;
+  public static final io.seatlayer.android.TransportName box-impl(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/TransportName;
+  public final java.lang.String unbox-impl();
+    descriptor: ()Ljava/lang/String;
+  public static final boolean equals-impl0(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+}

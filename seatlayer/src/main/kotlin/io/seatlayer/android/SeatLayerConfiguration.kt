@@ -3,8 +3,8 @@ package io.seatlayer.android
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-public const val SEATLAYER_ANDROID_VERSION: String = "0.2.0"
-public const val SEATLAYER_HOSTED_WEB_VERSION: String = "0.66.0"
+public const val SEATLAYER_ANDROID_VERSION: String = "0.3.0"
+public const val SEATLAYER_HOSTED_WEB_VERSION: String = "0.71.5"
 public const val SEATLAYER_LEGACY_FIXTURE_WEB_VERSION: String = "0.59.0"
 @Deprecated(
     message = "Production uses the hosted runtime; use SEATLAYER_HOSTED_WEB_VERSION.",

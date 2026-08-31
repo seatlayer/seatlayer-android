@@ -1,5 +1,58 @@
 # Changelog
 
+## 0.3.0
+
+- Adds `io.seatlayer:seatlayer-android-compose`, including the ready-made
+  adaptive `SeatLayerPicker`, 25 independent replacement builders, per-part
+  styles, themes, localized strings, and a View/XML host.
+- Adds the protocol-2 headless picker to `seatlayer-android`: immutable snapshot
+  state, a serialized semantic controller, native presentation reducers, and a
+  map-only `SeatLayerPickerMapView` for fully custom Compose or View layouts.
+- Adds native buyer flows for confirmation and tiers, GA and variable tables,
+  best available, dense cart and remove/undo, checkout handoff/rejection, hold
+  lapse recovery, floors/sections, accessibility filters, 2D/3D navigation,
+  native seat-view chrome, lifecycle reconciliation, and predictive Back.
+- Adds source-locked native design tokens and 37 locale dictionaries with
+  generated Kotlin verification tasks.
+- Moves the native picker to the pinned `seatlayer-js@0.71.5/mobile.html`
+  protocol-2 runtime while keeping the existing raw `SeatLayerView` on its
+  separate protocol-1 contract.
+- Consolidates both surfaces on one hardened renderer host and adds in-memory
+  protocol-2 buyer-access renewal without leaking bearer or provider errors.
+- Adds credential-free asynchronous Android System WebView engine prewarm,
+  honest engine/page/session result fields, load-to-ready trace sections, and a
+  release-like cold/warm/prewarmed Macrobenchmark target.
+- Adds deterministic instrumented Compose accessibility evidence for control
+  labels, toggle state, and Android 48dp minimum targets.
+- Adds deterministic ready-widget visual evidence for loading, retry,
+  empty/sales-closed, venue/floor/section navigation, tiers, GA/tables, cart and
+  hold recovery, 3D/panorama chrome, compact/wide layout, RTL, and large text.
+- Replaces the generic loading spinner with the established Web-style faint
+  venue silhouette and restrained indeterminate progress line, and keeps cart
+  chrome absent until the picker is ready.
+- Aligns the compact edge-to-edge ticket dock with Flutter/React Native's
+  square geometry so renderer pixels cannot appear as dark corner wedges.
+- Keeps the renderer session movable across compact/wide adaptive branches,
+  preserving live cart state through host-handled rotation and window resize.
+- Capability-gates panorama hardware/predictive Back through the additive
+  `picker.closeSeatView` command; older runtimes receive no unknown command and
+  retain their runtime-owned close control.
+- Removes duplicate renderer-authored All floors sentinels, preserves checkout
+  priority in short wide windows, and improves status/action contrast and
+  large-font confirmation spacing.
+- Extends release validation and Maven Central publication to build, lint,
+  test, compile device-evidence harnesses, generate POMs, and publish both
+  aligned Android artifacts.
+- Adds a dedicated `0.2.x` migration guide and checked-in external coordinate
+  consumers for raw Java, raw Kotlin, ready-made Compose, and custom Compose;
+  the raw consumer gate also rejects any accidental Compose dependency.
+- Reworks the default sample into the same DesiPass list → details → BOOK NOW
+  journey used by the Flutter and React Native demos, with ignored debug-local
+  host configuration, details-time renewable buyer-access prefetch, an
+  immutable credential-free runtime prewarm, ready/custom Compose and direct
+  ready View modes, and a credential-safe checkout handoff screen. Release and
+  benchmark variants contain blank DesiPass configuration.
+
 ## 0.2.0
 
 - Uses pinned `seatlayer-js@0.66.0/mobile.html` at `https://cdn.seatlayer.io`.

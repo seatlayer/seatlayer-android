@@ -16,4 +16,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "seatlayer-android"
 include(":seatlayer")
+include(":seatlayer-compose")
 include(":sample")
+include(":benchmark")

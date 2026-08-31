@@ -1,58 +1,53 @@
-# SeatLayer Android Seat Map SDK for Reserved Seating
+# SeatLayer Android SDK
 
 [![CI](https://github.com/seatlayer/seatlayer-android/actions/workflows/ci.yml/badge.svg)](https://github.com/seatlayer/seatlayer-android/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.seatlayer/seatlayer-android)](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android)
-[![Kotlin](https://img.shields.io/badge/Kotlin-coroutines-7F52FF.svg)](https://kotlinlang.org/)
 [![Android](https://img.shields.io/badge/Android-API%2024%2B-3ddc84.svg)](https://developer.android.com/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)
 
-The official SeatLayer Android SDK for adding an interactive seating chart and
-seat picker to ticketing apps. It renders live seat availability, creates
-temporary holds, finds best-available seats, and exposes every buyer action
-through a typed Kotlin coroutine API while your trusted server does the booking.
+The official native Android SDK for SeatLayer reserved seating. Version `0.3.0`
+adds a complete adaptive Jetpack Compose picker, a headless protocol-2
+state/controller, reusable native components, and View/XML interop while
+preserving the existing raw `SeatLayerView` API.
 
-[SeatLayer Android SDK on Maven Central](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android) ·
-[Android seat-map documentation](https://docs.seatlayer.io/buyer-sdk/mobile/) ·
-[SeatLayer reserved-seating platform](https://seatlayer.io/) ·
-[Buyer seat-map demo (web)](https://app.seatlayer.io/demo/play/grand-theatre) ·
-[SeatLayer iOS seat map SDK](https://github.com/seatlayer/seatlayer-ios) ·
-[SeatLayer Flutter seat map SDK](https://github.com/seatlayer/seatlayer-flutter) ·
-[SeatLayer React Native SDK](https://github.com/seatlayer/seatlayer-react-native) ·
-[SeatLayer AI Toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit)
+The hosted renderer owns only venue-map pixels. Your Android UI can use the
+ready-made picker, replace individual parts, compose every stock component into
+its own layout, or render completely custom Views around the headless map.
 
-> **Production SDK:** `0.2.0` is the current release, published to Maven Central
-> as `io.seatlayer:seatlayer-android`. Pin the documented release and validate
-> your event, checkout handoff, lifecycle, and target devices before rollout.
+[Android integration guide](https://docs.seatlayer.io/buyer-sdk/mobile/) ·
+[Secure holds and checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/) ·
+[Web demo](https://app.seatlayer.io/demo/play/grand-theatre) ·
+[Native picker reference](docs/native-picker.md) ·
+[0.2.x migration guide](docs/migration-0.3.md) ·
+[Bridge reference](docs/bridge.md) ·
+[Release validation](docs/release-validation.md)
 
-## What is included
+## Packages
 
-- `SeatLayerView`, an Android `FrameLayout` subclass that owns the embedded
-  seat map and can be created in Kotlin or inflated from XML.
-- A coroutine-based controller for holds, best available, general admission,
-  tiers, floors, view modes, and zoom.
-- Typed Kotlin models, `StateFlow` readiness, and a `SharedFlow` event stream.
-- An origin-restricted AndroidX WebKit message bridge with no unrestricted
-  `addJavascriptInterface`.
-- A pinned, immutable `seatlayer-js@0.66.0/mobile.html` production document.
-- A runnable sample app plus protocol, envelope, model, and bridge unit tests.
+| Artifact | Use it for |
+| --- | --- |
+| `io.seatlayer:seatlayer-android` | Raw protocol-1 API plus protocol-2 headless state, controller, and map View. No Compose dependency. |
+| `io.seatlayer:seatlayer-android-compose` | Ready-made picker, all native components, themes/styles/builders, and View/XML host. Strictly version-aligned with core. |
+
+Both artifacts ship on the same release train.
 
 ## Requirements
 
-- Android API 24 or newer (`minSdk = 24`, compiled against API 36)
-- JDK 17 to build the SDK
-- An AndroidX application
-- An Android System WebView that supports the `WEB_MESSAGE_LISTENER` feature —
-  `load` fails with a clear transport error when it does not
+- Android API 24 or newer; compile SDK 36
+- JDK 17 for local builds
+- AndroidX
+- Android System WebView support for secure WebKit message listeners
+- Document-start JavaScript support when using the protocol-2 native picker
+- `android:enableOnBackInvokedCallback="true"` on picker activities when
+  targeting Android 15 or lower and predictive-back animation is required
 
 ## Install
-
-The SDK is on Maven Central, so the default Android repository set already
-resolves it:
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.2.0")
+    implementation("io.seatlayer:seatlayer-android:0.3.0")
+    implementation("io.seatlayer:seatlayer-android-compose:0.3.0")
 }
 ```
 
@@ -66,49 +61,141 @@ dependencyResolutionManagement {
 }
 ```
 
-Releases before `0.2.0` were distributed as JitPack tags
-(`com.github.seatlayer:seatlayer-android:v0.1.3`). That channel still resolves
-the tagged sources, but Maven Central is the permanent coordinate. Always pin an
-exact version — never JitPack's `main-SNAPSHOT`.
+Raw-only applications can omit `seatlayer-android-compose`.
 
-## Quick start
-
-Create one `SeatLayerView`, collect its events, then `load` a configuration from
-a lifecycle-appropriate coroutine.
+## Ready-made native picker
 
 ```kotlin
 class CheckoutActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        setContent {
+            SeatLayerPicker(
+                configuration = SeatLayerConfiguration(
+                    event = "ev_your_event_key",
+                    currency = "USD",
+                    maxSelection = 6,
+                ),
+                modifier = Modifier.fillMaxSize(),
+                onCheckout = { handoff ->
+                    checkoutBackend.start(
+                        holdId = handoff.holdId,
+                        amount = handoff.total,
+                        currency = handoff.currency,
+                    )
+                },
+                onError = ::reportPickerError,
+                onClose = ::finish,
+            )
+        }
+    }
+}
+```
+
+The default tree includes adaptive compact/wide layouts, native header and
+legend, floors and sections, accessibility filters, confirmation, GA/table
+quantities, dense cart, best available, checkout, 3D/seat-view controls,
+hold-lapse recovery, light/dark branding, 37 locale dictionaries, lifecycle
+reconciliation, and Android predictive back.
+
+Give the picker a definite size and do not place the map in a scrolling list.
+The canvas owns pan and pinch gestures.
+
+Recomposition retains the active picker. Activity/process destruction creates
+a new session; recover an existing hold by restoring its opaque id through
+`SeatLayerPickerOptions(initialHoldId = ...)` and the same renewable
+buyer-access provider. Verify that runtime-owned resume path with real
+inventory, and never log the hold id.
+
+## Customize or build your own UI
+
+Three layers can be mixed without forking the SDK:
+
+1. Pass `SeatLayerPickerOptions`, `SeatLayerPickerTheme`, localized
+   `SeatLayerPickerStrings`, and `SeatLayerPickerStyles` to configure the
+   ready-made picker.
+2. Use `SeatLayerPickerBuilders` to decorate or replace any of 25 independent
+   parts.
+3. Use `SeatLayerPickerScope` and public components such as
+   `SeatLayerPickerMap`, `SeatLayerPickerHeader`, `SeatLayerPriceLegend`,
+   `SeatLayerConfirmCard`, and `SeatLayerPickerCartSheet` in a host-owned
+   hierarchy.
+
+```kotlin
+SeatLayerPickerScope(
+    configuration = configuration,
+    callbacks = SeatLayerPickerCallbacks(
+        onCheckout = ::openCheckout,
+        onClose = onClose,
+    ),
+) {
+    SeatLayerPickerLifecycle()
+    SeatLayerPickerBackHandler()
+
+    Column(Modifier.fillMaxSize()) {
+        SeatLayerPickerHeader(onClose)
+        SeatLayerPriceLegend()
+        Box(Modifier.weight(1f)) {
+            SeatLayerPickerMap(Modifier.fillMaxSize())
+            SeatLayerPickerMapControls()
+            SeatLayerConfirmCard()
+        }
+        SeatLayerPickerCartSheet()
+    }
+}
+```
+
+See the [native picker reference](docs/native-picker.md) for the full component
+catalogue, builder context, per-part styling, localization fallback, mandatory
+test/attribution disclosure, headless state guarantees, and custom View setup.
+
+## View and XML applications
+
+Use `SeatLayerPickerView` for the exact ready-made tree in an existing View
+screen:
+
+```xml
+<io.seatlayer.android.compose.SeatLayerPickerView
+    android:id="@+id/picker"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" />
+```
+
+```kotlin
+binding.picker.bind(
+    lifecycleOwner = this,
+    configuration = configuration,
+    onCheckout = ::openCheckout,
+    onReady = ::observeReady,
+    onSnapshot = ::observeSnapshot,
+    onClose = ::finish,
+)
+```
+
+For fully custom Views, bind a `SeatLayerPickerStateHolder` to
+`SeatLayerPickerMapView`, collect its `state`, and invoke its typed `controller`.
+
+## Existing raw map API
+
+The `0.2.x` low-level surface remains available and independent from the native
+picker:
+
+```kotlin
+class RawMapActivity : ComponentActivity() {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
     private lateinit var seatMap: SeatLayerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         seatMap = SeatLayerView(this)
         setContentView(seatMap)
 
         scope.launch {
-            seatMap.controller.events.collect { event ->
-                when (event) {
-                    is SeatLayerEvent.SelectionChanged ->
-                        renderSelection(event.seats)
-                    is SeatLayerEvent.HoldExpired ->
-                        showExpiredMessage()
-                    is SeatLayerEvent.Error ->
-                        reportSeatLayerError(event.error)
-                    else -> Unit
-                }
-            }
+            seatMap.controller.events.collect(::handleSeatLayerEvent)
         }
-
         scope.launch {
-            seatMap.load(
-                SeatLayerConfiguration(
-                    event = "ev_your_event_key",
-                    currency = "USD",
-                    maxSelection = 8,
-                ),
-            )
+            seatMap.load(SeatLayerConfiguration(event = "ev_your_event_key"))
         }
     }
 
@@ -120,173 +207,83 @@ class CheckoutActivity : ComponentActivity() {
 }
 ```
 
-`load` is a suspending function that returns `ReadyInfo` — the negotiated
-protocol revision, the event mode (`live` or `test`), the transport, and the
-event key. Await it before sending commands. The SDK moves WebView work to the
-main thread itself.
+`SeatLayerView` continues to negotiate protocol 1. The native picker uses a
+separate protocol-2 profile, so adding Compose does not silently change an
+existing raw integration. See the [0.3.0 migration guide](docs/migration-0.3.md)
+for dependency choices, lifecycle differences, and an adoption checklist.
 
-## Hold seats
+## Checkout and security boundary
 
-Seat selection happens inside the map. Your app then creates a short-lived hold
-and hands the opaque id to your backend:
+The app selects and holds inventory. A trusted backend inspects and books the
+hold after payment or order validation.
 
-```kotlin
-scope.launch {
-    val hold = seatMap.controller.hold(ttlMillis = 10 * 60 * 1_000)
-    if (hold != null) {
-        checkoutWith(
-            holdId = hold.holdId,
-            expiresAt = hold.expiry,
-            items = hold.items,
-        )
-    }
-}
-```
+- Never ship a SeatLayer secret key in the APK, WebView, or configuration.
+- Pass only the opaque checkout `holdId` and normal order context to the backend.
+- Calculate payable totals from server-inspected hold items, not app input.
+- Reuse a stable order id as the booking reference for safe retries.
 
-`HoldResult` also exposes `timeRemainingMillis`, which is convenient for driving
-a countdown in the buyer UI.
-
-## Security boundary
-
-The Android app **selects and holds** inventory. Your trusted backend
-**inspects and books** the hold after payment or order validation.
-
-- Never ship a SeatLayer secret key in the APK, the WebView, or app config.
-- Send only the `holdId` and your normal checkout context to your backend.
-- Calculate the charge from server-inspected hold items, not app input.
-- Reuse your stable order id as `bookingRef` for safe booking retries.
-
-Continue with
-[seat holds and secure server-side checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/)
-before connecting payment and booking.
-
-## Android runtime and WebView architecture
-
-`SeatLayerView` loads exactly one page: the immutable
-`https://cdn.seatlayer.io/seatlayer-js@0.66.0/mobile.html` document. That
-canonical HTTPS origin is what origin-bound private buyer sessions are minted
-for, and no event key or bearer is ever placed in the page URL or in events.
-
-Native and web talk over AndroidX WebKit's `addWebMessageListener`, restricted to
-`https://cdn.seatlayer.io` and to main-frame messages. File access, content
-access, mixed content, automatic popups, multiple windows, and third-party
-cookies are all disabled, and any navigation away from the pinned page URL is
-refused. If the renderer process exits, the SDK surfaces a transport failure
-rather than leaving a blank view.
-
-The public contract matches the Web, iOS, and Flutter SDKs:
-
-- commands are `suspend` functions that throw typed `SeatLayerException` values
-  (`Bridge`, `Timeout`, `Transport`, `Incompatible`, `Destroyed`);
-- events arrive as a typed `SeatLayerEvent` `SharedFlow`;
-- protocol negotiation (revision 1) fails closed and reports `sl_incompatible`
-  when the app and bundle share no revision or a required capability is missing;
-- unknown events survive as `SeatLayerEvent.Unknown`, and value classes such as
-  `EventMode` and `SeatLayerViewMode` accept unrecognised raw strings, so a newer
-  bundle never crashes an older app.
-
-Every command carries a correlation id and a timeout (15 seconds by default); a
-late reply for a timed-out or replaced chart is discarded.
-
-## Layout requirement
-
-Give the map a definite height or make it full-screen. Do not place it inside a
-`ScrollView`, `NestedScrollView`, or a scrolling list item — the canvas owns pan
-and pinch for map navigation, so an enclosing scrolling parent and the map fight
-over every gesture. The SDK already disables the WebView affordances that would
-compete with the canvas: scrollbars, over-scroll, and the built-in zoom
-controls. The hosted page sets `touch-action: none` so the canvas receives raw
-pan and pinch gestures instead of browser scrolling.
-
-## Commands
-
-```kotlin
-val controller = seatMap.controller
-
-val seats = controller.getSelection()
-val hold = controller.getCurrentHold()
-controller.extendHold()
-controller.release()
-
-val best = controller.bestAvailable(quantity = 4)
-val ga = controller.holdGeneralAdmission(areaId = "floor", quantity = 2)
-
-controller.setSeatTier(seatId = "A-12", tierId = "adult")
-controller.selectObjects(listOf("A-12", "A-13"))
-controller.setSelectableObjects(listOf("A-12", "A-13", "A-14"))
-val validity = controller.getSelectionValidity()
-controller.setFloor("balcony")
-controller.setViewMode(SeatLayerViewMode.Isometric)
-controller.setColorblindSafe(true)
-controller.zoomToFit()
-```
-
-The full command surface: `hold` · `resumeHold` · `extendHold` · `release` ·
-`releaseLabels` · `bestAvailable` · `holdGeneralAdmission` · `setSeatTier` ·
-`getSelection` · `getCurrentHold` · `selectObjects` · `deselectObjects` ·
-`clearSelection` · `selectCategories` · `deselectCategories` ·
-`setSelectableObjects` · `setMaxSelection` · `getSelectionValidity` ·
-`refreshAccess` · `getGeneralAdmissionAreas` · `getFloors` · `setFloor` ·
-`setColorblindSafe` · `setViewMode` · `getViewMode` · `zoomIn` · `zoomOut` ·
-`zoomToFit` · `destroy`
-
-Before calling a newly introduced command against an older web runtime, inspect
-the negotiated capability:
-
-```kotlin
-if (controller.bundle.value?.supportsCommand("bestAvailable") == true) {
-    controller.bestAvailable(quantity = 2)
-}
-```
-
-## Events
-
-`controller.events` emits: `SelectionChanged` · `SelectionValidityChanged` ·
-`SelectionValid` · `SelectionInvalid` · `SelectionLimitReached` ·
-`BuyerAccessExpired` · `BuyerAccessUnavailable` · `SelectedObjectsUnavailable` ·
-`HoldChanged` · `HoldRestored` · `HoldExpired` · `GeneralAdmissionClicked` ·
-`Hint` · `Error` · `SeatHovered` · `DeckTapped` · `Checkout` · `Unknown`
-
-See [the bridge reference](docs/bridge.md) for lifecycle, events, errors, and
-the full command surface.
-
-## Configuration
-
-`SeatLayerConfiguration` accepts:
-
-| Option | Purpose |
-| --- | --- |
-| `event` | Required public event key. |
-| `apiBase` | Optional SeatLayer API endpoint override. |
-| `publicKey` | Optional public SDK key. Never provide a secret key. |
-| `maxSelection` | Maximum buyer selection. |
-| `selectedObjects`, `selectableObjects` | Initial selection and selectable allow-list. |
-| `numberOfPlacesToSelect`, `selectionValidators` | Exact-count and adjacency/orphan rules. |
-| `buyerAccessToken`, `buyerAccessTokenProvider` | One-shot or renewable private buyer access. |
-| `locale`, `messages` | Locale and UI message overrides. |
-| `currency` | Buyer-facing currency. |
-| `colorblindSafe` | Accessible palette preference. |
-| `initialView` | Flat, isometric, or perspective view. |
-| `showsWebSeatTooltip` | Enables the web-rendered tooltip; off by default. |
-| `commandTimeoutMillis` | Per-command timeout; defaults to 15 seconds. |
-| `handshakeTimeoutMillis` | Initial ready timeout; defaults to 30 seconds. |
-| `hostInfo` | Extra host identification sent with the handshake. |
-
-For private channel inventory, mint short-lived sessions on your backend for the
-exact allowed origin `https://cdn.seatlayer.io`:
+Private events should use a renewable in-memory provider:
 
 ```kotlin
 SeatLayerConfiguration(
     event = "ev_private",
     buyerAccessTokenProvider = { context ->
-        buyerBackend.mintSeatLayerAccess(context.reason)
+        buyerBackend.mintSeatLayerBuyerAccess(context.reason)
     },
 )
 ```
 
-Bearer values stay in memory. The provider is re-invoked with a typed reason
-(`initial`, `expiring`, `expired`, `unauthorized`, `reconnect`, `manual`), and a
-provider failure is reported to the bundle without leaking its message.
+The SDK loads only the immutable
+`https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html` page. Web messages are
+restricted to the exact HTTPS origin and main frame; external navigation,
+file/content access, mixed content, popups, multiple windows, and third-party
+cookies are blocked. The bridge does not use `addJavascriptInterface`.
+
+## Headless picker behavior
+
+`SeatLayerPickerStateHolder.state` is a `StateFlow` of immutable snapshots and
+native presentation state. `SeatLayerPickerController` provides serialized
+suspending commands for selection, filters, floors/sections, view modes,
+camera, GA/tables, holds, best available, lifecycle refresh, checkout handoff,
+undo, back, and close.
+
+Snapshots are accepted only for the configured event and current session, and
+only at increasing revisions. Optional malformed fields are ignored without
+discarding a valid snapshot; invalid schema/session/revision/event identity is
+rejected. Empty UI appears only when the runtime gives affirmative sold-out or
+all-unavailable evidence.
+
+## Optional WebView engine prewarm
+
+For the best BOOK NOW latency, start the Android System WebView engine and warm
+the immutable mobile runtime while the host's Event Details screen is visible:
+
+```kotlin
+lifecycleScope.launch {
+    val result = SeatLayerPickerPrewarmer.prewarm(applicationContext)
+    check(result.engineStarted)
+}
+```
+
+The prewarmer loads only the pinned credential-free runtime page in a temporary
+hardened WebView and destroys that WebView when the main document finishes or
+times out. It never creates a picker session or receives an Activity, event
+key, public key, buyer token, or hold. `rendererPageLoaded` reports whether the
+document warm completed; a `false` value is a graceful page-warm fallback after
+the engine itself started. Concurrent callers share one operation, cancelling
+one coroutine cancels only that caller's wait, and a later raw or picker load
+waits for any operation already in flight.
+
+The `benchmark` module measures cold, warm, and prewarmed picker startup with a
+release-like, non-debuggable sample. Record release evidence on physical
+Android hardware with a current System WebView:
+
+```bash
+./gradlew :benchmark:connectedBenchmarkAndroidTest
+```
+
+Emulator runs are useful for functional checks but are not release timing
+evidence.
 
 ## Build locally
 
@@ -295,99 +292,120 @@ provider failure is reported to the bundle without leaking its message.
 ./gradlew :sample:installDebug
 ```
 
-`validate` runs unit tests, Android lint, the release and sample builds, Maven
-POM generation, and the retained fixture checksum check.
+`validate` runs focused unit tests, compiles the deterministic Compose
+accessibility fixture and release-like Macrobenchmark, checks generated
+locale/token source locks, lints and builds both artifacts, generates both
+Maven POMs, verifies public API/raw ABI, builds the R8-minified consumer sample,
+builds standalone raw Java/Kotlin and Compose apps from temporary Maven
+coordinates on both the oldest and current supported build toolchains, verifies
+that the raw dependency graph contains no Compose, and checks the retained
+fixture checksum.
 
-## Frequently asked questions
+The external-consumer matrix is intentionally frozen rather than implied:
 
-### How do I add a seat map to an Android app?
+| Lane | JDK | Gradle | AGP | Kotlin/Compose plugin |
+| --- | --- | --- | --- | --- |
+| Oldest supported | 17 | 8.13 | 8.12.0 | 2.3.10 |
+| Current | 17 | 9.6.1 | 9.2.1 built-in Kotlin | 2.3.10 |
 
-Add `io.seatlayer:seatlayer-android:0.2.0` from Maven Central, put a
-`SeatLayerView` on screen, and call `load(SeatLayerConfiguration(event = "…"))`
-from a coroutine. The quick start above is a complete interactive seating chart
-with live availability; the
-[Android seat-map documentation](https://docs.seatlayer.io/buyer-sdk/mobile/)
-covers lifecycle, commands, events, and runtime requirements in depth.
+Both lanes compile SDK `minSdk 24` raw Java/Kotlin and ready-made/custom
+Compose/View consumers against `compileSdk 36`. The SDK itself uses Compose BOM
+`2026.06.00`, Activity Compose `1.13.0`, Lifecycle `2.10.0`, and AndroidX
+WebKit `1.16.0`.
 
-### Is this a native Android seat map or a WebView?
+The sample launcher mirrors the Flutter and React Native DesiPass demo: choose
+a live event, open its details, tap **BOOK NOW**, use the picker, and receive a
+buyer-safe checkout handoff. There is no credential form in the buyer journey.
+For local development, the debug variant reads an ignored environment file at
+build time; release and benchmark variants always compile empty DesiPass
+values.
 
-Rendering runs in an Android `WebView` on SeatLayer's immutable, version-pinned
-buyer runtime, and application code never touches the web layer: commands,
-payloads, errors, and events are all typed Kotlin. `SeatLayerView` is a real
-Android `View`, the controller is coroutine- and `Flow`-based, and the API is
-named to match the web `SeatingChart` so Android and web read as one product.
+Use either `sample/.env.local`, the `DESIPASS_ENV_FILE` environment variable,
+or the ignored Android `local.properties` file to point at an existing local
+environment file:
 
-### Does it work with Jetpack Compose?
+```properties
+# local.properties -- ignored by Git
+desipass.envFile=/absolute/path/to/an/ignored/.env.local
+```
 
-Yes. `SeatLayerView` is an ordinary Android `View` (a `FrameLayout` subclass),
-so a Compose screen hosts it with `AndroidView { SeatLayerView(it) }` and a
-definite size — do not place it in a scrollable column. Collect
-`controller.events` inside `repeatOnLifecycle` so the stream stops with the
-screen. The SDK itself has no Compose dependency and ships no Compose wrapper;
-the bundled sample uses a plain `Activity`.
+The file may use `DESIPASS_GRAPHQL_URL` / `DESIPASS_API_KEY` or the existing
+React Native names `EXPO_PUBLIC_DESIPASS_GRAPHQL_URL` /
+`EXPO_PUBLIC_DESIPASS_API_KEY`. `sample/.env.example` keeps both values blank;
+no private host or credential is present in tracked source. Never put a key in
+a command line, tracked file, screenshot, or log. Rebuild the debug sample
+after changing the local environment.
 
-### Can I write the integration in Java instead of Kotlin?
+Every SDK integration path remains runnable through the explicit
+`MainActivity` intent:
 
-The public API is Kotlin-first: commands are `suspend` functions and state is
-exposed as `StateFlow`/`SharedFlow`, which Java cannot call idiomatically
-without the Kotlin coroutines interop helpers. Add Kotlin to the module that
-hosts the seat map — the rest of a Java app can stay as it is.
+```bash
+adb shell am start -n io.seatlayer.sample/.MainActivity \
+  --es seatlayerIntegration custom-view \
+  --es seatlayerEvent ev_your_event
+```
 
-### How do temporary seat holds work?
+Supported values are `ready-compose`, `branded-compose`, `custom-compose`,
+`ready-view`, `custom-view`, and `raw-view`. The Java/Kotlin source examples
+therefore compile the default widget, full branding/part replacement, a custom
+Compose composition, the ready-made View host, a pure Android View composition
+over the headless controller/map, and the retained raw protocol-1 view.
 
-When a buyer selects seats, the SDK creates a temporary hold that reserves the
-inventory against concurrent buyers for a limited window. The hold expires
-automatically if checkout does not complete — `SeatLayerEvent.HoldExpired` tells
-the app to return the buyer to the map — and `extendHold` and `resumeHold` cover
-longer checkouts and app restarts. This prevents double-selling without locking
-seats forever.
+To launch the DesiPass journey explicitly:
 
-### Can I use my own payment provider?
+```bash
+adb shell am start \
+  -n io.seatlayer.sample/.HostedValidationActivity
+```
 
-Yes. SeatLayer never processes payment inside the seat map. The app hands the
-`holdId` to your backend, and your backend charges through any payment provider
-you already use — Stripe, Adyen, Razorpay, or your own — before booking the hold
-through the
-[server-side checkout flow](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/).
+The same live list → details → **BOOK NOW** → picker → checkout journey can
+exercise each supported complete/custom integration without changing the demo
+or embedding credentials:
 
-### Can I evaluate the SDK without a SeatLayer account?
+```bash
+# Ready-made Compose picker (the default)
+adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
+  --es seatlayerHostedIntegration ready-compose
 
-The unit test suite runs with no account and no WebView, because the bridge
-channel is an interface that the tests substitute. Running the sample app on a
-device does need an event key: it loads the hosted runtime and renders real
-inventory. Create a free SeatLayer test event for that — `ReadyInfo.mode`
-reports `test`, and a test event books no real inventory.
+# Host-owned Compose layout over the public picker scope/components
+adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
+  --es seatlayerHostedIntegration custom-compose
 
-## Continue your Android integration
+# Ready-made picker hosted from an Android View
+adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
+  --es seatlayerHostedIntegration ready-view
+```
 
-- [Follow the mobile seat-map integration guide](https://docs.seatlayer.io/buyer-sdk/mobile/)
-  for setup, lifecycle, commands, events, and runtime requirements.
-- [Connect seat holds to secure server-side checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/)
-  without exposing booking credentials in the app.
-- [Run the complete checkout example](https://docs.seatlayer.io/examples/complete-checkout/)
-  to connect the buyer hold id to payment and idempotent booking.
-- [Compare SeatLayer's mobile seat map SDKs](https://docs.seatlayer.io/buyer-sdk/mobile/)
-  when choosing between native Android, iOS, Flutter, and React Native.
-- [Read the Android bridge reference](docs/bridge.md) for the protocol
-  lifecycle, correlation, timeouts, and the full typed event surface.
-- [Explore the 3D seating chart for web buyers](https://seatlayer.io/3d-seat-map/)
-  as a separate browser capability when comparing the wider buyer experience.
-- [Point AI coding agents at the SeatLayer docs index](https://docs.seatlayer.io/llms.txt)
-  (`llms.txt`) for an agent-readable map of the documentation.
+An omitted or unknown `seatlayerHostedIntegration` value safely selects
+`ready-compose`.
 
-## SeatLayer SDK ecosystem
+The debug-only host configuration is resolved locally and is never rendered or
+logged. The list/detail API supplies only host event data; the details screen
+prefetches renewable buyer access, and **BOOK NOW** opens the protocol-2 picker.
+Prewarm loads only the immutable credential-free mobile runtime: it never
+creates a hidden picker session and receives no event identity, buyer access,
+or host credential. The host key is not passed to SeatLayer. Buyer tokens,
+event keys, and opaque hold ids are likewise not rendered or logged; the
+checkout evidence screen records only buyer-safe event, ticket count, currency,
+and total. Never provide a SeatLayer secret key to this sample.
+
+When intentionally changing public API, review and refresh the checked-in dumps
+with `scripts/verify-public-api.sh --write`; `validate` rejects accidental API
+or raw `0.2.x` ABI drift.
+
+## SDK ecosystem
 
 | Surface | Package or source |
 | --- | --- |
 | JavaScript | [`@seatlayer/js`](https://www.npmjs.com/package/@seatlayer/js) |
 | React | [`@seatlayer/react`](https://www.npmjs.com/package/@seatlayer/react) |
 | React Native | [`@seatlayer/react-native`](https://www.npmjs.com/package/@seatlayer/react-native) |
-| iOS | [`seatlayer-ios`](https://github.com/seatlayer/seatlayer-ios) |
 | Flutter | [`seatlayer`](https://pub.dev/packages/seatlayer) |
-| Android | [`seatlayer-android`](https://github.com/seatlayer/seatlayer-android) (this package) |
+| iOS | [`seatlayer-ios`](https://github.com/seatlayer/seatlayer-ios) |
+| Android | [`seatlayer-android`](https://github.com/seatlayer/seatlayer-android) |
 | Server SDKs | [Node.js, Python, PHP, Ruby, .NET, Java, and Go](https://docs.seatlayer.io/server-sdk/install/) |
 
-Releases follow semantic versioning. See [CHANGELOG.md](CHANGELOG.md).
+See [CHANGELOG.md](CHANGELOG.md). Releases follow semantic versioning.
 
 ## License
 
