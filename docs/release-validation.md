@@ -116,17 +116,20 @@ Publication requires all of the following on the exact commit to be tagged:
 - physical API-floor/current-target and active-System-WebView records;
 - cold/warm/prewarm JSON and traces from physical hardware;
 - hosted matrix evidence for ready Compose, custom Compose, and ready View;
+- the public Android documentation updated from the published `0.2.0` raw-only
+  surface to the approved `0.3.0` native-picker contract;
 - owner visual/API approval; and
-- explicit authorization to commit, push, tag, and publish.
+- explicit authorization to tag and publish.
 
 Publish `seatlayer-android` and `seatlayer-android-compose` together at the same
 version, with the immutable renderer pin checked by the release workflow.
 
 ## 6. Candidate record — 2026-08-31
 
-Branch `native-picker`, based on
-`52255d347cde76c3d99a707e45ccbea3ad9825c8`, completed the source/build/API 35
-hosted-event portion of this checklist:
+The validated implementation tree, based on
+`52255d347cde76c3d99a707e45ccbea3ad9825c8`, was squash-merged to `main` as
+`2a4e1705a8638a5503159a29c4235da12c1cfdaa` after completing the
+source/build/API 35 hosted-event portion of this checklist:
 
 - `./gradlew :seatlayer:testDebugUnitTest
   :seatlayer-compose:testDebugUnitTest` — passed, 58 core + 10 Compose tests.

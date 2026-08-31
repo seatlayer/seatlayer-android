@@ -23,7 +23,7 @@ changes were made:
   `pickerMotion.ts`, `pickerSelectionFlight.ts`, `pickerSeatViewChrome.ts`,
   `pickerView3dNav.ts`, and `seatingChartImmersive.ts`.
 - Flutter SDK commit `848be0c3dfadaba5efcda04d951a436cbd983e6f`:
-  `doc/media/picker-flow.gif`, `doc/media/picker-section.png`,
+  `README.md`, `doc/media/picker-flow.gif`, `doc/media/picker-section.png`,
   `lib/src/picker/picker_adaptive_layout.dart`, `picker_header.dart`,
   `picker_legend.dart`, `picker_floor_strip.dart`, `picker_dock_bar.dart`,
   `picker_confirm_card.dart`, `picker_cart_sheet.dart`,
@@ -69,6 +69,7 @@ Repository-local Android tokens are source-locked in
 | Responsive and safe layout | Flutter adaptive layout/system overlay; RN adaptive/safe-layout sources | Compact portrait, compact landscape, 320dp split width, RTL, 1.5x font, gesture navigation, and a short forced-wide composition were inspected. Wide checkout remains pinned. See adaptive captures. |
 | Accessibility controls | Web accessibility menu; Flutter/RN accessibility sources | Only runtime-authored needs render; counts, selection, disabled zero inventory, independent filters, TalkBack labels/state, and 48dp actions are present. See `accessibility-sheet-light-api35.png`. |
 | Loading, retry, empty, and sales-closed hierarchy | Web `pickerSkeleton.ts`, its loading styles, and `pickerBootReveal.ts`; Flutter status views; RN status/empty sources | A faint venue-shell silhouette and restrained 2dp indeterminate line replace the generic spinner/empty rectangle; cart chrome stays absent before ready. Retry/empty states remain branded and never expose a raw event key. See the four deterministic states and hosted loading capture. |
+| Public documentation hierarchy and hero media | The SEO baseline at Android commit `52255d347cde76c3d99a707e45ccbea3ad9825c8`; Flutter `README.md` integration ladder and `picker-flow.gif` placement | The Android README keeps its seat-map/reserved-seating title, keyword-rich introduction, FAQs and next-step links, then layers the native ownership ladder, all new 0.3 capabilities, and an Android-only picker GIF above the fold. |
 
 ## Ready-widget layout contract
 
@@ -169,6 +170,21 @@ the same selected one-ticket cart and emitted no second ready/chart-load event.
 The runtime-owned panorama close restored the same seat target. Hosted `0.71.5`
 did not advertise `picker.closeSeatView`; hardware Back therefore sent no
 unknown command and intentionally did not close panorama.
+
+## Public README picker GIF
+
+`docs/media/picker-flow.gif` is a 480×1040, 10fps, looping public overview made
+only from the buyer-safe hosted Android picker captures listed above. Its frames
+are, in order: ready overview, section focus, confirmation, selected cart, 3D
+overview, explicit 3D target, panorama open, and panorama drag. The DesiPass
+event list, details screen, credential handling, and checkout host screen are
+intentionally absent so the public hero shows the SDK surface rather than the
+sample host brand.
+
+The GIF is visual documentation, not extra runtime evidence: every source frame
+was already recorded on the API 35 environment above. It uses short cross-fades
+only and does not synthesize UI, change text, retouch controls, or imply
+physical-device acceptance.
 
 ## Acceptance boundary
 

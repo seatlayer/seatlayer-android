@@ -1,6 +1,7 @@
 # Native Android picker
 
-SeatLayer `0.3.0` has two Android artifacts with one release version:
+SeatLayer Android `0.3.0` is the candidate for two aligned artifacts with one
+release version:
 
 - `seatlayer-android` contains the hardened map host, protocol-1 raw API, and
   protocol-2 headless picker state/controller.
@@ -14,7 +15,42 @@ controls, seat-view chrome, hold recovery, and back behavior are native Android
 UI. A custom integration can use the same state and controller without using
 the default composition.
 
+`0.2.0` remains the published Maven Central release until the `0.3.0` release
+gate passes and an owner approves publication. The coordinates and examples in
+this guide describe the candidate API; they do not mean the Compose artifact is
+already available from Maven Central.
+
+## Native ownership and integration paths
+
+“Native picker” describes the buyer journey, not a replacement venue renderer.
+SeatLayer deliberately divides ownership at the boundary where each side has
+the strongest information:
+
+| Native Android UI owns | Hosted SeatLayer renderer owns |
+| --- | --- |
+| Header, event identity, filters, floors, sections, confirmation, tiers, quantities, cart, hold UI, checkout, errors, test disclosure, attribution | Seats, labels, section shells, authoritative map focus, venue camera, real 3D scene, panorama photograph |
+| Compact/wide layout, Compose/View hierarchy, TalkBack, 48dp targets, Android Back, safe areas, IME and cutout behavior | Chart pan/pinch, seat hit testing, panorama drag, 3D gestures, authoritative inventory projection |
+| Theme and strings around the map; capability-gated controls over it | Runtime-authored categories, accessibility groups, tiers, immersive metadata and capability advertisement |
+
+The renderer suppresses duplicate web chrome in protocol 2. A ready picker
+therefore has one confirmation surface, one cart, one test badge, and one
+checkout action, while the actual venue pixels remain consistent with the Web,
+Flutter, React Native, and iOS SDKs.
+
+The public entry points form a customization ladder:
+
+| Path | Entry point | Host owns | SDK still owns |
+| --- | --- | --- | --- |
+| Ready Compose | `SeatLayerPicker` | Configuration and callbacks | Complete adaptive buyer flow |
+| Branded/part-replaced Compose | `SeatLayerPicker` plus theme/styles/strings/options/builders | Visual identity or chosen parts | Layout, semantic state, holds and lifecycle |
+| Custom Compose | `SeatLayerPickerScope` plus public components | Entire hierarchy | State holder, controller, map and checkout contract |
+| Ready View/XML | `SeatLayerPickerView` | Existing View screen | Exact ready-made Compose tree |
+| Custom Views/headless | `SeatLayerPickerStateHolder` plus `SeatLayerPickerMapView` | Entire View hierarchy | Protocol-2 state, commands and renderer |
+| Existing raw map | `SeatLayerView` | All buyer UI and orchestration | Frozen protocol-1 map API |
+
 ## Install
+
+After `0.3.0` is published, add the aligned artifacts:
 
 ```kotlin
 dependencies {
@@ -25,7 +61,10 @@ dependencies {
 
 The Compose artifact strictly aligns its core dependency to the same version.
 Raw-only applications can keep only `seatlayer-android` and do not inherit a
-Compose dependency.
+Compose dependency. Until publication, production applications should remain on
+the published `io.seatlayer:seatlayer-android:0.2.0` coordinate or build the
+candidate locally for evaluation; do not assume the Compose coordinate resolves
+from Maven Central.
 
 Requirements are API 24+, JDK 17 for builds, and an Android System WebView that
 supports AndroidX WebKit message listeners and document-start JavaScript.
@@ -40,6 +79,7 @@ setContent {
     SeatLayerPicker(
         configuration = SeatLayerConfiguration(
             event = "ev_your_event_key",
+            publicKey = "pk_test_your_key",
             currency = "USD",
             maxSelection = 6,
         ),
@@ -63,11 +103,16 @@ hardware and predictive back, haptics, viewport insets, test-event disclosure,
 required attribution, and orderly hold-aware shutdown. Keep it in a
 non-scrolling container with a definite size.
 
+Register `https://cdn.seatlayer.io` as an allowed origin for the publishable key
+used by public inventory. For private inventory, omit `publicKey` and provide a
+renewable buyer-access provider from a trusted backend.
+
 Android capability-gates the additive `picker.closeSeatView` command. When a
 runtime advertises it, hardware/predictive Back closes panorama without changing
-selection or the 3D target. Current hosted runtimes expose only the runtime's
-own close control, so native Back is safely consumed there. Runtime rollout and
-live Back validation remain release gates.
+selection or the 3D target. The pinned hosted `0.71.5` runtime exposes only its
+own close control, so native Back sends no unsupported command and does not
+claim to close panorama there. Runtime rollout and live Back validation remain
+release gates.
 
 Checkout transfers an opaque `SeatLayerPickerCheckoutHandoff` to the host.
 Booking and price verification stay on your trusted server. If the host cannot
@@ -102,6 +147,44 @@ SeatLayerPicker(
 Unsupported optional capabilities remain hidden. Capabilities enabled in
 `SeatLayerPickerOptions` are negotiated before ready, so an incompatible
 runtime fails clearly instead of showing controls that cannot work.
+
+### Option and callback reference
+
+| `SeatLayerPickerOptions` | Behavior |
+| --- | --- |
+| `layout` | Adaptive, forced compact, or forced wide native composition |
+| `chrome` | Visibility for header, legend, floor UI, map controls, cart, dock, confirmation, hold and attribution surfaces |
+| `readOnly` | Refuses inventory mutation in native controller and renderer |
+| `confirmSelection` | Keeps reserved seats pending until native confirmation |
+| `enableBestAvailable` | Negotiates and exposes the Best Available flow |
+| `enableVenue3D` / `enableSeatView` | Negotiates and exposes supported immersive experiences |
+| `holdTtlMillis` | Requested picker-owned hold duration; server remains authoritative |
+| `initialHoldId` | Restores an opaque host-owned hold into a new session |
+| `max3DSeats` | Caps the selected-seat set offered to venue 3D |
+| `hideEventDetails` | Suppresses duplicate host-provided event details in picker chrome |
+| `panelInitiallyCollapsed` | Chooses the compact cart sheet's initial state |
+| `refreshOnResume` | Requests availability/hold reconciliation on foreground |
+| `announceHoldLapse` | Controls native lapse notice; expiry callbacks/state still update |
+| `haptics` | Enables semantic Android haptic cues |
+| `languages` | Advertises the host's preferred language sequence to the runtime |
+
+`SeatLayerPickerChromeOptions` independently controls `header`, `priceLegend`,
+`floorSelector`, `floorStrip`, `mapControls`, `overview`, `zoom`, `colorblind`,
+`fit`, `map3D`, `accessibility`, `cartSheet`, `dock`, `confirmCard`,
+`holdCountdown`, and `attribution`. Hiding a stock surface does not disable the
+underlying controller capability for a custom host. Attribution is still a
+product/legal obligation when the accepted branding state requires it.
+
+| `SeatLayerPickerCallbacks` | Delivered value |
+| --- | --- |
+| `onReady` | Negotiated `ReadyInfo` after protocol-2 readiness |
+| `onSnapshot` | Every accepted, monotonic `SeatLayerPickerSnapshot` |
+| `onSelectionChanged` | Typed selected seats after authoritative mutation |
+| `onHoldChanged` | Hold status, server expiry, and owner without the hold id |
+| `onChartLoad` | Optional runtime-authored local chart-load trace |
+| `onCheckout` | One opaque `SeatLayerPickerCheckoutHandoff` |
+| `onError` | Typed bridge, runtime, access, validation, or host-callback error |
+| `onClose` | Host dismissal after orderly picker close |
 
 ## Theme, localized copy, and per-part styles
 
@@ -141,6 +224,19 @@ the exact BCP-47 tag, then the base language, then English. App overrides win.
 Supplemental Android-only copy that is absent from a locale dictionary falls
 back to its typed English value.
 
+The default colors, radii, spacing, elevations, type sizes, motion durations,
+haptic decisions, breakpoints, and minimum targets come from
+`seatlayer-compose/src/main/resources/io/seatlayer/android/compose/picker_tokens.json`.
+`scripts/generate-picker-tokens.py` generates `SeatLayerPickerTokens.kt`, and
+the release gate rejects drift between them. Theme roles also include a paired
+`SeatLayerPickerMapTheme`, so live light/dark or brand changes repaint native
+chrome and renderer-owned map roles together without recreating the session.
+
+`SeatLayerPickerPartStyle` can override container/content color, corner radius,
+elevation, and horizontal/vertical padding for one part. Visual customization
+cannot reduce semantic interaction targets below 48dp or remove required
+TalkBack state.
+
 ## Replace individual parts
 
 `SeatLayerPickerBuilders` has one independent replacement point for each of the
@@ -176,6 +272,52 @@ SeatLayerPicker(
 
 Test-event disclosure and required attribution are intentionally outside the
 replacement catalogue in the ready-made tree.
+
+### All 25 replacement parts
+
+The enum, builder property, stock implementation, state and style slot stay
+one-to-one. This table is also the custom-host checklist:
+
+| `SeatLayerPickerPart` | Builder property | Stock public implementation |
+| --- | --- | --- |
+| `Header` | `header` | `SeatLayerPickerHeader` |
+| `Legend` | `legend` | `SeatLayerPriceLegend` |
+| `FloorSelector` | `floorSelector` | `SeatLayerPickerFloorSelector` |
+| `FloorStrip` | `floorStrip` | `SeatLayerFloorStrip` |
+| `SectionNavigator` | `sectionNavigator` | `SeatLayerPickerSectionNavigator` |
+| `DockBar` | `dockBar` | `SeatLayerDockBar` |
+| `AccessibilityFilters` | `accessibilityFilters` | `SeatLayerPickerAccessibilityFilters` |
+| `Map` | `map` | `SeatLayerPickerMap` |
+| `MapControls` | `mapControls` | `SeatLayerPickerMapControls` / `SeatLayerPickerZoomControls` |
+| `BestAvailable` | `bestAvailable` | `SeatLayerBestSeatsForm` |
+| `SeatConfirmation` | `seatConfirmation` | `SeatLayerPickerSeatConfirmation`, tier selector and tier choices |
+| `ConfirmCard` | `confirmCard` | `SeatLayerConfirmCard` |
+| `GeneralAdmissionPrompt` | `generalAdmissionPrompt` | `SeatLayerPickerGeneralAdmissionPrompt` |
+| `TablePrompt` | `tablePrompt` | `SeatLayerPickerTablePrompt` |
+| `CartList` | `cartList` | `SeatLayerPickerCartList` |
+| `CartSheet` | `cartSheet` | `SeatLayerPickerCartSheet` |
+| `Venue3D` | `venue3D` | `SeatLayerVenue3D` |
+| `SeatViewChrome` | `seatViewChrome` | `SeatLayerSeatViewChrome` |
+| `HoldCountdown` | `holdCountdown` | `SeatLayerPickerHoldCountdown` |
+| `HoldLapse` | `holdLapse` | `SeatLayerHoldLapseNotice` |
+| `ActionError` | `actionError` | `SeatLayerPickerActionError` |
+| `CheckoutBar` | `checkoutBar` | `SeatLayerPickerCheckoutBar` / `SeatLayerBookButton` |
+| `Loading` | `loading` | `SeatLayerPickerLoadingView` |
+| `Error` | `error` | `SeatLayerPickerErrorView` |
+| `Empty` | `empty` | `SeatLayerPickerEmptyView` |
+
+`SeatLayerPickerPartContext` gives every builder the same immutable
+`SeatLayerPickerState`, accepted snapshot, presentation state, typed
+controller, resolved theme mode/theme, localized strings, options, global
+styles, and per-part style. A custom part must use those semantic values rather
+than reverse-engineering UI text or renderer pixels.
+
+Standalone public controls outside the builder catalogue include
+`SeatLayerPickerFitControl`, `SeatLayerPickerOverviewControl`,
+`SeatLayerPickerStepOutControl`, `SeatLayerPickerViewModeControl`,
+`SeatLayerPicker3DNavigationControl`, `SeatLayerPickerColorblindControl`,
+`SeatLayerPickerLimitedViewControl`, and `SeatLayerPickerUndoNotice`. Lifecycle,
+Back, haptic, test-mode, and attribution components are public as well.
 
 ## Build a fully custom Compose picker
 
@@ -262,6 +404,117 @@ For a completely custom View hierarchy, create one
 `stateHolder.controller` commands, and call `stateHolder.close()` before
 destroying the map.
 
+## Buyer capability reference
+
+Ready Compose, custom Compose, ready View/XML, and headless custom Views share
+the same protocol-2 state and controller. The visual host changes; the buyer
+contract does not.
+
+### Startup, disclosure, failure, and empty inventory
+
+- `Idle` and `Loading` render native skeleton/progress UI while document load,
+  hello, compatibility negotiation, and the first accepted snapshot complete.
+- Test inventory always renders `SeatLayerPickerTestModeIndicator`; required
+  `SeatLayerPickerAttribution` remains present unless the server-side entitlement
+  says otherwise.
+- Handshake, bridge, timeout, renderer, access, and action failures retain a
+  typed `SeatLayerException`. The ready widget presents Retry when retry is
+  meaningful and Close when the host must leave.
+- Missing or malformed optional inventory never becomes a false “sold out.”
+  Empty UI requires affirmative sales-closed, sold-out, or all-unavailable
+  evidence from an accepted snapshot.
+- Disabled actions keep their semantics and explain their state; unsupported
+  optional capabilities are absent instead of appearing as dead controls.
+
+### Venue overview, sections, floors, and filters
+
+- The map can move from venue overview into one focused section and one level
+  back out. The dock and section navigator use runtime-authored labels, zone,
+  entrance, category, price, and seats-left metadata.
+- Multi-floor venues expose an active floor and, only with `floor-stack-v1`, an
+  all-floors mode. Older runtimes receive no all-floors command.
+- Category legend chips are filters, not decorative price swatches. Runtime
+  availability decides enabled state and map focus.
+- Accessibility filters are authored by the runtime through access-need keys and
+  counts. Unknown future access groups remain selectable because the SDK does
+  not hard-code a closed list.
+- Limited-view and colorblind-safe controls update the authoritative renderer;
+  a host theme alone never pretends those inventory filters changed.
+
+### Reserved seats, tiers, general admission, and tables
+
+- A seat can open a native confirmation card before mutation. Adult, Child,
+  guided, restricted, or future tiers use typed id/name/price/currency,
+  restriction, and buyer-message metadata.
+- `confirmPending(tierId)` dispatches `picker.setSeatTier` before accepting the
+  pending seat. A tier failure leaves confirmation open and cannot momentarily
+  add the wrong-priced line to cart.
+- GA uses runtime area capacity, available count, category, price, currency, and
+  tier metadata. The quantity prompt creates one authoritative hold mutation.
+- Variable tables use capacity plus min/max occupancy. The prompt prevents an
+  out-of-bounds quantity before the controller validates it again.
+- Selection validity, maximum selection, in-flight mutations, read-only mode,
+  and host-owned holds all participate in enabled/disabled state.
+
+### Cart, removal, undo, holds, and checkout
+
+- `SeatLayerPickerProjections.confirmedCart` excludes an unconfirmed pending
+  seat. Dense runs fold only structurally equivalent addressed seats; GA,
+  tables, tiers, and multi-quantity lines remain individually actionable.
+- Removal targets an authoritative line identity. Undo is session-scoped and is
+  offered only after the line is absent; a revision from another session cannot
+  restore it.
+- Hold countdown uses server expiry. Foreground reconciliation catches expiry
+  even when Android suspended the process and no local timer fired.
+- Lapse recovery reports all/partial/none, offers only runtime-confirmed
+  recoverable seats, and leaves conflicting seats unclaimed.
+- Repeated Continue taps share one serialized checkout operation.
+  `SeatLayerPickerCheckoutHandoff` is the only ordinary API carrying the opaque
+  hold id; snapshots expose status, expiry, and owner but not that capability.
+- Successful checkout transfers ownership to the host. Close before handoff
+  releases picker-owned inventory; close after handoff never releases a
+  host-owned hold. Callback failure rejects only the exact handoff just issued.
+
+### Venue 3D and seat-view panorama
+
+- `venue-3d-v1` gates the Map/3D choice. Runtime snapshots author the explicit
+  target seat, same-row previous/next boundaries, 3D-focused section, and
+  recenter state. Omitted additive position keys mean an older runtime; explicit
+  null neighbours mean a real row boundary.
+- Orbit/pan rotation controls are sent only with
+  `venue-3d-controls-v1` plus the exact command. Native controls stand down when
+  the runtime does not support the requested operation.
+- `seat-view-v1` gates panorama. Panorama pixels and drag gestures stay inside
+  the renderer; native UI owns caption, badge, close coordination, and the
+  unavailable state. Closing restores the same target rather than changing the
+  selection or 3D seat.
+- Hardware/predictive Back walks prompt → expanded cart → panorama → 3D → seat
+  confirmation → focused section → host close. `picker.closeSeatView` is sent
+  only when advertised. Hosted runtime `0.71.5` does not advertise it, so its
+  own panorama close affordance remains authoritative and hosted native Back is
+  not claimed for that path.
+- Ordinary 2D controls stand down during immersive scenes while cart/Continue
+  remains reachable when the buyer has held inventory.
+
+### Adaptive layout, system UI, and accessibility
+
+- `Adaptive` responds to actual width, not device class. Compact phones,
+  tablets, landscape, foldables, split-screen, and freeform resize use one state
+  holder while native chrome moves between bottom-sheet and wide-panel layouts.
+- The map receives viewport insets for native overlays. System bars, display
+  cutouts, gesture navigation, and host IME interactions remain part of the
+  physical-device release matrix; the API 35 evidence proves safe-drawing and
+  gesture insets, not every physical configuration.
+- Every stock action has a 48dp minimum target, TalkBack label/role/state,
+  disabled semantics, and predictable traversal order. Selection and errors do
+  not rely on color alone.
+- Large font scale may grow content or make a panel scroll internally but does
+  not clip confirmation or checkout. RTL mirrors directional controls and
+  padding while preserving authored seat, row, section, and price text.
+- `Auto` appearance follows Android system light or dark mode; a host can pass
+  an explicit mode or theme. Theme changes update native roles and the renderer
+  map theme without reloading, dropping cart, or moving the camera.
+
 ## Headless state guarantees
 
 `SeatLayerPickerStateHolder` exposes a lifecycle-neutral `StateFlow` containing
@@ -297,6 +550,39 @@ guidance, including tiers inside `SeatLayerPickerGeneralAdmissionArea`.
 document-to-ready, and the complete additive ready payload through
 `SeatLayerPickerReadyTiming`. Optional runtime-authored `chart-load-trace-v1`
 records are emitted on `stateHolder.chartLoads` and through `onChartLoad`.
+
+### Headless controller groups
+
+`SeatLayerPickerController` is the only mutation path for ready and custom
+hosts. Inventory-changing calls are serialized; presentation-only calls retain
+the same capability checks but do not pretend to change authoritative inventory.
+
+| Group | Public operations |
+| --- | --- |
+| Synchronization | `synchronize`, `lifecycle`, `setLifecycle`, `refreshAvailability` |
+| Reserved selection | `selectObjects`, `deselectObjects`, `clearSelection`, `setSeatTier`, `setSelectableObjects`, `setMaxSelection` |
+| Categories and access | `selectCategories`, `deselectCategories`, `setCategoryFilter`, `setAccessibilityFilter`, `setLimitedViewFilter`, `setColorblindSafe` |
+| Venue navigation | `focusSection`, `overview`, `setRung`, `setFloor`, `showAllFloors`, `setViewMode`, `zoomIn`, `zoomOut`, `zoomToFit` |
+| GA, tables, best available | `holdGeneralAdmission`, `setTableQuantity`, `bestAvailable`, `holdSelection` |
+| Immersive views | `setBuyerView`, `venue3D`, `setVenue3DNavigationMode`, `openSeatView`, `closeSeatView` |
+| Native-overlay coordination | `setThemeMode`, `setInteractionEnabled`, `setViewportInsets` |
+| Cart and holds | `removeCartLine`, `removeWithUndo`, `undoLastRemoval`, `resumeHold`, `extendHold`, `abort`, `reselectLapsedSeats` |
+| Checkout and ownership | `checkout`, `handoffCheckout`, `rejectHandoff` |
+| Native presentation | `confirmPending`, `confirmPendingTable`, `cancelPending`, `cancelPendingTable`, `setCartExpanded`, `dismissActionError`, `dismissRemovalUndo`, `dismissHoldLapse` |
+| Exit | `back`, `close`, `destroy` |
+
+`supportsCapability`, `supportsCommand`, and `supportsEvent` expose the exact
+negotiated surface. Helpers such as `supportsVenue3D`, `supportsSeatView`,
+`supportsSeatViewClose`, `supportsNativeSeatViewChrome`, `supportsFloorStack`,
+`supportsViewportInsets`, `supportsHoldSelection`, and
+`supportsAvailabilityRefresh` combine the required capability and command.
+When an optional operation is unavailable, the controller sends no bridge
+message; the ready UI also omits its control.
+
+`snapshot`, `presentation`, `isReady`, `canCheckout`, and `nextBackStep` are
+immediate controller projections of the accepted state. `chartLoads` is a local
+`SharedFlow` for runtime-authored load traces and must not be treated as an SDK
+telemetry upload.
 
 ## WebView engine prewarm and startup measurement
 
@@ -413,3 +699,26 @@ book only after payment/order validation.
 surface is separate from the protocol-2 picker and remains source/binary
 compatible with `0.2.x`. New native-picker work should prefer the ready-made
 picker or the headless picker state/controller described above.
+
+## Before publishing 0.3.0
+
+Source, unit, Compose instrumentation, API/ABI, release AAR, consumer, sample,
+and API 35 emulator/hosted-event validation are complete for the current
+candidate. Publication is still a separate owner-approved action.
+
+The remaining release gates are intentionally explicit:
+
+- physical-device API-floor/current-target records and cold/warm/prewarm traces;
+- hosted evidence from a runtime advertising additive 3D neighbours,
+  rotate/move controls, and `picker.closeSeatView`;
+- live multi-tier, hold-expiry/rejection, and Activity/process restoration with
+  `initialHoldId` against suitable inventory; and
+- synchronization of the public Android documentation with this approved
+  native-picker contract; and
+- owner visual/API approval plus separate authorization to tag and publish both
+  Maven artifacts together.
+
+The pinned hosted `0.71.5` runtime does not advertise native panorama close, so
+no release note or guide may claim that hardware/predictive Back closes hosted
+panorama today. See [release validation](release-validation.md) for exact
+commands, environments, evidence, and the publication checklist.

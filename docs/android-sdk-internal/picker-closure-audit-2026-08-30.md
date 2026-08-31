@@ -2,19 +2,23 @@
 
 ## Outcome
 
-The Android `native-picker` implementation candidate is complete and
-independent of iOS. It contains the ready-made Compose picker, protocol-2
-headless core, all 25 replacement builders and public stock components,
-View/XML hosting, the DesiPass buyer demo, deterministic native-chrome evidence,
-release artifacts, consumer checks, API locks, and updated documentation.
+The Android native-picker implementation candidate is complete, merged to
+`main`, and independent of iOS. It contains the ready-made Compose picker,
+protocol-2 headless core, all 25 replacement builders and public stock
+components, View/XML hosting, the DesiPass buyer demo, deterministic
+native-chrome evidence, release artifacts, consumer checks, API locks, and
+updated documentation.
 
 The selected feature checkout was the latest candidate based on
-`52255d347cde76c3d99a707e45ccbea3ad9825c8`. The separate primary checkout had
-unrelated user changes and was left untouched. No tag, Maven publication,
-release, or merge was performed. An authorized DesiPass development client key
-was consumed from an ignored existing local environment for the debug sample;
-it was never printed, logged, rendered, added to a command line, staged, or
-passed to SeatLayer. Release and benchmark variants compiled blank host values.
+`52255d347cde76c3d99a707e45ccbea3ad9825c8`. Its validated tree was
+byte-for-byte squash-merged and pushed to `main` as
+`2a4e1705a8638a5503159a29c4235da12c1cfdaa`; temporary public feature branches
+were deleted. The separate primary checkout had unrelated user changes and was
+left untouched. No tag, Maven publication, or release was performed. An
+authorized DesiPass development client key was consumed from an ignored
+existing local environment for the debug sample; it was never printed, logged,
+rendered, added to a command line, staged, or passed to SeatLayer. Release and
+benchmark variants compiled blank host values.
 
 This is a green source/build/API 35 hosted-event candidate, not final production
 acceptance. Hosted-runtime rollout, physical devices/performance evidence, and
@@ -87,7 +91,7 @@ owner approval still bound the claims listed below.
 
 Environment:
 
-- branch: `native-picker`
+- validated implementation tree: `2a4e1705a8638a5503159a29c4235da12c1cfdaa`
 - base: `52255d347cde76c3d99a707e45ccbea3ad9825c8`
 - AVD: `SeatLayer_RN_Pixel5_API35`
 - Android: 15 / API 35
@@ -209,6 +213,27 @@ coordinate-only raw/Compose consumers, oldest/current toolchains, raw no-Compose
 dependency enforcement, source limits, Web fixture checksum, public API dumps,
 and the frozen raw ABI.
 
+The post-merge public-documentation correction was then validated independently:
+
+- the original SEO title, introduction, product links, FAQ coverage, and
+  ecosystem navigation from the `52255d347cde76c3d99a707e45ccbea3ad9825c8`
+  baseline remain present, with the native-picker material layered on top;
+- GitHub's Markdown renderer accepted the README and native-picker guide, and a
+  local validator found no broken repository links or unclosed code fences;
+- the documented 25 builders, 16 picker options, eight callbacks, controller
+  operations, and referenced public types were checked against the candidate
+  source;
+- `docs/media/picker-flow.gif` was inspected at 480×1040, 10 fps, and 10.3
+  seconds. It uses only buyer-safe Android picker captures (overview, section,
+  confirmation, cart, 3D, and panorama); the DesiPass event list and details
+  screen are intentionally excluded from public hero media;
+- the staged text and GIF metadata were checked for credentials, local paths,
+  and internal tooling attribution, and `git diff --cached --check` passed.
+
+No implementation file changed during that correction, so the successful full
+Gradle gate above remains the applicable code result; rerunning it would not
+exercise a documentation- or GIF-specific failure mode.
+
 ## Evidence boundary and remaining release risks
 
 Before production release, an owner still needs to:
@@ -224,8 +249,10 @@ Before production release, an owner still needs to:
    gesture navigation, split/resizable windows, and any host IME interaction.
 4. Run five physical cold/warm/prewarmed benchmark iterations and retain all
    JSON/traces; emulator timing is not release evidence.
-5. Obtain owner visual/API approval before any tag, Maven publication, release,
-   or merge.
+5. Update the public Android documentation from the published `0.2.0` raw-only
+   surface to the owner-approved `0.3.0` native-picker contract.
+6. Obtain owner visual/API approval before any tag, Maven publication, or
+   release.
 
 These are explicit hosted-runtime, device, and owner gates. They do
 not depend on iOS and do not invalidate the completed Android source candidate.

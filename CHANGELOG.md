@@ -52,6 +52,10 @@
   immutable credential-free runtime prewarm, ready/custom Compose and direct
   ready View modes, and a credential-safe checkout handoff screen. Release and
   benchmark variants contain blank DesiPass configuration.
+- Restores the Android seat-map SEO README structure, adds a picker-only API 35
+  buyer-flow GIF, and documents native-versus-renderer ownership, every public
+  integration path, all 25 replacement parts, controller groups, lifecycle,
+  accessibility, immersive capability gates, and pre-publication boundaries.
 
 ## 0.2.0
 

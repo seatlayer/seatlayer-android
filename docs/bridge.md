@@ -193,6 +193,10 @@ transport failure instead of a silent blank view.
 
 ## Version pairing
 
+The `0.3.0` rows describe the aligned release candidate. `0.2.0` remains the
+published Maven Central release until the publication gate is separately
+approved and completed.
+
 | Component | Version |
 | --- | --- |
 | Android core | `0.3.0` |

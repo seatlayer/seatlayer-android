@@ -1,9 +1,13 @@
 # Migrate from Android SDK 0.2.x to 0.3.0
 
-SeatLayer Android `0.3.0` is an additive release. Existing raw
+SeatLayer Android `0.3.0` is an additive release candidate. Existing raw
 `SeatLayerView` integrations can update the core coordinate without adopting
 Compose or rewriting their protocol-1 integration. The new protocol-2 native
 picker is a separate surface that applications opt into.
+
+`0.2.0` remains the published Maven Central version. Follow this guide when
+evaluating the candidate from source or after `0.3.0` is published; do not
+assume the new coordinates resolve before owner-approved publication.
 
 ## Choose the integration you want
 
