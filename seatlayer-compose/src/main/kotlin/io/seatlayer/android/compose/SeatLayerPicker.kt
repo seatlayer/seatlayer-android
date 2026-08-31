@@ -516,9 +516,11 @@ private fun WideSidePanel(builders: SeatLayerPickerBuilders) {
                         )
                     }
                 }
-                if (scope.options.chrome.attribution) {
-                    SeatLayerPickerAttribution(Modifier.align(Alignment.CenterHorizontally))
-                }
+                SeatLayerPickerAttribution(
+                    Modifier
+                        .align(Alignment.End)
+                        .padding(end = 8.dp),
+                )
                 if (confirmed.items.isNotEmpty()) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.CheckoutBar,
@@ -643,13 +645,11 @@ private fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
         SeatLayerPickerUndoNotice(Modifier.align(Alignment.CenterHorizontally))
     }
 
-    if (!wide && !immersive && scope.options.chrome.attribution &&
-        (!compact || !scope.options.chrome.cartSheet)
-    ) {
+    if (!wide && !immersive && (!compact || !scope.options.chrome.cartSheet)) {
         SeatLayerPickerAttribution(
             modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 8.dp, bottom = bottomPadding + 4.dp),
+                .align(Alignment.BottomEnd)
+                .padding(end = 8.dp, bottom = bottomPadding + 4.dp),
             compact = compact,
         )
     }

@@ -12,7 +12,7 @@ creates temporary holds, finds best-available seats, and exposes every buyer
 action through typed Kotlin coroutines while your trusted server completes the
 booking.
 
-The `0.3.0` candidate adds a complete adaptive Jetpack Compose picker, a
+Version `0.3.4` adds a complete adaptive Jetpack Compose picker, a
 headless protocol-2 state/controller, reusable native Android components, and
 View/XML interop while preserving the frozen raw `SeatLayerView` API.
 
@@ -23,7 +23,6 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 [Native picker reference](docs/native-picker.md) ·
 [0.2.x migration guide](docs/migration-0.3.md) ·
 [Bridge reference](docs/bridge.md) ·
-[Release validation](docs/release-validation.md) ·
 [SeatLayer iOS seat map SDK](https://github.com/seatlayer/seatlayer-ios) ·
 [SeatLayer Flutter seat map SDK](https://github.com/seatlayer/seatlayer-flutter) ·
 [SeatLayer React Native SDK](https://github.com/seatlayer/seatlayer-react-native) ·
@@ -31,10 +30,8 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 
 ![Seat map picker running in a native Android app: venue overview, section focus, seat confirmation, cart, 3D venue view and panorama](https://raw.githubusercontent.com/seatlayer/seatlayer-android/main/docs/media/picker-flow.gif)
 
-> **Release status:** `0.2.0` is the current published Maven Central release.
-> This branch prepares `0.3.0`; the new Compose artifact and native picker must
-> not be treated as published until the documented release gate passes and an
-> owner approves publication. Pin an exact published version in production.
+> **Aligned release:** Use `0.3.4` for both Android artifacts. Pin the exact
+> version in production so core and Compose cannot drift.
 
 ## Works as a native Android picker
 
@@ -98,8 +95,8 @@ flowchart TD
 - A hardened, origin-restricted AndroidX WebKit bridge with no unrestricted
   `addJavascriptInterface`.
 - A pinned immutable `seatlayer-js@0.71.5/mobile.html` renderer.
-- A DesiPass list → event details → **BOOK NOW** sample covering ready Compose,
-  custom Compose, ready View, custom View, branded, and raw integrations.
+- A generic sample covering ready Compose, branded/custom Compose, ready/custom
+  View, and raw integrations.
 
 ## Packages
 
@@ -122,14 +119,13 @@ Both artifacts ship on the same release train.
 
 ## Install
 
-The examples below describe the `0.3.0` candidate. After that version is
-published, add both aligned artifacts for the native picker:
+Add both aligned `0.3.4` artifacts for the native picker:
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.0")
-    implementation("io.seatlayer:seatlayer-android-compose:0.3.0")
+    implementation("io.seatlayer:seatlayer-android:0.3.4")
+    implementation("io.seatlayer:seatlayer-android-compose:0.3.4")
 }
 ```
 
@@ -143,14 +139,7 @@ dependencyResolutionManagement {
 }
 ```
 
-Raw-only applications can omit `seatlayer-android-compose`. Until `0.3.0` is
-published, production applications should keep the current Maven release:
-
-```kotlin
-dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.2.0")
-}
-```
+Raw-only applications can omit `seatlayer-android-compose`.
 
 Releases before `0.2.0` used JitPack coordinates
 (`com.github.seatlayer:seatlayer-android:v0.1.3`). Maven Central is the permanent
@@ -321,7 +310,7 @@ stop observation outside its active lifecycle.
 
 `SeatLayerView` continues to negotiate protocol 1. The native picker uses a
 separate protocol-2 profile, so adding Compose does not silently change an
-existing raw integration. See the [0.3.0 migration guide](docs/migration-0.3.md)
+existing raw integration. See the [0.3.4 migration guide](docs/migration-0.3.md)
 for dependency choices, lifecycle differences, and an adoption checklist.
 
 ### Hold seats with the raw API
@@ -431,7 +420,7 @@ windows, automatic external navigation, and third-party cookies are disabled.
 Renderer termination becomes a typed transport failure instead of a silent
 blank screen.
 
-The `0.3.0` candidate production path is the hosted `0.71.5` page. The
+The `0.3.4` production path is the hosted `0.71.5` page. The
 repository retains a verified `seatlayer-js@0.59.0` JavaScript fixture only for
 deterministic legacy tests: `seatlayer/src/main/assets/seatlayer.js`, SHA-256
 `89bc29fbccad5d3c30e52cf5381c974b95ac034b32c28b400248b4ebb4ee22a9`. The
@@ -679,31 +668,8 @@ Compose/View consumers against `compileSdk 36`. The SDK itself uses Compose BOM
 `2026.06.00`, Activity Compose `1.13.0`, Lifecycle `2.10.0`, and AndroidX
 WebKit `1.16.0`.
 
-The sample launcher mirrors the Flutter and React Native DesiPass demo: choose
-a live event, open its details, tap **BOOK NOW**, use the picker, and receive a
-buyer-safe checkout handoff. There is no credential form in the buyer journey.
-For local development, the debug variant reads an ignored environment file at
-build time; release and benchmark variants always compile empty DesiPass
-values.
-
-Use either `sample/.env.local`, the `DESIPASS_ENV_FILE` environment variable,
-or the ignored Android `local.properties` file to point at an existing local
-environment file:
-
-```properties
-# local.properties -- ignored by Git
-desipass.envFile=/absolute/path/to/an/ignored/.env.local
-```
-
-The file may use `DESIPASS_GRAPHQL_URL` / `DESIPASS_API_KEY` or the existing
-React Native names `EXPO_PUBLIC_DESIPASS_GRAPHQL_URL` /
-`EXPO_PUBLIC_DESIPASS_API_KEY`. `sample/.env.example` keeps both values blank;
-no private host or credential is present in tracked source. Never put a key in
-a command line, tracked file, screenshot, or log. Rebuild the debug sample
-after changing the local environment.
-
-Every SDK integration path remains runnable through the explicit
-`MainActivity` intent:
+The sample launches the ready-made Compose picker by default. Every supported
+integration path remains runnable through the `MainActivity` intent:
 
 ```bash
 adb shell am start -n io.seatlayer.sample/.MainActivity \
@@ -717,44 +683,6 @@ therefore compile the default widget, full branding/part replacement, a custom
 Compose composition, the ready-made View host, a pure Android View composition
 over the headless controller/map, and the retained raw protocol-1 view.
 
-To launch the DesiPass journey explicitly:
-
-```bash
-adb shell am start \
-  -n io.seatlayer.sample/.HostedValidationActivity
-```
-
-The same live list → details → **BOOK NOW** → picker → checkout journey can
-exercise each supported complete/custom integration without changing the demo
-or embedding credentials:
-
-```bash
-# Ready-made Compose picker (the default)
-adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
-  --es seatlayerHostedIntegration ready-compose
-
-# Host-owned Compose layout over the public picker scope/components
-adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
-  --es seatlayerHostedIntegration custom-compose
-
-# Ready-made picker hosted from an Android View
-adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
-  --es seatlayerHostedIntegration ready-view
-```
-
-An omitted or unknown `seatlayerHostedIntegration` value safely selects
-`ready-compose`.
-
-The debug-only host configuration is resolved locally and is never rendered or
-logged. The list/detail API supplies only host event data; the details screen
-prefetches renewable buyer access, and **BOOK NOW** opens the protocol-2 picker.
-Prewarm loads only the immutable credential-free mobile runtime: it never
-creates a hidden picker session and receives no event identity, buyer access,
-or host credential. The host key is not passed to SeatLayer. Buyer tokens,
-event keys, and opaque hold ids are likewise not rendered or logged; the
-checkout evidence screen records only buyer-safe event, ticket count, currency,
-and total. Never provide a SeatLayer secret key to this sample.
-
 When intentionally changing public API, review and refresh the checked-in dumps
 with `scripts/verify-public-api.sh --write`; `validate` rejects accidental API
 or raw `0.2.x` ABI drift.
@@ -767,8 +695,8 @@ For the complete native flow, add the aligned core and Compose artifacts and
 place `SeatLayerPicker` in a bounded screen with your event configuration. It
 already includes the interactive seating chart, filters, seat confirmation,
 cart, holds, 3D/panorama controls, and checkout handoff. Existing production
-apps on published `0.2.0` can continue to use `SeatLayerView` and migrate when
-`0.3.0` is released.
+apps on `0.2.x` can continue to use `SeatLayerView` and migrate to `0.3.4`
+when ready.
 
 ### Is this a native Android seat map or a WebView?
 

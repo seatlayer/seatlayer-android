@@ -578,11 +578,18 @@ private fun CompactCartSheet(
                             if (confirmed.items.isEmpty()) bestAvailable() else cartList()
                         }
                         checkoutBar()
-                        SeatLayerPickerAttribution(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
-                            compact = true,
-                        )
                     }
+                }
+            }
+            if (scope.state.snapshot?.branding?.attributionRequired == true) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(18.dp)
+                        .padding(end = 8.dp),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    SeatLayerPickerAttribution(compact = true)
                 }
             }
         }

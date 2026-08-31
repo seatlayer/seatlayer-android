@@ -193,14 +193,14 @@ transport failure instead of a silent blank view.
 
 ## Version pairing
 
-The `0.3.0` rows describe the aligned release candidate. `0.2.0` remains the
+The `0.3.4` rows describe the aligned release. `0.2.0` remains the
 published Maven Central release until the publication gate is separately
 approved and completed.
 
 | Component | Version |
 | --- | --- |
-| Android core | `0.3.0` |
-| Android Compose | `0.3.0` |
+| Android core | `0.3.4` |
+| Android Compose | `0.3.4` |
 | Hosted SeatLayer mobile runtime | `0.71.5` |
 | Retained legacy fixture | `0.59.0` |
 | Raw bridge protocol | `1` |

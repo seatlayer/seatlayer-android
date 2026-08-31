@@ -12,7 +12,7 @@
             android:name=".PrewarmActivity"
             android:exported="true" />
         <activity
-            android:name=".HostedValidationActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|screenLayout|screenSize|smallestScreenSize"
             android:exported="true">
             <intent-filter>
@@ -20,8 +20,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" />
     </application>
 </manifest>

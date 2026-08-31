@@ -37,6 +37,8 @@ public data class SeatLayerPickerChromeOptions(
     val dock: Boolean = true,
     val confirmCard: Boolean = true,
     val holdCountdown: Boolean = true,
+    // Retained for source compatibility. Built-in layouts intentionally ignore
+    // this value; API branding is authoritative for attribution visibility.
     val attribution: Boolean = true,
 )
 

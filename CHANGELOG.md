@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.3.0
+## 0.3.4
 
 - Adds `io.seatlayer:seatlayer-android-compose`, including the ready-made
   adaptive `SeatLayerPicker`, 25 independent replacement builders, per-part
@@ -22,9 +22,9 @@
 - Adds credential-free asynchronous Android System WebView engine prewarm,
   honest engine/page/session result fields, load-to-ready trace sections, and a
   release-like cold/warm/prewarmed Macrobenchmark target.
-- Adds deterministic instrumented Compose accessibility evidence for control
+- Adds instrumented Compose accessibility regression coverage for control
   labels, toggle state, and Android 48dp minimum targets.
-- Adds deterministic ready-widget visual evidence for loading, retry,
+- Adds ready-widget UI regression coverage for loading, retry,
   empty/sales-closed, venue/floor/section navigation, tiers, GA/tables, cart and
   hold recovery, 3D/panorama chrome, compact/wide layout, RTL, and large text.
 - Replaces the generic loading spinner with the established Web-style faint
@@ -41,21 +41,15 @@
   priority in short wide windows, and improves status/action contrast and
   large-font confirmation spacing.
 - Extends release validation and Maven Central publication to build, lint,
-  test, compile device-evidence harnesses, generate POMs, and publish both
-  aligned Android artifacts.
+  test, generate POMs, and publish both aligned Android artifacts.
 - Adds a dedicated `0.2.x` migration guide and checked-in external coordinate
   consumers for raw Java, raw Kotlin, ready-made Compose, and custom Compose;
   the raw consumer gate also rejects any accidental Compose dependency.
-- Reworks the default sample into the same DesiPass list → details → BOOK NOW
-  journey used by the Flutter and React Native demos, with ignored debug-local
-  host configuration, details-time renewable buyer-access prefetch, an
-  immutable credential-free runtime prewarm, ready/custom Compose and direct
-  ready View modes, and a credential-safe checkout handoff screen. Release and
-  benchmark variants contain blank DesiPass configuration.
-- Restores the Android seat-map SEO README structure, adds a picker-only API 35
-  buyer-flow GIF, and documents native-versus-renderer ownership, every public
-  integration path, all 25 replacement parts, controller groups, lifecycle,
-  accessibility, immersive capability gates, and pre-publication boundaries.
+- Keeps the sample generic and runnable across ready/branded/custom Compose,
+  ready/custom View, and raw integrations without embedding host credentials.
+- Documents native-versus-renderer ownership, every public integration path,
+  all 25 replacement parts, controller groups, lifecycle, accessibility, and
+  immersive capability gates.
 
 ## 0.2.0
 

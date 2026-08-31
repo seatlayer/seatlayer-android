@@ -47,7 +47,7 @@ public final class io.seatlayer.android.compose.ComposableSingletons$SeatLayerPi
     descriptor: ()Lkotlin/jvm/functions/Function2;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$2036979802$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1351212184$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1694095993$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1600643985$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;

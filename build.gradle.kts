@@ -175,6 +175,14 @@ val verifyOldestExternalConsumers = tasks.register<Exec>("verifyOldestExternalCo
     commandLine("bash", "scripts/verify-oldest-external-consumers.sh")
 }
 
+val verifyPublicRepositoryHygiene = tasks.register<Exec>("verifyPublicRepositoryHygiene") {
+    group = "verification"
+    description = "Rejects internal process artifacts, unapproved media, local paths, and credentials."
+    inputs.file(layout.projectDirectory.file("scripts/check-public-repository.sh"))
+    outputs.upToDateWhen { false }
+    commandLine("bash", "scripts/check-public-repository.sh")
+}
+
 tasks.register("validate") {
     group = "verification"
     description = "Builds, tests, lints, and validates both SDK artifacts and the sample app."
@@ -197,6 +205,7 @@ tasks.register("validate") {
         verifyPublicationMetadata,
         verifyExternalConsumers,
         verifyOldestExternalConsumers,
+        verifyPublicRepositoryHygiene,
         verifyKotlinSourceLimits,
         verifyPublicApi,
         "verifyVendoredWebSdk",

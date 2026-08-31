@@ -1,6 +1,6 @@
 # Native Android picker
 
-SeatLayer Android `0.3.0` is the candidate for two aligned artifacts with one
+SeatLayer Android `0.3.4` ships two aligned artifacts with one
 release version:
 
 - `seatlayer-android` contains the hardened map host, protocol-1 raw API, and
@@ -14,11 +14,6 @@ confirmation, quantities, cart, checkout, loading/error/empty states, 3D
 controls, seat-view chrome, hold recovery, and back behavior are native Android
 UI. A custom integration can use the same state and controller without using
 the default composition.
-
-`0.2.0` remains the published Maven Central release until the `0.3.0` release
-gate passes and an owner approves publication. The coordinates and examples in
-this guide describe the candidate API; they do not mean the Compose artifact is
-already available from Maven Central.
 
 ## Native ownership and integration paths
 
@@ -50,21 +45,18 @@ The public entry points form a customization ladder:
 
 ## Install
 
-After `0.3.0` is published, add the aligned artifacts:
+Add the aligned `0.3.4` artifacts:
 
 ```kotlin
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.0")
-    implementation("io.seatlayer:seatlayer-android-compose:0.3.0")
+    implementation("io.seatlayer:seatlayer-android:0.3.4")
+    implementation("io.seatlayer:seatlayer-android-compose:0.3.4")
 }
 ```
 
 The Compose artifact strictly aligns its core dependency to the same version.
 Raw-only applications can keep only `seatlayer-android` and do not inherit a
-Compose dependency. Until publication, production applications should remain on
-the published `io.seatlayer:seatlayer-android:0.2.0` coordinate or build the
-candidate locally for evaluation; do not assume the Compose coordinate resolves
-from Maven Central.
+Compose dependency.
 
 Requirements are API 24+, JDK 17 for builds, and an Android System WebView that
 supports AndroidX WebKit message listeners and document-start JavaScript.
@@ -615,63 +607,31 @@ in-flight prewarm first. Their load-to-ready spans are named
 `SeatLayer.Raw.Load` and `SeatLayer.Picker.Load` in system traces on Android 10
 and newer.
 
-The repository's Macrobenchmark target performs five cold, warm, and
-runtime-prewarmed iterations against a release-like, minified sample:
+The repository's Macrobenchmark target measures cold, warm, and
+runtime-prewarmed startup against a release-like, minified sample:
 
 ```bash
 ./gradlew :benchmark:connectedBenchmarkAndroidTest
 ```
 
-Run it on physical Android hardware with a current System WebView for release
-numbers. Do not publish emulator timing as device evidence. The benchmark
-requires no private event credentials; use a separate owner-approved hosted
-inventory run for the release buyer-flow gate.
+Run benchmarks on physical Android hardware with a current System WebView when
+you need representative device timings.
 
-The release gate also compiles clean coordinate-only consumers at both ends of
-the supported build-tool range. The oldest lane is JDK 17, Gradle 8.13, AGP
-8.12.0, and Kotlin/Compose plugin 2.3.10. The current lane is JDK 17, Gradle
-9.6.1, AGP 9.2.1 with built-in Kotlin, and Compose plugin 2.3.10. Both use
-`compileSdk 36`, exercise `minSdk 24`, compile raw Java/Kotlin plus
-ready-made/custom Compose/View usage, and reject Compose leakage from the raw
-coordinate.
-
-`sample/.HostedValidationActivity` is the default sample launcher and mirrors
-the Flutter/React Native DesiPass journey: live event list, event details, BOOK
-NOW, picker, and buyer-safe checkout evidence. The debug build resolves
-DesiPass host configuration from the ignored `sample/.env.local`, an environment
-file selected by `DESIPASS_ENV_FILE`, or `local.properties` key
-`desipass.envFile`. Both `DESIPASS_*` and `EXPO_PUBLIC_DESIPASS_*` names are
-accepted. Release and benchmark variants force the URL and client key to empty
-strings. The key is never rendered or logged and is used only by the DesiPass
-host client; the picker receives renewable buyer access instead. It does not
-render or log the event key, buyer bearer, or opaque checkout hold id. The six
-ready/branded/custom Compose/View/raw SDK examples remain available through the
-explicit `sample/.MainActivity` intent.
-
-Use the optional `seatlayerHostedIntegration` intent extra to run that exact
-live journey through the ready-made Compose picker, a host-owned Compose
-composition, or the ready-made View host:
+The sample launches `MainActivity` and supports every public integration path:
 
 ```bash
-adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
-  --es seatlayerHostedIntegration ready-compose
-adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
-  --es seatlayerHostedIntegration custom-compose
-adb shell am start -n io.seatlayer.sample/.HostedValidationActivity \
-  --es seatlayerHostedIntegration ready-view
+adb shell am start -n io.seatlayer.sample/.MainActivity \
+  --es seatlayerIntegration ready-compose \
+  --es seatlayerEvent ev_your_event
+adb shell am start -n io.seatlayer.sample/.MainActivity \
+  --es seatlayerIntegration custom-compose \
+  --es seatlayerEvent ev_your_event
+adb shell am start -n io.seatlayer.sample/.MainActivity \
+  --es seatlayerIntegration ready-view \
+  --es seatlayerEvent ev_your_event
 ```
 
-The ready View route installs `SeatLayerPickerView` directly as the Activity
-content. This proves the View/XML host itself and avoids nesting its
-Compose-backed implementation inside another Compose `AndroidView`. The sample
-declares configuration handling for orientation and window-size changes; the
-movable ready renderer therefore keeps the live session and cart while moving
-between adaptive layouts. Explicit Activity/process destruction still follows
-the `initialHoldId` recovery contract above.
-
-`ready-compose` is the default when the extra is absent or unrecognized. The
-mode changes only the Android integration surface; event retrieval, renewable
-buyer access, picker configuration, and checkout evidence remain identical.
+`ready-compose` is the default when the extra is absent or unrecognized.
 
 ## Private buyer access
 
@@ -700,25 +660,6 @@ surface is separate from the protocol-2 picker and remains source/binary
 compatible with `0.2.x`. New native-picker work should prefer the ready-made
 picker or the headless picker state/controller described above.
 
-## Before publishing 0.3.0
-
-Source, unit, Compose instrumentation, API/ABI, release AAR, consumer, sample,
-and API 35 emulator/hosted-event validation are complete for the current
-candidate. Publication is still a separate owner-approved action.
-
-The remaining release gates are intentionally explicit:
-
-- physical-device API-floor/current-target records and cold/warm/prewarm traces;
-- hosted evidence from a runtime advertising additive 3D neighbours,
-  rotate/move controls, and `picker.closeSeatView`;
-- live multi-tier, hold-expiry/rejection, and Activity/process restoration with
-  `initialHoldId` against suitable inventory; and
-- synchronization of the public Android documentation with this approved
-  native-picker contract; and
-- owner visual/API approval plus separate authorization to tag and publish both
-  Maven artifacts together.
-
 The pinned hosted `0.71.5` runtime does not advertise native panorama close, so
-no release note or guide may claim that hardware/predictive Back closes hosted
-panorama today. See [release validation](release-validation.md) for exact
-commands, environments, evidence, and the publication checklist.
+hardware/predictive Back does not claim to close a hosted panorama; the
+runtime-owned close control remains authoritative.

@@ -121,7 +121,7 @@
         },
         "host": {
           "platform": "ios",
-          "sdk": "0.3.0"
+          "sdk": "0.3.4"
         },
         "surface": {
           "kind": "picker",

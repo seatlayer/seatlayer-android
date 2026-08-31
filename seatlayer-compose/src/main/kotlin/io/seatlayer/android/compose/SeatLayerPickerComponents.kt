@@ -565,19 +565,41 @@ public fun SeatLayerPickerAttribution(
                 ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (compact) {
-                SeatLayerPickerIcon(
-                    glyph = SeatLayerPickerGlyph.Seat,
-                    color = scope.theme.muted,
-                    modifier = Modifier.size(10.dp),
-                )
-                Spacer(Modifier.width(4.dp))
-            }
+            SeatLayerPickerPoweredMark(
+                background = scope.theme.muted,
+                ink = scope.theme.surface,
+            )
+            Spacer(Modifier.width(4.dp))
             Text(
                 text = scope.strings.poweredBy,
                 fontSize = if (compact) 10.sp else 11.sp,
                 fontWeight = if (compact) FontWeight.SemiBold else FontWeight.Normal,
                 maxLines = 1,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SeatLayerPickerPoweredMark(
+    background: Color,
+    ink: Color,
+) {
+    Canvas(
+        modifier = Modifier
+            .size(12.dp)
+            .clip(RoundedCornerShape(3.dp))
+            .background(background)
+            .padding(2.dp),
+    ) {
+        val barHeight = 2.dp.toPx()
+        val radius = CornerRadius(1.dp.toPx())
+        listOf(8.dp, 5.5.dp, 3.dp).forEachIndexed { index, width ->
+            drawRoundRect(
+                color = ink,
+                topLeft = Offset(0f, index * 3.dp.toPx()),
+                size = Size(width.toPx(), barHeight),
+                cornerRadius = radius,
             )
         }
     }

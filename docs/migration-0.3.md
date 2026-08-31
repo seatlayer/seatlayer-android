@@ -1,12 +1,11 @@
-# Migrate from Android SDK 0.2.x to 0.3.0
+# Migrate from Android SDK 0.2.x to 0.3.4
 
-SeatLayer Android `0.3.0` is an additive release candidate. Existing raw
+SeatLayer Android `0.3.4` is an additive release. Existing raw
 `SeatLayerView` integrations can update the core coordinate without adopting
 Compose or rewriting their protocol-1 integration. The new protocol-2 native
 picker is a separate surface that applications opt into.
 
-`0.2.0` remains the published Maven Central version. Follow this guide when
-evaluating the candidate from source or after `0.3.0` is published; do not
+Follow this guide when upgrading from `0.2.x`; do not
 assume the new coordinates resolve before owner-approved publication.
 
 ## Choose the integration you want
@@ -28,7 +27,7 @@ Update only the version:
 
 ```kotlin
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.0")
+    implementation("io.seatlayer:seatlayer-android:0.3.4")
 }
 ```
 
@@ -62,7 +61,7 @@ Add the aligned Compose artifact:
 
 ```kotlin
 dependencies {
-    val seatlayerVersion = "0.3.0"
+    val seatlayerVersion = "0.3.4"
     implementation("io.seatlayer:seatlayer-android:$seatlayerVersion")
     implementation("io.seatlayer:seatlayer-android-compose:$seatlayerVersion")
 }
@@ -148,7 +147,7 @@ callbacks or diagnostics.
 
 ## Upgrade checklist
 
-1. Set every SeatLayer Android artifact to `0.3.0`.
+1. Set every SeatLayer Android artifact to `0.3.4`.
 2. Keep only `seatlayer-android` if the app stays on the raw map.
 3. Run the existing raw flow and confirm it still negotiates protocol 1.
 4. For a native picker, select one ownership model and use its protocol-2
@@ -159,13 +158,6 @@ callbacks or diagnostics.
    background/foreground, and hold expiry with real hosted inventory.
 7. Validate release/minified builds and a current Android System WebView on a
    physical device.
-
-The repository sample can consume the same ignored DesiPass environment file
-as the Flutter/React Native demos. Point `local.properties` key
-`desipass.envFile` or `DESIPASS_ENV_FILE` at that file; do not copy the client
-key into source or a command line. Only the debug sample receives those local
-values. Release and benchmark variants deliberately compile blank host
-configuration.
 
 See the [native picker reference](native-picker.md) for all components and
 customization points, and the [bridge reference](bridge.md) for the protocol
