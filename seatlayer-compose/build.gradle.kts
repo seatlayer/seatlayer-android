@@ -78,12 +78,14 @@ mavenPublishing {
     )
 
     pom {
-        name.set("SeatLayer Android Compose SDK")
+        name.set("SeatLayer Jetpack Compose Seating Chart and Seat Picker")
         description.set(
-            "Ready-made and composable native Android picker UI for SeatLayer.",
+            "Official SeatLayer Jetpack Compose UI for Android seating charts and reserved seating. " +
+                "Add a customizable seat picker with native filters, seat details, cart, hold countdown " +
+                "and checkout callbacks around the shared venue map.",
         )
         inceptionYear.set("2026")
-        url.set("https://github.com/seatlayer/seatlayer-android")
+        url.set("https://docs.seatlayer.io/buyer-sdk/android/")
         licenses {
             license {
                 name.set("MIT License")

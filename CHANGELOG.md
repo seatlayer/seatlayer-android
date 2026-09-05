@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.5
+
+- Clarifies the Android and Jetpack Compose package names and descriptions on
+  Maven Central, with direct links to the Kotlin integration guide.
+- Refreshes README setup and customization guidance. Both artifacts keep the
+  same runtime and public APIs as 0.3.4.
+
 ## 0.3.4
 
 - Adds `io.seatlayer:seatlayer-android-compose`, including the ready-made

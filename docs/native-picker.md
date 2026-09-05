@@ -1,6 +1,6 @@
 # Native Android picker
 
-SeatLayer Android `0.3.4` ships two aligned artifacts with one
+SeatLayer Android `0.3.5` ships two aligned artifacts with one
 release version:
 
 - `seatlayer-android` contains the hardened map host, protocol-1 raw API, and
@@ -45,12 +45,12 @@ The public entry points form a customization ladder:
 
 ## Install
 
-Add the aligned `0.3.4` artifacts:
+Add the aligned `0.3.5` artifacts:
 
 ```kotlin
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.4")
-    implementation("io.seatlayer:seatlayer-android-compose:0.3.4")
+    implementation("io.seatlayer:seatlayer-android:0.3.5")
+    implementation("io.seatlayer:seatlayer-android-compose:0.3.5")
 }
 ```
 

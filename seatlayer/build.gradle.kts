@@ -54,12 +54,14 @@ mavenPublishing {
     )
 
     pom {
-        name.set("SeatLayer Android SDK")
+        name.set("SeatLayer Android Seating Chart and Seat Map SDK")
         description.set(
-            "Official native Kotlin SDK for interactive SeatLayer reserved-seating maps.",
+            "Official SeatLayer Android SDK for interactive seating charts and seat maps in Kotlin apps. " +
+                "Use live availability, best-available seat selection and temporary holds through typed " +
+                "coroutines, Android Views and a headless buyer controller.",
         )
         inceptionYear.set("2026")
-        url.set("https://github.com/seatlayer/seatlayer-android")
+        url.set("https://docs.seatlayer.io/buyer-sdk/android/")
         licenses {
             license {
                 name.set("MIT License")

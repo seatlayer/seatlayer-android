@@ -1,4 +1,4 @@
-# Migrate from Android SDK 0.2.x to 0.3.4
+# Migrate from Android SDK 0.2.x to 0.3
 
 SeatLayer Android `0.3.4` is an additive release. Existing raw
 `SeatLayerView` integrations can update the core coordinate without adopting
@@ -27,7 +27,7 @@ Update only the version:
 
 ```kotlin
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.4")
+    implementation("io.seatlayer:seatlayer-android:0.3.5")
 }
 ```
 
@@ -61,7 +61,7 @@ Add the aligned Compose artifact:
 
 ```kotlin
 dependencies {
-    val seatlayerVersion = "0.3.4"
+    val seatlayerVersion = "0.3.5"
     implementation("io.seatlayer:seatlayer-android:$seatlayerVersion")
     implementation("io.seatlayer:seatlayer-android-compose:$seatlayerVersion")
 }
@@ -147,7 +147,7 @@ callbacks or diagnostics.
 
 ## Upgrade checklist
 
-1. Set every SeatLayer Android artifact to `0.3.4`.
+1. Set every SeatLayer Android artifact to `0.3.5`.
 2. Keep only `seatlayer-android` if the app stays on the raw map.
 3. Run the existing raw flow and confirm it still negotiates protocol 1.
 4. For a native picker, select one ownership model and use its protocol-2
