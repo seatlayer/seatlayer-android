@@ -311,7 +311,7 @@ stop observation outside its active lifecycle.
 
 `SeatLayerView` continues to negotiate protocol 1. The native picker uses a
 separate protocol-2 profile, so adding Compose does not silently change an
-existing raw integration. See the [0.3.4 migration guide](docs/migration-0.3.md)
+existing raw integration. See the [Android 0.3 migration guide](docs/migration-0.3.md)
 for dependency choices, lifecycle differences, and an adoption checklist.
 
 ### Hold seats with the raw API

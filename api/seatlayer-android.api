@@ -1187,7 +1187,7 @@ public final class io.seatlayer.android.SeatLayerConfiguration {
     descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;ZLio/seatlayer/android/BuyerAccessToken;Lio/seatlayer/android/BuyerAccessTokenProvider;Ljava/util/List;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;JJLjava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 public final class io.seatlayer.android.SeatLayerConfigurationKt {
-  public static final java.lang.String SEATLAYER_ANDROID_VERSION = "0.3.4";
+  public static final java.lang.String SEATLAYER_ANDROID_VERSION = "0.3.5";
     descriptor: Ljava/lang/String;
   public static final java.lang.String SEATLAYER_HOSTED_WEB_VERSION = "0.71.5";
     descriptor: Ljava/lang/String;
