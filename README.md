@@ -31,7 +31,7 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 
 ![Seat map picker running in a native Android app: venue overview, section focus, seat confirmation, cart, 3D venue view and panorama](https://raw.githubusercontent.com/seatlayer/seatlayer-android/main/docs/media/picker-flow.gif)
 
-> **Aligned release:** Use `0.3.4` for both Android artifacts. Pin the exact
+> **Aligned release:** Use `0.3.5` for both Android artifacts. Pin the exact
 > version in production so core and Compose cannot drift.
 
 ## Works as a native Android picker
@@ -120,13 +120,13 @@ Both artifacts ship on the same release train.
 
 ## Install
 
-Add both aligned `0.3.4` artifacts for the native picker:
+Add both aligned `0.3.5` artifacts for the native picker:
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.4")
-    implementation("io.seatlayer:seatlayer-android-compose:0.3.4")
+    implementation("io.seatlayer:seatlayer-android:0.3.5")
+    implementation("io.seatlayer:seatlayer-android-compose:0.3.5")
 }
 ```
 
@@ -421,7 +421,7 @@ windows, automatic external navigation, and third-party cookies are disabled.
 Renderer termination becomes a typed transport failure instead of a silent
 blank screen.
 
-The `0.3.4` production path is the hosted `0.71.5` page. The
+The production path is the hosted `0.71.5` page. The
 repository retains a verified `seatlayer-js@0.59.0` JavaScript fixture only for
 deterministic legacy tests: `seatlayer/src/main/assets/seatlayer.js`, SHA-256
 `89bc29fbccad5d3c30e52cf5381c974b95ac034b32c28b400248b4ebb4ee22a9`. The
@@ -696,7 +696,7 @@ For the complete native flow, add the aligned core and Compose artifacts and
 place `SeatLayerPicker` in a bounded screen with your event configuration. It
 already includes the interactive seating chart, filters, seat confirmation,
 cart, holds, 3D/panorama controls, and checkout handoff. Existing production
-apps on `0.2.x` can continue to use `SeatLayerView` and migrate to `0.3.4`
+apps on `0.2.x` can continue to use `SeatLayerView` and migrate to `0.3.5`
 when ready.
 
 ### Is this a native Android seat map or a WebView?
