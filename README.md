@@ -6,18 +6,19 @@
 [![Android](https://img.shields.io/badge/Android-API%2024%2B-3ddc84.svg)](https://developer.android.com/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)
 
-The official SeatLayer Android SDK for adding an interactive seating chart and
-native seat picker to ticketing apps. It renders live seat availability,
-creates temporary holds, finds best-available seats, and exposes every buyer
-action through typed Kotlin coroutines while your trusted server completes the
-booking.
+The official SeatLayer Android SDK adds an interactive seating chart and native
+seat picker to Kotlin ticketing apps. It renders live seat availability, creates
+temporary holds, finds best-available seats, and exposes every buyer action
+through typed Kotlin coroutines while your trusted server completes booking.
+The ready-made picker and public components use Jetpack Compose, with View/XML
+interop for existing Android screens.
 
 Version `0.3.4` adds a complete adaptive Jetpack Compose picker, a
 headless protocol-2 state/controller, reusable native Android components, and
 View/XML interop while preserving the frozen raw `SeatLayerView` API.
 
 [SeatLayer Android SDK on Maven Central](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android) ·
-[Android seat-map documentation](https://docs.seatlayer.io/buyer-sdk/android/) ·
+[Kotlin and Jetpack Compose seat-map guide](https://docs.seatlayer.io/buyer-sdk/android/) ·
 [SeatLayer reserved-seating platform](https://seatlayer.io/) ·
 [Buyer seat-map demo (web)](https://app.seatlayer.io/demo/play/grand-theatre) ·
 [Native picker reference](docs/native-picker.md) ·
