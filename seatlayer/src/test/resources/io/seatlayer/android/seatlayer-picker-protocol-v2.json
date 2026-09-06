@@ -27,7 +27,12 @@
     "chart-load-trace-v1",
     "availability-refresh-v1",
     "access-needs-v1",
-    "hold-selection-v1"
+    "hold-selection-v1",
+    "seat-view-thumbnail-v1",
+    "accessibility-focus-v1",
+    "section-access-counts-v1",
+    "category-availability-v1",
+    "seat-screen-point-v1"
   ],
   "requiredCommands": [
     "picker.getSnapshot",

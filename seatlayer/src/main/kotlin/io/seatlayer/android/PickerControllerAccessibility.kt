@@ -30,3 +30,60 @@ internal suspend fun SeatLayerPickerController.performSetColorblindSafe(
     enabled: Boolean,
 ): SeatLayerPickerSnapshot? =
     mutation("picker.setColorblindSafe", jsonObject("on" to JsonPrimitive(enabled)))
+/** Flies the map to the spaces the current accommodation filter matches. */
+internal suspend fun SeatLayerPickerController.performFocusAccessibilityFilter(
+    types: List<String>?,
+): SeatLayerPickerSnapshot? {
+    types?.takeIf(List<String>::isNotEmpty)?.let { requireNonEmptyValues(it, "types") }
+    if (!supportsAccessibilityFocus || !supportsCommand("picker.focusAccessibilityFilter")) {
+        return snapshot
+    }
+    return mutation(
+        "picker.focusAccessibilityFilter",
+        jsonObject(
+            "types" to (
+                types?.takeIf(List<String>::isNotEmpty)?.let(::jsonStrings) ?: JsonNull
+                ),
+        ),
+    )
+}
+
+/**
+ * Steps to the next section holding a matching space.
+ *
+ * A runtime that lists neither the capability nor the command answers nothing:
+ * a tour that is not offered is not a failure, and the stepper simply never
+ * appears.
+ */
+internal suspend fun SeatLayerPickerController.performFocusNextAccessibleSection(
+    types: List<String>?,
+): SeatLayerPickerAccessibleStep? {
+    types?.takeIf(List<String>::isNotEmpty)?.let { requireNonEmptyValues(it, "types") }
+    if (!supportsAccessibilityFocus || !supportsCommand("picker.focusNextAccessibleSection")) {
+        return null
+    }
+    val reply = command(
+        "picker.focusNextAccessibleSection",
+        jsonObject(
+            "types" to (
+                types?.takeIf(List<String>::isNotEmpty)?.let(::jsonStrings) ?: JsonNull
+                ),
+        ),
+    )
+    return decodeSeatLayerPickerAccessibleStep(reply)
+}
+
+/**
+ * Marks the seat a card is asking about, or clears the mark.
+ *
+ * The seat is painted as a candidate, not as a selection: it is in no cart and
+ * in no total until the card is answered.
+ */
+internal suspend fun SeatLayerPickerController.performSetSelectionFocus(seatId: String?) {
+    seatId?.let { requireNonEmptyValue(it, "seatId") }
+    if (!supportsCommand("picker.setSelectionFocus")) return
+    presentation(
+        "picker.setSelectionFocus",
+        jsonObject("seatId" to (seatId?.let(::JsonPrimitive) ?: JsonNull)),
+    )
+}

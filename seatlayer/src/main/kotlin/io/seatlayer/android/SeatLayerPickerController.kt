@@ -94,6 +94,24 @@ public class SeatLayerPickerController internal constructor(
     public val supportsHoldSelection: Boolean
         get() = supportsCapabilityAndCommand("hold-selection-v1", "picker.holdSelection")
 
+    /** Whether the runtime reports the accommodations this event actually has. */
+    public val supportsAccessNeeds: Boolean
+        get() = supportsCapabilityAndCommand("access-needs-v1", "picker.setAccessibilityFilter")
+
+    /** Whether a filter can fly the map, and the accessible-section tour exists. */
+    public val supportsAccessibilityFocus: Boolean
+        get() = isReady && supportsCapability("accessibility-focus-v1")
+
+    /** Whether sections report how many accessible spaces are left. */
+    public val supportsSectionAccessCounts: Boolean
+        get() = isReady && supportsCapability("section-access-counts-v1")
+
+    /** Whether a selected seat may carry a photograph of the view from it. */
+    public val supportsSeatViewThumbnail: Boolean
+        get() = stateHolder.behavior.enableSeatView &&
+            isReady &&
+            supportsCapability("seat-view-thumbnail-v1")
+
     public fun supportsCapability(capability: String): Boolean =
         bundleInfo?.supportsCapability(capability) == true
 
@@ -155,6 +173,52 @@ public class SeatLayerPickerController internal constructor(
 
     public suspend fun setLimitedViewFilter(enabled: Boolean): SeatLayerPickerSnapshot? =
         performSetLimitedViewHidden(enabled)
+
+    /**
+     * Flies the map to the spaces the accommodation filter matches.
+     *
+     * A runtime that does not offer the tour answers nothing and the map stays
+     * where it is.
+     */
+    public suspend fun focusAccessibilityFilter(
+        types: List<String>? = null,
+    ): SeatLayerPickerSnapshot? = performFocusAccessibilityFilter(types)
+
+    /** Steps to the next section holding a matching space, or null if none. */
+    public suspend fun focusNextAccessibleSection(
+        types: List<String>? = null,
+    ): SeatLayerPickerAccessibleStep? = performFocusNextAccessibleSection(types)
+
+    /** Marks the seat a card is asking about; it joins no cart and no total. */
+    public suspend fun setSelectionFocus(seatId: String?): Unit =
+        performSetSelectionFocus(seatId)
+
+    /** Clears the candidate mark left by [setSelectionFocus]. */
+    public suspend fun forgetSelectionFocus(): Unit = performSetSelectionFocus(null)
+
+    /**
+     * Replaces the rectangles the map must not answer taps through.
+     *
+     * Every call carries the whole list, and the list has to be standing before
+     * the finger lands, so it is re-sent whenever the layout moves.
+     */
+    public suspend fun setBlockedRegions(
+        regions: List<SeatLayerPickerBlockedRegion>?,
+    ): Unit = performSetBlockedRegions(regions)
+
+    /**
+     * Lifts the map so [seatId] clears the card standing over it.
+     *
+     * [fraction] is how far down the visible map the seat should land.
+     * [gestures] is the value a previous frame returned; passing it back is
+     * what stops the map from undoing the buyer's own drag.
+     */
+    public suspend fun frameSeat(
+        seatId: String,
+        fraction: Double? = null,
+        animate: Boolean = true,
+        gestures: SeatLayerPickerSeatGestures? = null,
+    ): SeatLayerPickerSeatFrame? = performFrameSeat(seatId, fraction, animate, gestures)
 
     public suspend fun focusSection(sectionId: String): SeatLayerPickerSnapshot? =
         performFocusSection(sectionId)

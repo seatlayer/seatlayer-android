@@ -113,3 +113,56 @@ internal suspend fun SeatLayerPickerController.performSetViewportInsets(
     }
     presentation("picker.setViewportInsets", payload)
 }
+/**
+ * Replaces the whole list of rectangles the map must not answer taps through.
+ *
+ * Chrome drawn over the map takes the whole touch on its own side, but the
+ * renderer never learns that unless the rectangles are standing before the
+ * finger lands — so this is re-sent at the same cadence as the viewport insets,
+ * and every call carries the complete list, never a delta.
+ */
+internal suspend fun SeatLayerPickerController.performSetBlockedRegions(
+    regions: List<SeatLayerPickerBlockedRegion>?,
+) {
+    if (!supportsCommand("picker.setBlockedRegions")) return
+    presentation(
+        "picker.setBlockedRegions",
+        jsonObject(
+            "rects" to (
+                regions?.let { list ->
+                    kotlinx.serialization.json.JsonArray(list.map(SeatLayerPickerBlockedRegion::toJson))
+                } ?: JsonNull
+                ),
+        ),
+    )
+}
+
+/**
+ * Lifts the map so a seat clears the card standing over it.
+ *
+ * The reply's `gestures` is the renderer's own record of where the buyer has
+ * since dragged the map. Reading it when the card opens and handing it back on
+ * every re-frame is the whole guard against arguing with a finger.
+ */
+internal suspend fun SeatLayerPickerController.performFrameSeat(
+    seatId: String,
+    fraction: Double?,
+    animate: Boolean,
+    gestures: SeatLayerPickerSeatGestures?,
+): SeatLayerPickerSeatFrame? {
+    requireNonEmptyValue(seatId, "seatId")
+    if (fraction != null && (!fraction.isFinite() || fraction <= 0.0 || fraction > 1.0)) {
+        throw badPickerPayload("fraction must be greater than zero and at most one")
+    }
+    if (!supportsCommand("picker.frameSeat")) return null
+    val reply = command(
+        "picker.frameSeat",
+        jsonObject(
+            "seatId" to JsonPrimitive(seatId),
+            "fraction" to jsonNumber(fraction),
+            "animate" to JsonPrimitive(animate),
+            "gestures" to gestures?.raw,
+        ),
+    )
+    return decodeSeatLayerPickerSeatFrame(reply)
+}
