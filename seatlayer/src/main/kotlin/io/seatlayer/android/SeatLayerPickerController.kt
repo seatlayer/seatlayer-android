@@ -204,7 +204,10 @@ public class SeatLayerPickerController internal constructor(
      */
     public suspend fun setBlockedRegions(
         regions: List<SeatLayerPickerBlockedRegion>?,
-    ): Unit = performSetBlockedRegions(regions)
+    ) {
+        stateHolder.setBlockedRegions(regions.orEmpty())
+        performSetBlockedRegions(regions)
+    }
 
     /**
      * Lifts the map so [seatId] clears the card standing over it.
@@ -378,6 +381,58 @@ public class SeatLayerPickerController internal constructor(
 
     public fun setCartExpanded(expanded: Boolean): Unit =
         presentationCoordinator.setCartExpanded(expanded)
+
+    /** Opens the sheet to a named detent rather than to a boolean. */
+    public fun setCartSheetDetent(detent: SeatLayerPickerSheetDetent): Unit =
+        setCartExpanded(detent == SeatLayerPickerSheetDetent.Open)
+
+    /**
+     * Advances the arrival of a seat in the cart.
+     *
+     * The steps are driven by the surfaces that know — the chip that lands, the
+     * tray that finishes swelling — rather than by a clock that decides a
+     * flight has happened before it has.
+     */
+    public fun setCartLanding(landing: SeatLayerPickerCartLanding): Unit =
+        stateHolder.setCartLanding(landing)
+
+    /** Opens the card over a seat and marks it as a candidate on the map. */
+    public suspend fun openSeatCard(
+        seat: SeatLayerPickerSelectedSeat,
+        intent: SeatLayerPickerCardIntent = SeatLayerPickerCardIntent.Add,
+    ): Unit = performOpenSeatCard(seat, intent)
+
+    /** Closes the card, clears the candidate mark and puts the map back. */
+    public suspend fun closeSeatCard(): Unit = performCloseSeatCard()
+
+    /** The seat a Remove card is asking about, if one is up. */
+    public val seatAwaitingRemoval: SeatLayerPickerSelectedSeat?
+        get() = presentation.seatAwaitingRemoval
+
+    /** Closes a Remove card without touching the seat. */
+    public suspend fun dismissSeatRemoval() {
+        if (presentation.cardIntent != SeatLayerPickerCardIntent.Remove) return
+        performCloseSeatCard()
+    }
+
+    /** Lifts the map so a seat clears the card standing over it. */
+    public suspend fun liftSeat(
+        seatId: String,
+        fraction: Double? = null,
+    ): SeatLayerPickerSeatLift? = performLiftSeat(seatId, fraction)
+
+    /** Gives back the lift the card borrowed. */
+    public suspend fun restoreSeatLift(): Unit = performRestoreSeatLift()
+
+    /** The handoff whose hold left without expiring: a sale, not a timeout. */
+    public val bookedHandoff: SeatLayerPickerCheckoutHandoff?
+        get() = presentation.bookedHandoff
+
+    public fun dismissBookedOverlay(): Unit = stateHolder.clearBookedHandoff()
+
+    /** Whether a checkout the host took is expected to come back to the map. */
+    public fun setResumeAfterCheckout(resume: Boolean): Unit =
+        stateHolder.setResumeAfterCheckout(resume)
 
     public fun dismissActionError(): Unit = presentationCoordinator.dismissActionError()
 

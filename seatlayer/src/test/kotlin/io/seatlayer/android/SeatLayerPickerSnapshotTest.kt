@@ -153,11 +153,11 @@ class SeatLayerPickerSnapshotTest {
         )!!
 
         assertTrue(holder.acceptSnapshot(first))
-        assertEquals("A-1", holder.state.value.presentation.pendingSeat?.label)
+        assertEquals("A-1", holder.state.value.presentation.candidateSeat?.label)
         holder.controller.confirmPending()
-        assertNull(holder.state.value.presentation.pendingSeat)
+        assertNull(holder.state.value.presentation.candidateSeat)
         assertTrue(holder.acceptSnapshot(second))
-        assertEquals("A-2", holder.state.value.presentation.pendingSeat?.label)
+        assertEquals("A-2", holder.state.value.presentation.candidateSeat?.label)
     }
 
     @Test

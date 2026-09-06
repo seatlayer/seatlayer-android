@@ -57,7 +57,7 @@ internal class SeatLayerPickerPresentationCoordinator(
     fun confirmPending() = stateHolder.confirmPendingSeat()
 
     suspend fun confirmPending(tierId: String?): Boolean {
-        val pending = stateHolder.state.value.presentation.pendingSeat ?: return false
+        val pending = stateHolder.state.value.presentation.candidateSeat ?: return false
         val selectedTier = if (pending.tiers.isEmpty() && tierId == null) {
             null
         } else {
@@ -155,7 +155,7 @@ internal class SeatLayerPickerPresentationCoordinator(
     fun dismissRemovalUndo() = stateHolder.setRemovalUndo(null)
 
     suspend fun cancelPending(): Boolean {
-        val pending = stateHolder.state.value.presentation.pendingSeat ?: return false
+        val pending = stateHolder.state.value.presentation.candidateSeat ?: return false
         return cancelPendingSeat(pending)
     }
 

@@ -371,6 +371,13 @@ public data class SeatLayerPickerSnapshot(
     val maxSelection: Int,
     val ticketCount: Int,
     val cartLines: List<SeatLayerPickerCartLine>,
+    /**
+     * True when [cartLines] carries seats the runtime's own cart did not.
+     *
+     * The count and the total are then this SDK's arithmetic, not the
+     * runtime's, until the hold is replaced.
+     */
+    val cartCompletedFromSelection: Boolean = false,
     val cartTotal: Double,
     val currency: String,
     val hold: SeatLayerPickerHold,

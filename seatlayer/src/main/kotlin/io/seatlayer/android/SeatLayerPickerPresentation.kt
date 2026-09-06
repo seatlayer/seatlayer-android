@@ -74,7 +74,13 @@ public value class SeatLayerPickerBackStep(public val raw: String) {
 }
 
 public data class SeatLayerPickerPresentationState(
-    val pendingSeat: SeatLayerPickerSelectedSeat? = null,
+    /**
+     * The seat a card is asking about.
+     *
+     * It is a candidate, not a purchase: it is in no cart line the buyer sees,
+     * in no ticket count and in no total until the card is answered.
+     */
+    val candidateSeat: SeatLayerPickerSelectedSeat? = null,
     val pendingTable: SeatLayerPickerSelectedSeat? = null,
     val activePrompt: SeatLayerPickerPrompt? = null,
     val actionInFlight: Boolean = false,
@@ -82,11 +88,43 @@ public data class SeatLayerPickerPresentationState(
     val lastActionError: SeatLayerException? = null,
     val cartExpanded: Boolean = false,
     val removalUndo: SeatLayerPickerRemovalUndo? = null,
+    /** Which question the card over [candidateSeat] is asking. */
+    val cardIntent: SeatLayerPickerCardIntent = SeatLayerPickerCardIntent.Add,
+    val cartLanding: SeatLayerPickerCartLanding = SeatLayerPickerCartLanding.Idle,
+    val seatLift: SeatLayerPickerSeatLift? = null,
+    /** The chrome rectangles the map must not answer taps through. */
+    val blockedRegions: List<SeatLayerPickerBlockedRegion> = emptyList(),
+    /** True while a checkout the host took is expected to come back. */
+    val resumeAfterCheckout: Boolean = false,
+    /**
+     * The handoff whose hold left without expiring.
+     *
+     * A hold the host took to checkout and that then vanishes without an expiry
+     * is a sale, not a timeout. Reading it as a timeout tells a buyer who has
+     * just paid that their seats were released.
+     */
+    val bookedHandoff: SeatLayerPickerCheckoutHandoff? = null,
 ) {
+    /** The seat a card is asking about. */
+    @Deprecated("Renamed to candidateSeat.", ReplaceWith("candidateSeat"))
+    public val pendingSeat: SeatLayerPickerSelectedSeat?
+        get() = candidateSeat
+
+    /** The seat a Remove card is asking about, if that is the question. */
+    public val seatAwaitingRemoval: SeatLayerPickerSelectedSeat?
+        get() = candidateSeat.takeIf { cardIntent == SeatLayerPickerCardIntent.Remove }
+
+    public val sheetDetent: SeatLayerPickerSheetDetent
+        get() = if (cartExpanded) {
+            SeatLayerPickerSheetDetent.Open
+        } else {
+            SeatLayerPickerSheetDetent.Collapsed
+        }
+
     public fun confirmedCart(snapshot: SeatLayerPickerSnapshot?):
         SeatLayerPickerConfirmedCartProjection = SeatLayerPickerProjections.confirmedCart(
         items = snapshot?.cartLines.orEmpty(),
-        pending = pendingSeat,
+        pending = candidateSeat.takeIf { cardIntent == SeatLayerPickerCardIntent.Add },
     )
 
     public fun canCheckout(
@@ -95,10 +133,12 @@ public data class SeatLayerPickerPresentationState(
         readOnly: Boolean,
     ): Boolean = ready &&
         !readOnly &&
-        !actionInFlight &&
+        // Deliberately not gated on actionInFlight: adding a seat to a live
+        // hold puts a command in flight, and greying Continue through it tells
+        // the buyer their tickets stopped being buyable.
         checkoutHandoff == null &&
         activePrompt == null &&
-        pendingSeat == null &&
+        candidateSeat == null &&
         confirmedCart(snapshot).items.isNotEmpty() &&
         snapshot?.hold?.owner != "host" &&
         snapshot?.selectionValidity?.isValid != false
@@ -112,7 +152,7 @@ public data class SeatLayerPickerPresentationState(
             cartExpanded -> SeatLayerPickerBackStep.Cart
             seatView != null -> SeatLayerPickerBackStep.Panorama
             snapshot?.map?.buyerView == "venue3d" -> SeatLayerPickerBackStep.Venue3D
-            pendingSeat != null -> SeatLayerPickerBackStep.Confirmation
+            candidateSeat != null -> SeatLayerPickerBackStep.Confirmation
             snapshot?.map?.buyerView != null && snapshot.map.buyerView != "map" ->
                 SeatLayerPickerBackStep.Venue
             snapshot?.map?.canZoomOut == true &&

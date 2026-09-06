@@ -184,7 +184,7 @@ class SeatLayerPickerControllerTest {
         successful = PickerFixture(revisionWaitMillis = 0) { command, _ ->
             if (command == "picker.setSeatTier") {
                 pendingDuringCommand =
-                    successful.holder.state.value.presentation.pendingSeat != null
+                    successful.holder.state.value.presentation.candidateSeat != null
                 json("""{"snapshot":${tierSnapshot(3, "child")}}""")
             } else {
                 json("{}")
@@ -197,7 +197,7 @@ class SeatLayerPickerControllerTest {
         assertEquals(listOf("picker.setSeatTier"), successful.commands)
         assertEquals("child", successful.controller.snapshot?.selection?.single()?.tierId)
         assertEquals(60.0, successful.controller.snapshot?.selection?.single()?.price ?: 0.0, 0.0)
-        assertEquals(null, successful.holder.state.value.presentation.pendingSeat)
+        assertEquals(null, successful.holder.state.value.presentation.candidateSeat)
 
         val failed = PickerFixture(revisionWaitMillis = 0) { command, _ ->
             if (command == "picker.setSeatTier") {
@@ -208,7 +208,7 @@ class SeatLayerPickerControllerTest {
         failed.holder.acceptSnapshot(json(tierSnapshot(2, "adult")))
 
         assertEquals(false, failed.controller.confirmPending("child"))
-        assertEquals("adult", failed.holder.state.value.presentation.pendingSeat?.tierId)
+        assertEquals("adult", failed.holder.state.value.presentation.candidateSeat?.tierId)
         assertEquals(false, failed.holder.state.value.presentation.actionInFlight)
     }
 

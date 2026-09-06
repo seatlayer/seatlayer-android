@@ -84,11 +84,33 @@ internal suspend fun SeatLayerPickerController.performRejectHandoff(
     return mutation("picker.rejectHandoff", jsonObject("holdId" to JsonPrimitive(holdId)))
 }
 
-/** Turns the buyer's seats into a checkout handoff. */
+/**
+ * Turns the buyer's seats into a checkout handoff.
+ *
+ * A runtime that already treats the live hold as checkout's refuses a selection
+ * the hold does not cover — which is every seat added after the hold was made.
+ * When it does, the chart's own `hold` command is sent once: it carries every
+ * seat already held along with the new ones, so no seat list is invented here.
+ * The checkout is then asked for again. The observable order is
+ * `picker.continue → hold → picker.continue`, and the buyer sees no error.
+ */
 internal suspend fun SeatLayerPickerController.performCheckout(
     ttlMillis: Int?,
 ): SeatLayerPickerCheckoutHandoff {
-    val result = command("picker.continue", jsonObject("ttlMs" to jsonNumber(ttlMillis)))
+    // `ttlMs` travels only when a host set a hold length; the server's own
+    // window applies otherwise, and the SDK never names a number.
+    val ttl = jsonObject("ttlMs" to jsonNumber(ttlMillis))
+    val result = try {
+        command("picker.continue", ttl)
+    } catch (error: SeatLayerException.Bridge) {
+        if (error.code != SeatLayerPickerErrorCodes.HOLD_SELECTION_MISMATCH) throw error
+        // Without the chart's own hold there is nothing to replace it with, and
+        // the buyer is better served by the runtime's own refusal than by a
+        // second, vaguer one.
+        if (!supportsCommand("hold")) throw error
+        command("hold", ttl)
+        command("picker.continue", ttl)
+    }
     applyMutationResult(result)
     return decodeSeatLayerPickerCheckoutHandoff((result as? JsonObject)?.get("handoff"))
         ?: throw pickerDecodingFailure("picker.continue returned no checkout handoff")

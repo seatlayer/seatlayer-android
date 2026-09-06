@@ -25,7 +25,7 @@ internal fun decodeSeatLayerPickerSnapshot(
     val cart = root.objectValue("cart")
     val hold = root.objectValue("hold")
     val access = root.objectValue("access")
-    val cartLines = decodePickerList(
+    val reported = decodePickerList(
         cart?.get("items") ?: cart?.get("lines"),
         ::decodePickerCartLine,
     )
@@ -33,6 +33,18 @@ internal fun decodeSeatLayerPickerSnapshot(
         selectionNode?.get("seats"),
         ::decodePickerSelectedSeat,
     )
+    // A runtime that treats the live hold as checkout's reports only that
+    // hold's lines, so a seat chosen after the hold was made is drawn selected
+    // on the map, missing from the cart, and refused at Continue. Complete the
+    // cart from the selection: the line invents nothing, every field is the
+    // seat's own, and the runtime's next hold corrects the price it could not
+    // know. Matched by label, because a reported line may carry no seat id.
+    val reportedLabels = reported.mapTo(mutableSetOf(), SeatLayerPickerCartLine::label)
+    val missing = selection
+        .filterNot { seat -> seat.label in reportedLabels }
+        .map(::pickerCartLineFromSeat)
+    val cartLines = reported + missing
+    val cartCompletedFromSelection = missing.isNotEmpty()
 
     return SeatLayerPickerSnapshot(
         schema = SEATLAYER_PICKER_SNAPSHOT_SCHEMA,
@@ -61,10 +73,19 @@ internal fun decodeSeatLayerPickerSnapshot(
         selection = selection,
         selectionValidity = decodeSelectionValidity(selectionNode?.get("validity")),
         maxSelection = exactPickerInteger(selectionNode?.get("maxSelection")) ?: 10,
-        ticketCount = exactPickerInteger(cart?.get("quantity")) ?: selection.size,
+        ticketCount = if (cartCompletedFromSelection) {
+            cartLines.sumOf { it.quantity.coerceAtLeast(1) }
+        } else {
+            exactPickerInteger(cart?.get("quantity")) ?: selection.size
+        },
         cartLines = cartLines,
-        cartTotal = finitePickerDouble(cart?.get("total"))
-            ?: cartLines.sumOf(SeatLayerPickerCartLine::total),
+        cartCompletedFromSelection = cartCompletedFromSelection,
+        cartTotal = if (cartCompletedFromSelection) {
+            cartLines.sumOf(SeatLayerPickerCartLine::total)
+        } else {
+            finitePickerDouble(cart?.get("total"))
+                ?: cartLines.sumOf(SeatLayerPickerCartLine::total)
+        },
         currency = cart?.string("currency") ?: event.currency,
         hold = SeatLayerPickerHold(
             active = hold?.boolean("active") ?: false,
@@ -78,6 +99,11 @@ internal fun decodeSeatLayerPickerSnapshot(
         raw = root,
     )
 }
+
+/** One seat carried by an event rather than by the selection array. */
+internal fun decodeSeatLayerPickerRetappedSeat(
+    value: JsonElement?,
+): SeatLayerPickerSelectedSeat? = value?.let(::decodePickerSelectedSeat)
 
 private fun decodePickerSelectedSeat(value: JsonElement): SeatLayerPickerSelectedSeat? {
     val root = value as? JsonObject ?: return null
@@ -345,6 +371,30 @@ private fun decodePickerSection(value: JsonElement): SeatLayerPickerSectionSumma
         accessibleFree = decodePickerAccessibleFree(
             root["accessibleFree"] ?: root["accessibleLeft"],
         ),
+    )
+}
+
+/** One cart line built from a seat the reported cart does not carry. */
+private fun pickerCartLineFromSeat(
+    seat: SeatLayerPickerSelectedSeat,
+): SeatLayerPickerCartLine {
+    val objectId = seat.objectId ?: seat.id
+    return SeatLayerPickerCartLine(
+        lineKey = objectId,
+        label = seat.label,
+        displayLabel = seat.displayLabel,
+        displayType = seat.displayType,
+        objectId = objectId,
+        objectType = seat.objectType ?: "seat",
+        categoryKey = seat.categoryKey,
+        tierId = seat.tierId,
+        unitPrice = seat.price,
+        currency = seat.currency,
+        quantity = seat.quantity ?: 1,
+        seatId = seat.id,
+        sectionLabel = seat.sectionLabel,
+        rowLabel = seat.rowLabel,
+        seatNumber = seat.seatNumber,
     )
 }
 

@@ -125,19 +125,19 @@ class SeatLayerPickerPresentationTest {
             SeatLayerPickerPresentationState(
                 activePrompt = SeatLayerPickerPrompt.GeneralAdmission(ga),
                 cartExpanded = true,
-                pendingSeat = pending,
+                candidateSeat = pending,
             ).nextBackStep(section),
         )
         assertEquals(
             SeatLayerPickerBackStep.Cart,
             SeatLayerPickerPresentationState(
                 cartExpanded = true,
-                pendingSeat = pending,
+                candidateSeat = pending,
             ).nextBackStep(section),
         )
         assertEquals(
             SeatLayerPickerBackStep.Confirmation,
-            SeatLayerPickerPresentationState(pendingSeat = pending).nextBackStep(section),
+            SeatLayerPickerPresentationState(candidateSeat = pending).nextBackStep(section),
         )
         assertEquals(
             SeatLayerPickerBackStep.Section,
@@ -161,11 +161,11 @@ class SeatLayerPickerPresentationTest {
         )
         assertEquals(
             SeatLayerPickerBackStep.Venue3D,
-            SeatLayerPickerPresentationState(pendingSeat = pending).nextBackStep(venue3D),
+            SeatLayerPickerPresentationState(candidateSeat = pending).nextBackStep(venue3D),
         )
         assertEquals(
             SeatLayerPickerBackStep.Panorama,
-            SeatLayerPickerPresentationState(pendingSeat = pending).nextBackStep(
+            SeatLayerPickerPresentationState(candidateSeat = pending).nextBackStep(
                 venue3D,
                 SeatLayerSeatView(
                     seatId = "seat-2",
