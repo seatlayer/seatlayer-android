@@ -66,6 +66,45 @@ public data class SeatLayerPickerCategory(
     val available: Int,
     val notForSale: Boolean,
     val tiers: List<SeatLayerPickerCategoryTier>,
+    /**
+     * Seats left in this category, when the runtime counts them.
+     *
+     * Absent is not zero: a runtime that does not offer live counts says
+     * nothing here, and a rail that reads that as "sold out" strikes through a
+     * category the buyer can still book.
+     */
+    val free: Int? = null,
+) {
+    /** True only on affirmative evidence that nothing is left. */
+    public val isSoldOut: Boolean get() = free != null && free <= 0
+}
+
+/** Where a seat is on screen right now, in map-view pixels. */
+public data class SeatLayerPickerScreenPoint(
+    val x: Double,
+    val y: Double,
+)
+
+/** A photograph of the view from a seat. Only a real photograph is offered. */
+public data class SeatLayerPickerSeatViewThumbnail(
+    val reference: String,
+)
+
+/**
+ * What the picker may say about how a modelled view was produced.
+ *
+ * Every prose field is required: a partial disclosure reads as a complete one,
+ * and a buyer deciding on a modelled view deserves the whole answer or none.
+ */
+public data class SeatLayerPickerSeatConfidence(
+    val headline: String,
+    val model: String,
+    val reality: String,
+    val coverage: String,
+    val provenance: String,
+    val freshness: String,
+    val limitations: List<String> = emptyList(),
+    val modeledTarget: String? = null,
 )
 
 /** Rich picker-only selection model without changing the raw protocol-1 seat ABI. */
@@ -91,6 +130,14 @@ public data class SeatLayerPickerSelectedSeat(
     val capacity: Int?,
     val minOccupancy: Int?,
     val maxOccupancy: Int?,
+    /** Where the seat is on screen, when the runtime reports it. */
+    val screenPoint: SeatLayerPickerScreenPoint? = null,
+    /** The seat's own selling marks and the organizer's sentence. */
+    val commercial: SeatLayerPickerSeatCommercial? = null,
+    val seatViewThumbnail: SeatLayerPickerSeatViewThumbnail? = null,
+    /** Distance to the stage, already rounded by the runtime. */
+    val sightlineMetres: Double? = null,
+    val seatViewConfidence: SeatLayerPickerSeatConfidence? = null,
 ) {
     public val buyerFacingLabel: String get() = displayLabel ?: label
     public val isVariableTable: Boolean
@@ -115,6 +162,14 @@ public data class SeatLayerPickerSectionSummary(
     val seatsLeft: Int?,
     val priceMin: Double?,
     val priceMax: Double?,
+    /**
+     * Accessible spaces left in this section, when the runtime counts them.
+     *
+     * Null means not counted, which is not the same as none: an empty report
+     * is a runtime that does not offer the count, and a dock that prints zero
+     * from it tells the buyer the section has nothing when it may have plenty.
+     */
+    val accessibleFree: Int? = null,
 )
 
 public data class SeatLayerPickerCartLine(
@@ -237,9 +292,11 @@ public data class SeatLayerPickerFloorInfo(
 
 public data class SeatLayerPickerAccessNeed(
     val key: String,
-    val count: Int,
+    /** How many are left, when the runtime counts them. Null is not zero. */
+    val count: Int?,
 ) {
-    public val isAvailable: Boolean get() = count > 0
+    /** A need with no count is offered; only an affirmative zero disables it. */
+    public val isAvailable: Boolean get() = count == null || count > 0
 }
 
 /** Protocol-2 general-admission inventory with full native tier metadata. */
@@ -267,6 +324,13 @@ public data class SeatLayerPickerMapState(
     val hideLimitedView: Boolean,
     val canZoomIn: Boolean,
     val canZoomOut: Boolean,
+    /**
+     * Whether the camera is already showing the whole venue.
+     *
+     * Present-only: absent means the renderer cannot answer, never false. A
+     * control that dims on absent is a control that never lights up.
+     */
+    val atVenueFit: Boolean? = null,
     val categoryFilter: List<String>,
     val accessibilityFilter: List<String>,
     val accessNeeds: List<SeatLayerPickerAccessNeed>,

@@ -105,7 +105,80 @@ private fun decodePickerSelectedSeat(value: JsonElement): SeatLayerPickerSelecte
         capacity = exactPickerInteger(root["capacity"]),
         minOccupancy = exactPickerInteger(root["minOccupancy"]),
         maxOccupancy = exactPickerInteger(root["maxOccupancy"]),
+        screenPoint = decodePickerScreenPoint(root["screenPoint"]),
+        commercial = decodePickerCommercial(root["commercial"]),
+        seatViewThumbnail = decodePickerSeatViewThumbnail(root["seatViewThumb"]),
+        // A negative distance is a renderer that could not measure, not a seat
+        // behind the stage.
+        sightlineMetres = finitePickerDouble(root["sightlineMetres"])?.takeIf { it >= 0 },
+        seatViewConfidence = decodePickerSeatConfidence(root["seatViewConfidence"]),
     )
+}
+
+private fun decodePickerScreenPoint(value: JsonElement?): SeatLayerPickerScreenPoint? {
+    val root = value as? JsonObject ?: return null
+    val x = finitePickerDouble(root["x"]) ?: return null
+    val y = finitePickerDouble(root["y"]) ?: return null
+    return SeatLayerPickerScreenPoint(x, y)
+}
+
+private fun decodePickerCommercial(value: JsonElement?): SeatLayerPickerSeatCommercial? {
+    val root = value as? JsonObject ?: return null
+    val commercial = SeatLayerPickerSeatCommercial(
+        restrictedView = root.boolean("restrictedView") == true,
+        obstructedView = root.boolean("obstructedView") == true,
+        premium = root.boolean("premium") == true,
+        organizerNote = root.string("note")?.trim()?.takeIf(String::isNotEmpty),
+    )
+    return commercial.takeUnless { it.isEmpty }
+}
+
+/**
+ * A thumbnail only when the runtime says the image is a real photograph.
+ *
+ * A generated preview offered as "the view from your seat" is a promise the
+ * seat cannot keep, so anything but `real` is dropped.
+ */
+private fun decodePickerSeatViewThumbnail(
+    value: JsonElement?,
+): SeatLayerPickerSeatViewThumbnail? {
+    val root = value as? JsonObject ?: return null
+    if (root.string("kind") != "real") return null
+    val reference = root.string("reference")?.takeIf(String::isNotEmpty) ?: return null
+    return SeatLayerPickerSeatViewThumbnail(reference)
+}
+
+/** Every prose field or nothing: half a disclosure still reads as a whole one. */
+private fun decodePickerSeatConfidence(
+    value: JsonElement?,
+): SeatLayerPickerSeatConfidence? {
+    val root = value as? JsonObject ?: return null
+    val prose = listOf("headline", "model", "reality", "coverage", "provenance", "freshness")
+        .map { key -> root.string(key)?.trim()?.takeIf(String::isNotEmpty) ?: return null }
+    return SeatLayerPickerSeatConfidence(
+        headline = prose[0],
+        model = prose[1],
+        reality = prose[2],
+        coverage = prose[3],
+        provenance = prose[4],
+        freshness = prose[5],
+        limitations = uniquePickerStrings(root["limitations"]),
+        modeledTarget = root.string("modeledTarget"),
+    )
+}
+
+/**
+ * Accessible spaces left in a section, or null when nothing counted them.
+ *
+ * The runtime reports a map keyed by accommodation. An empty map is a runtime
+ * that does not offer the count, so it stays null rather than becoming zero.
+ */
+private fun decodePickerAccessibleFree(value: JsonElement?): Int? {
+    exactPickerInteger(value)?.let { return it.coerceAtLeast(0) }
+    val root = value as? JsonObject ?: return null
+    val counts = root.values.mapNotNull(::exactPickerInteger)
+    if (counts.isEmpty()) return null
+    return counts.sumOf { it.coerceAtLeast(0) }
 }
 
 internal fun decodeSeatLayerPickerCheckoutHandoff(
@@ -212,6 +285,7 @@ private fun decodePickerCategory(value: JsonElement): SeatLayerPickerCategory? {
         available = exactPickerInteger(root["available"]) ?: 0,
         notForSale = root.boolean("notForSale") ?: false,
         tiers = tiers,
+        free = exactPickerInteger(root["free"])?.coerceAtLeast(0),
     )
 }
 
@@ -268,6 +342,9 @@ private fun decodePickerSection(value: JsonElement): SeatLayerPickerSectionSumma
         seatsLeft = exactPickerInteger(root["seatsLeft"]),
         priceMin = finitePickerDouble(root["priceMin"]),
         priceMax = finitePickerDouble(root["priceMax"]),
+        accessibleFree = decodePickerAccessibleFree(
+            root["accessibleFree"] ?: root["accessibleLeft"],
+        ),
     )
 }
 
@@ -316,6 +393,8 @@ private fun decodePickerMap(value: JsonElement?): SeatLayerPickerMapState {
         colorblindSafe = root?.boolean("colorblindSafe") ?: false,
         hideLimitedView = root?.boolean("hideLimitedView") ?: false,
         canZoomIn = root?.boolean("canZoomIn") ?: true,
+        // Present-only: absent is "the renderer cannot answer", never false.
+        atVenueFit = root?.boolean("atVenueFit"),
         // Older runtimes could report false while already below the venue.
         // Explicit true still wins, while semantic 2D evidence preserves one
         // safe step-out during a rolling runtime/native rollout.
@@ -370,7 +449,7 @@ private fun decodePickerAccessNeeds(value: JsonElement?): List<SeatLayerPickerAc
         if (!seen.add(key)) return@decodePickerList null
         SeatLayerPickerAccessNeed(
             key = key,
-            count = (exactPickerInteger(root["count"]) ?: 0).coerceAtLeast(0),
+            count = exactPickerInteger(root["count"])?.coerceAtLeast(0),
         )
     }
 }
