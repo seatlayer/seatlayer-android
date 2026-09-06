@@ -832,6 +832,78 @@ final class io.seatlayer.android.PendingCommand {
   public boolean equals(java.lang.Object);
     descriptor: (Ljava/lang/Object;)Z
 }
+public final class io.seatlayer.android.PickerControllerAccessibilityKt {
+  public static final java.lang.Object performSetAccessibilityFilter(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetLimitedViewHidden(io.seatlayer.android.SeatLayerPickerController, boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetColorblindSafe(io.seatlayer.android.SeatLayerPickerController, boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+public final class io.seatlayer.android.PickerControllerCameraKt {
+  public static final java.lang.Object performFocusSection(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetRung(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetFloor(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetViewMode-fCARRtk(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetBuyerView(io.seatlayer.android.SeatLayerPickerController, java.lang.String, java.lang.String, boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performOpenSeatView(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSet3DNavigationMode(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetThemeMode-_5FjZnw(io.seatlayer.android.SeatLayerPickerController, java.lang.String, io.seatlayer.android.SeatLayerPickerMapTheme, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerMapTheme;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetViewportInsets(io.seatlayer.android.SeatLayerPickerController, io.seatlayer.android.SeatLayerPickerViewportInsets, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Lio/seatlayer/android/SeatLayerPickerViewportInsets;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+public final class io.seatlayer.android.PickerControllerHoldKt {
+  public static final java.lang.Object performSetGeneralAdmissionQuantity(io.seatlayer.android.SeatLayerPickerController, java.lang.String, int, java.lang.String, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;ILjava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performHoldSelection(io.seatlayer.android.SeatLayerPickerController, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performBestAvailable(io.seatlayer.android.SeatLayerPickerController, int, java.lang.String, java.lang.String, boolean, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;ILjava/lang/String;Ljava/lang/String;ZLjava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performResumeHold(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performExtendHold(io.seatlayer.android.SeatLayerPickerController, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performRejectHandoff(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performCheckout(io.seatlayer.android.SeatLayerPickerController, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerCheckoutHandoff>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performRefreshAccess(io.seatlayer.android.SeatLayerPickerController, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerLifecycleResult>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performLifecycle(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerLifecycleResult>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performReselectLapsedSeats(io.seatlayer.android.SeatLayerPickerController, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+public final class io.seatlayer.android.PickerControllerSelectionKt {
+  public static final java.lang.Object performSelectObjects(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performDeselectObjects(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSelectCategories(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performDeselectCategories(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetSeatTier(io.seatlayer.android.SeatLayerPickerController, java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performRemoveObject(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetTableQuantity(io.seatlayer.android.SeatLayerPickerController, java.lang.String, int, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;ILjava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetSelectableObjects(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetMaxSelection(io.seatlayer.android.SeatLayerPickerController, int, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;ILkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static final java.lang.Object performSetCategoryFilter(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
 public final class io.seatlayer.android.ProtocolRange$Companion {
   public final io.seatlayer.android.ProtocolRange getNative();
     descriptor: ()Lio/seatlayer/android/ProtocolRange;
@@ -2283,6 +2355,8 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Lio/seatlayer/android/SeatLayerPickerStateHolder;J)V
   public io.seatlayer.android.SeatLayerPickerController(io.seatlayer.android.SeatLayerPickerStateHolder, long, int, kotlin.jvm.internal.DefaultConstructorMarker);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerStateHolder;JILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final io.seatlayer.android.SeatLayerPickerStateHolder getStateHolder$seatlayer();
+    descriptor: ()Lio/seatlayer/android/SeatLayerPickerStateHolder;
   public final io.seatlayer.android.SeatLayerPickerSnapshot getSnapshot();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerSnapshot;
   public final kotlinx.coroutines.flow.SharedFlow<io.seatlayer.android.SeatLayerChartLoad> getChartLoads();
@@ -2465,6 +2539,50 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: ()V
   public final void resetForLoad$seatlayer();
     descriptor: ()V
+  public final io.seatlayer.android.SeatLayerPickerHoldLapse getHoldLapse$seatlayer();
+    descriptor: ()Lio/seatlayer/android/SeatLayerPickerHoldLapse;
+  public final boolean getRefreshesOnResume$seatlayer();
+    descriptor: ()Z
+  public final void setActionInFlight$seatlayer(boolean);
+    descriptor: (Z)V
+  public final void recordPickerError$seatlayer(io.seatlayer.android.SeatLayerException);
+    descriptor: (Lio/seatlayer/android/SeatLayerException;)V
+  public final void dismissGeneralAdmissionCandidate$seatlayer();
+    descriptor: ()V
+  public final boolean supportsCapabilityAndCommand$seatlayer(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Z
+  public final java.lang.Object mutation$seatlayer(java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object mutation$seatlayer$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object presentation$seatlayer(java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object presentation$seatlayer$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object command$seatlayer(java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation<? super kotlinx.serialization.json.JsonElement>);
+    descriptor: (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object command$seatlayer$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object lifecycleMutation$seatlayer(java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerLifecycleResult>);
+    descriptor: (Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object lifecycleMutation$seatlayer$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object applyMutationResult$seatlayer(kotlinx.serialization.json.JsonElement, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lkotlinx/serialization/json/JsonElement;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+}
+public final class io.seatlayer.android.SeatLayerPickerControllerKt {
+  public static final void requireNonEmptyValue(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)V
+  public static final void requireNonEmptyValues(java.util.List<java.lang.String>, java.lang.String);
+    descriptor: (Ljava/util/List;Ljava/lang/String;)V
+  public static final void requirePositiveValue(int, java.lang.String);
+    descriptor: (ILjava/lang/String;)V
+  public static final io.seatlayer.android.SeatLayerException$Bridge badPickerPayload(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SeatLayerException$Bridge;
+  public static final io.seatlayer.android.SeatLayerException$Bridge pickerDecodingFailure(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SeatLayerException$Bridge;
+  public static final io.seatlayer.android.SeatLayerException$Bridge pickerBridgeFailure(java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;)Lio/seatlayer/android/SeatLayerException$Bridge;
 }
 public final class io.seatlayer.android.SeatLayerPickerDecodingKt {
   public static final io.seatlayer.android.SeatLayerPickerSnapshot decodeSeatLayerPickerSnapshot(kotlinx.serialization.json.JsonElement);
