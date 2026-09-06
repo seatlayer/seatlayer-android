@@ -144,7 +144,7 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
     val panorama = state.seatView != null
     val interactionBlocked = state.presentation.cartExpanded ||
         (!immersiveInspection &&
-            (state.presentation.pendingSeat != null ||
+            (state.presentation.candidateSeat != null ||
                 state.presentation.activePrompt != null))
     LaunchedEffect(interactionBlocked, state.isReady) {
         if (state.isReady) {
@@ -371,7 +371,7 @@ private fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
     }
 
     if (regularMap && scope.options.chrome.confirmCard &&
-        scope.state.presentation.pendingSeat != null
+        scope.state.presentation.candidateSeat != null
     ) {
         Box(
             modifier = Modifier
@@ -426,7 +426,7 @@ private fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
         }
     }
     if (scope.options.chrome.confirmCard &&
-        scope.state.presentation.pendingSeat != null
+        scope.state.presentation.candidateSeat != null
     ) {
         Box(
             modifier = Modifier

@@ -181,7 +181,7 @@ private fun evidencePresentation(
     val table = evidenceTable()
     return when (scenario) {
         PickerEvidenceScenario.Confirmation -> SeatLayerPickerPresentationState(
-            pendingSeat = seat,
+            candidateSeat = seat,
         )
         PickerEvidenceScenario.GeneralAdmission -> SeatLayerPickerPresentationState(
             activePrompt = SeatLayerPickerPrompt.GeneralAdmission(

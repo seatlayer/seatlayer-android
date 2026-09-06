@@ -40,7 +40,7 @@ internal fun SeatLayerSelectionFlight(
     modifier: Modifier = Modifier,
 ) {
     val scope = LocalSeatLayerPickerScope.current
-    val pending = scope.state.presentation.pendingSeat
+    val pending = scope.state.presentation.candidateSeat
     val snapshot = scope.state.snapshot
     var previous by remember(scope.stateHolder) {
         mutableStateOf<SeatLayerPickerSelectedSeat?>(pending)

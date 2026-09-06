@@ -56,7 +56,7 @@ public fun SeatLayerConfirmCard(
 ) {
     val scope = LocalSeatLayerPickerScope.current
     val resolvedStyle = style ?: scope.styles[SeatLayerPickerPart.ConfirmCard]
-    val seat = scope.state.presentation.pendingSeat ?: return
+    val seat = scope.state.presentation.candidateSeat ?: return
     val coroutineScope = rememberCoroutineScope()
     var selectedTierId by remember(
         seat.id,
