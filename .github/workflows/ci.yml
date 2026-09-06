@@ -23,5 +23,14 @@ jobs:
         with:
           distribution: temurin
           java-version: "17"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - run: node --version
       - uses: gradle/actions/setup-gradle@v6
+      # `validate` is the whole release gate in one job. Keep an eye on the
+      # elapsed time reported here: the job's own limit is 20 minutes, so when
+      # the gate approaches it, split it into a per-push `check` (unit tests,
+      # design and hygiene checks, API dumps) and a tag-only `validateRelease`
+      # (consumer smoke builds, benchmark assembly, lint).
       - run: ./gradlew validate

@@ -193,6 +193,7 @@ tasks.register("validate") {
         ":seatlayer:assembleRelease",
         ":seatlayer:generatePomFileForMavenPublication",
         ":seatlayer-compose:testDebugUnitTest",
+        ":seatlayer-compose:verifyRoborazziDebug",
         ":seatlayer-compose:lintRelease",
         ":seatlayer-compose:assembleRelease",
         ":seatlayer-compose:assembleDebugAndroidTest",
