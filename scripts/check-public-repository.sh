@@ -32,7 +32,7 @@ while IFS= read -r path; do
   case "$lower" in
     *.png|*.jpg|*.jpeg|*.gif|*.mp4|*.mov)
       case "$lower" in
-        .github/social-preview.png|doc/media/*|docs/media/*|test/*|tests/*|example/*/assets.xcassets/*|example/android/app/src/main/res/*|sample/src/main/res/*) ;;
+        .github/social-preview.png|doc/media/*|docs/media/*|test/*|tests/*|*/src/test/snapshots/*|example/*/assets.xcassets/*|example/android/app/src/main/res/*|sample/src/main/res/*) ;;
         *) report "media is outside an approved public or test-fixture location: $path" ;;
       esac
       ;;

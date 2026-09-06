@@ -1,11 +1,6 @@
 package io.seatlayer.android.compose
 
-import android.content.res.Configuration
-import android.graphics.Bitmap
-import android.os.SystemClock
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -24,25 +19,24 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import io.seatlayer.android.SeatLayerPickerThemeMode
-import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.GraphicsMode
 
 /** Full native-chrome evidence with only renderer-owned pixels substituted. */
 @RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 public class SeatLayerPickerVisualEvidenceTest {
     @get:Rule
     public val composeRule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
     public fun overviewTestModeCompactLight() {
-        render(PickerEvidenceScenario.Overview, "overview-test-light-compact-api35.png")
+        render(PickerEvidenceScenario.Overview)
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
         composeRule.onNodeWithText("TEST MODE").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Fit to screen").assertIsDisplayed()
@@ -50,10 +44,7 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun sectionFocusFloorsAndStepOut() {
-        render(
-            PickerEvidenceScenario.SectionFocus,
-            "section-focus-floors-light-compact-api35.png",
-        )
+        render(PickerEvidenceScenario.SectionFocus)
         composeRule.onNodeWithText("Lower").assertIsDisplayed()
         composeRule.onNodeWithText("Upper").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Back to venue").assertIsDisplayed()
@@ -61,10 +52,7 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun visibleAdultChildTierConfirmation() {
-        render(
-            PickerEvidenceScenario.Confirmation,
-            "confirmation-tiers-light-compact-api35.png",
-        )
+        render(PickerEvidenceScenario.Confirmation)
         composeRule.onNodeWithText("Adult").assertIsDisplayed()
         composeRule.onNodeWithText("Child").assertIsDisplayed()
         composeRule.onNodeWithText("Companion").assertIsDisplayed()
@@ -72,7 +60,7 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun generalAdmissionQuantityAndTiers() {
-        render(PickerEvidenceScenario.GeneralAdmission, "ga-quantity-light-compact-api35.png")
+        render(PickerEvidenceScenario.GeneralAdmission)
         composeRule.onNodeWithText("Standing floor").assertIsDisplayed()
         composeRule.onNodeWithText("Quantity").assertIsDisplayed()
     }
@@ -81,7 +69,6 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun tableQuantityDark() {
         render(
             PickerEvidenceScenario.Table,
-            "table-quantity-dark-compact-api35.png",
             themeMode = SeatLayerPickerThemeMode.Dark,
         )
         composeRule.onNodeWithText("Terrace table 7").assertIsDisplayed()
@@ -90,14 +77,14 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun expandedDenseCartWithHold() {
-        render(PickerEvidenceScenario.Cart, "cart-hold-light-compact-api35.png")
+        render(PickerEvidenceScenario.Cart)
         composeRule.onNodeWithText("12–14", substring = true).assertIsDisplayed()
         composeRule.onNodeWithText("Hold seats & checkout").assertIsDisplayed()
     }
 
     @Test
     public fun holdLapseAndUndoNotices() {
-        render(PickerEvidenceScenario.Recovery, "hold-lapse-undo-light-compact-api35.png")
+        render(PickerEvidenceScenario.Recovery)
         composeRule.onNodeWithText("Your hold expired.").assertIsDisplayed()
         composeRule.onNodeWithText("Undo").assertIsDisplayed()
     }
@@ -106,7 +93,6 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun venue3DTargetAndNeighboursDark() {
         render(
             PickerEvidenceScenario.Venue3D,
-            "venue-3d-target-dark-compact-api35.png",
             themeMode = SeatLayerPickerThemeMode.Dark,
         )
         composeRule.onNodeWithContentDescription("Previous seat").assertIsDisplayed()
@@ -119,7 +105,6 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun panoramaRestoresTargetChromeDark() {
         render(
             PickerEvidenceScenario.Panorama,
-            "panorama-target-dark-compact-api35.png",
             themeMode = SeatLayerPickerThemeMode.Dark,
         )
         composeRule.onNodeWithText("Section 102 · Row A · Seat 12").assertIsDisplayed()
@@ -128,23 +113,20 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun panoramaUnavailableIsActionable() {
-        render(
-            PickerEvidenceScenario.PanoramaUnavailable,
-            "panorama-unavailable-light-compact-api35.png",
-        )
+        render(PickerEvidenceScenario.PanoramaUnavailable)
         composeRule.onNodeWithText("Seat view is unavailable for this seat.").assertIsDisplayed()
         composeRule.onNodeWithText("Dismiss").assertIsDisplayed()
     }
 
     @Test
     public fun loadingState() {
-        render(PickerEvidenceScenario.Loading, "loading-light-compact-api35.png")
+        render(PickerEvidenceScenario.Loading)
         composeRule.onNodeWithContentDescription("Loading seat map…").assertIsDisplayed()
     }
 
     @Test
     public fun failureRetryState() {
-        render(PickerEvidenceScenario.Error, "error-retry-light-compact-api35.png")
+        render(PickerEvidenceScenario.Error)
         composeRule.onNodeWithText("Choose your seats").assertIsDisplayed()
         composeRule.onNodeWithText("The seat map didn’t load").assertIsDisplayed()
         composeRule.onNodeWithText("Try again").assertIsDisplayed()
@@ -152,13 +134,13 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun emptyInventoryState() {
-        render(PickerEvidenceScenario.Empty, "empty-inventory-light-compact-api35.png")
+        render(PickerEvidenceScenario.Empty)
         composeRule.onNodeWithText("Sold out").assertIsDisplayed()
     }
 
     @Test
     public fun salesClosedState() {
-        render(PickerEvidenceScenario.SalesClosed, "sales-closed-light-compact-api35.png")
+        render(PickerEvidenceScenario.SalesClosed)
         composeRule.onNodeWithText("Sold out").assertIsDisplayed()
     }
 
@@ -166,7 +148,6 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun confirmationAtLargeFontScale() {
         render(
             PickerEvidenceScenario.Confirmation,
-            "confirmation-large-font-light-api35.png",
             fontScale = 1.5f,
         )
         composeRule.onNodeWithText("Select").assertIsDisplayed()
@@ -177,7 +158,6 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun rtlCompactChrome() {
         render(
             PickerEvidenceScenario.Overview,
-            "overview-rtl-light-compact-api35.png",
             layoutDirection = LayoutDirection.Rtl,
         )
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
@@ -187,7 +167,6 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun narrowSplitScreenChrome() {
         render(
             PickerEvidenceScenario.Overview,
-            "overview-split-320dp-light-api35.png",
             viewportWidthDp = 320,
         )
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
@@ -195,11 +174,9 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun compactLandscapeChrome() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        assumeTrue(context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        RuntimeEnvironment.setQualifiers("+w844dp-h390dp-land")
         render(
             PickerEvidenceScenario.Overview,
-            "overview-compact-landscape-light-api35.png",
             options = SeatLayerPickerOptions(layout = SeatLayerPickerLayoutMode.Compact),
         )
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
@@ -208,11 +185,9 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     @Test
     public fun wideLandscapeChrome() {
-        val context = InstrumentationRegistry.getInstrumentation().targetContext
-        assumeTrue(context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+        RuntimeEnvironment.setQualifiers("+w844dp-h390dp-land")
         render(
             PickerEvidenceScenario.Cart,
-            "cart-wide-landscape-light-api35.png",
             options = SeatLayerPickerOptions(layout = SeatLayerPickerLayoutMode.Wide),
         )
         composeRule.onNodeWithText("Section 102", substring = true).assertIsDisplayed()
@@ -221,7 +196,6 @@ public class SeatLayerPickerVisualEvidenceTest {
 
     private fun render(
         scenario: PickerEvidenceScenario,
-        fileName: String,
         themeMode: SeatLayerPickerThemeMode = SeatLayerPickerThemeMode.Light,
         options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
         fontScale: Float = 1f,
@@ -270,61 +244,5 @@ public class SeatLayerPickerVisualEvidenceTest {
         composeRule.waitForIdle()
         composeRule.mainClock.advanceTimeBy(500)
         composeRule.waitForIdle()
-        composeRule.runOnUiThread {
-            val transparent = android.graphics.Color.TRANSPARENT
-            val lightBars = themeMode != SeatLayerPickerThemeMode.Dark
-            composeRule.activity.enableEdgeToEdge(
-                statusBarStyle = if (lightBars) {
-                    SystemBarStyle.light(transparent, transparent)
-                } else {
-                    SystemBarStyle.dark(transparent)
-                },
-                navigationBarStyle = if (lightBars) {
-                    SystemBarStyle.light(transparent, transparent)
-                } else {
-                    SystemBarStyle.dark(transparent)
-                },
-            )
-            WindowCompat.getInsetsController(
-                composeRule.activity.window,
-                composeRule.activity.window.decorView,
-            ).apply {
-                isAppearanceLightStatusBars = lightBars
-                isAppearanceLightNavigationBars = lightBars
-            }
-        }
-        saveScreenshot(fileName)
-    }
-
-    private fun saveScreenshot(fileName: String) {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        val outputDirectory = instrumentation.targetContext.getExternalFilesDir("evidence")
-            ?: error("No external evidence directory")
-        val output = outputDirectory.resolve(fileName)
-        instrumentation.waitForIdleSync()
-        SystemClock.sleep(400)
-        instrumentation.uiAutomation.takeScreenshot().let { bitmap ->
-            assertTrue(
-                "Screenshot $fileName did not contain rendered application content",
-                bitmap.hasRenderedApplicationContent(),
-            )
-            output.outputStream().use { stream ->
-                assertTrue(bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream))
-            }
-        }
-        assertTrue("Screenshot $fileName is empty", output.length() > 10_000)
-    }
-
-    private fun Bitmap.hasRenderedApplicationContent(): Boolean {
-        val colours = hashSetOf<Int>()
-        val xStep = (width / 32).coerceAtLeast(1)
-        val yStep = (height / 48).coerceAtLeast(1)
-        for (y in height / 8 until height * 7 / 8 step yStep) {
-            for (x in width / 10 until width * 9 / 10 step xStep) {
-                colours += getPixel(x, y)
-                if (colours.size >= 12) return true
-            }
-        }
-        return false
     }
 }

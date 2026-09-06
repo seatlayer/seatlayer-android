@@ -7,6 +7,7 @@ plugins {
     id("com.android.test") version "9.2.1" apply false
     id("org.jetbrains.kotlin.plugin.compose") version "2.3.10" apply false
     id("com.vanniktech.maven.publish") version "0.37.0" apply false
+    id("io.github.takahirom.roborazzi") version "1.73.0" apply false
 }
 
 subprojects {
