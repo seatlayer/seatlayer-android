@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -142,3 +143,44 @@ private fun needLabel(need: SeatLayerPickerAccessNeed): String =
         .filter(String::isNotBlank)
         .joinToString(" ") { word -> word.replaceFirstChar(Char::uppercase) } +
         " · ${need.count}"
+
+@Composable
+internal fun AccessibilityToggleOption(
+    label: String,
+    selected: Boolean,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    val scope = LocalSeatLayerPickerScope.current
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 52.dp)
+            .semantics {
+                role = Role.Switch
+                toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
+            },
+        color = Color.Transparent,
+        contentColor = scope.theme.onSurface,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                label,
+                modifier = Modifier.weight(1f),
+                color = if (enabled) scope.theme.onSurface else scope.theme.muted,
+                fontWeight = FontWeight.Medium,
+            )
+            Switch(
+                checked = selected,
+                onCheckedChange = null,
+                enabled = enabled,
+                modifier = Modifier.clearAndSetSemantics { },
+            )
+        }
+    }
+}
