@@ -101,10 +101,9 @@ renewable buyer-access provider from a trusted backend.
 
 Android capability-gates the additive `picker.closeSeatView` command. When a
 runtime advertises it, hardware/predictive Back closes panorama without changing
-selection or the 3D target. The pinned hosted `0.71.5` runtime exposes only its
-own close control, so native Back sends no unsupported command and does not
-claim to close panorama there. Runtime rollout and live Back validation remain
-release gates.
+selection or the 3D target. Where a runtime exposes only its own close control,
+native Back sends no unsupported command and does not claim to close panorama
+there. Runtime rollout and live Back validation remain release gates.
 
 Checkout transfers an opaque `SeatLayerPickerCheckoutHandoff` to the host.
 Booking and price verification stay on your trusted server. If the host cannot
@@ -482,9 +481,9 @@ contract does not.
   selection or 3D seat.
 - Hardware/predictive Back walks prompt → expanded cart → panorama → 3D → seat
   confirmation → focused section → host close. `picker.closeSeatView` is sent
-  only when advertised. Hosted runtime `0.71.5` does not advertise it, so its
-  own panorama close affordance remains authoritative and hosted native Back is
-  not claimed for that path.
+  only when advertised. A runtime that does not advertise it keeps its own
+  panorama close affordance authoritative, and native Back is not claimed for
+  that path.
 - Ordinary 2D controls stand down during immersive scenes while cart/Continue
   remains reachable when the buyer has held inventory.
 
@@ -660,6 +659,6 @@ surface is separate from the protocol-2 picker and remains source/binary
 compatible with `0.2.x`. New native-picker work should prefer the ready-made
 picker or the headless picker state/controller described above.
 
-The pinned hosted `0.71.5` runtime does not advertise native panorama close, so
+Where the hosted runtime does not advertise native panorama close,
 hardware/predictive Back does not claim to close a hosted panorama; the
 runtime-owned close control remains authoritative.

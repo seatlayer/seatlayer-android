@@ -1189,15 +1189,15 @@ public final class io.seatlayer.android.SeatLayerConfiguration {
 public final class io.seatlayer.android.SeatLayerConfigurationKt {
   public static final java.lang.String SEATLAYER_ANDROID_VERSION = "0.3.5";
     descriptor: Ljava/lang/String;
-  public static final java.lang.String SEATLAYER_HOSTED_WEB_VERSION = "0.71.5";
+  public static final java.lang.String SEATLAYER_HOSTED_WEB_VERSION = "0.84.1";
     descriptor: Ljava/lang/String;
   public static final java.lang.String SEATLAYER_LEGACY_FIXTURE_WEB_VERSION = "0.59.0";
     descriptor: Ljava/lang/String;
-  public static final java.lang.String SEATLAYER_BUNDLED_WEB_VERSION = "0.71.5";
+  public static final java.lang.String SEATLAYER_BUNDLED_WEB_VERSION = "0.84.1";
     descriptor: Ljava/lang/String;
   public static final java.lang.String SEATLAYER_MOBILE_ORIGIN = "https://cdn.seatlayer.io";
     descriptor: Ljava/lang/String;
-  public static final java.lang.String SEATLAYER_MOBILE_PAGE_URL = "https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html";
+  public static final java.lang.String SEATLAYER_MOBILE_PAGE_URL = "https://cdn.seatlayer.io/seatlayer-js@0.84.1/mobile.html";
     descriptor: Ljava/lang/String;
   public static void getSEATLAYER_BUNDLED_WEB_VERSION$annotations();
     descriptor: ()V
@@ -4053,7 +4053,7 @@ final class io.seatlayer.android.SeatLayerView$Companion {
 public final class io.seatlayer.android.SeatLayerView extends android.widget.FrameLayout {
   public static final java.lang.String APP_ORIGIN = "https://cdn.seatlayer.io";
     descriptor: Ljava/lang/String;
-  public static final java.lang.String PAGE_URL = "https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html";
+  public static final java.lang.String PAGE_URL = "https://cdn.seatlayer.io/seatlayer-js@0.84.1/mobile.html";
     descriptor: Ljava/lang/String;
   public static final java.lang.String BRIDGE_OBJECT = "seatlayerAndroid";
     descriptor: Ljava/lang/String;

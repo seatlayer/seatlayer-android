@@ -26,24 +26,6 @@ subprojects {
     }
 }
 
-val expectedWebSdkSha256 =
-    "89bc29fbccad5d3c30e52cf5381c974b95ac034b32c28b400248b4ebb4ee22a9"
-
-tasks.register("verifyVendoredWebSdk") {
-    group = "verification"
-    description = "Verifies the pinned SeatLayer Web SDK asset."
-    val asset = layout.projectDirectory.file("seatlayer/src/main/assets/seatlayer.js")
-    inputs.file(asset)
-    doLast {
-        val digest = java.security.MessageDigest.getInstance("SHA-256")
-            .digest(asset.asFile.readBytes())
-            .joinToString("") { "%02x".format(it) }
-        check(digest == expectedWebSdkSha256) {
-            "Unexpected seatlayer.js checksum: $digest"
-        }
-    }
-}
-
 val verifyKotlinSourceLimits = tasks.register("verifyKotlinSourceLimits") {
     group = "verification"
     description = "Rejects Android Kotlin source files over the 800-line project limit."
@@ -207,6 +189,5 @@ tasks.register("validate") {
         verifyPublicRepositoryHygiene,
         verifyKotlinSourceLimits,
         verifyPublicApi,
-        "verifyVendoredWebSdk",
     )
 }

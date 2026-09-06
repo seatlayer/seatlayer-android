@@ -95,7 +95,7 @@ flowchart TD
   telemetry, secure holds, and buyer-safe checkout handoff.
 - A hardened, origin-restricted AndroidX WebKit bridge with no unrestricted
   `addJavascriptInterface`.
-- A pinned immutable `seatlayer-js@0.71.5/mobile.html` renderer.
+- A pinned immutable `seatlayer-js@0.84.1/mobile.html` renderer.
 - A generic sample covering ready Compose, branded/custom Compose, ready/custom
   View, and raw integrations.
 
@@ -414,18 +414,15 @@ reason (`initial`, `expiring`, `expired`, `unauthorized`, `reconnect`, or
 ### Runtime and layout boundary
 
 Both raw and native-picker integrations load the pinned
-`https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html` document. Native and
+`https://cdn.seatlayer.io/seatlayer-js@0.84.1/mobile.html` document. Native and
 web communicate through AndroidX WebKit messages restricted to the exact HTTPS
 origin and main frame. File/content access, mixed content, popups, multiple
 windows, automatic external navigation, and third-party cookies are disabled.
 Renderer termination becomes a typed transport failure instead of a silent
 blank screen.
 
-The production path is the hosted `0.71.5` page. The
-repository retains a verified `seatlayer-js@0.59.0` JavaScript fixture only for
-deterministic legacy tests: `seatlayer/src/main/assets/seatlayer.js`, SHA-256
-`89bc29fbccad5d3c30e52cf5381c974b95ac034b32c28b400248b4ebb4ee22a9`. The
-fixture is not loaded by the production picker.
+The production path is the hosted `0.84.1` page, and it is the only path: the
+SDK vendors no JavaScript of its own.
 
 Give the map a definite height or make it full-screen. Do not place it in a
 `ScrollView`, `NestedScrollView`, lazy list item, or another gesture-driven
@@ -455,7 +452,7 @@ SeatLayerConfiguration(
 ```
 
 The SDK loads only the immutable
-`https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html` page. Web messages are
+`https://cdn.seatlayer.io/seatlayer-js@0.84.1/mobile.html` page. Web messages are
 restricted to the exact HTTPS origin and main frame; external navigation,
 file/content access, mixed content, popups, multiple windows, and third-party
 cookies are blocked. The bridge does not use `addJavascriptInterface`.
@@ -496,10 +493,9 @@ accessibility groups, hold ownership, retry state, or capability information.
 
 Optional operations are exact capability-gated. An older runtime never receives
 a command it did not advertise. In particular, native panorama Back sends
-`picker.closeSeatView` only when that exact command is present. The pinned
-hosted `0.71.5` runtime does not advertise it, so its own panorama close control
-remains authoritative; this README does not claim hosted native-Back support
-for that path.
+`picker.closeSeatView` only when that exact command is present. A runtime that
+does not advertise it keeps its own panorama close control authoritative; this
+README claims no native-Back support for that path.
 
 ## Selection, cart, holds, and checkout
 
