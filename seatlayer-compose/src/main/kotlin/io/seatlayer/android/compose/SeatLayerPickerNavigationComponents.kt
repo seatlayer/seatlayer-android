@@ -314,7 +314,7 @@ public fun SeatLayerDockBar(
                     .height(48.dp)
                     .semantics {
                         role = Role.Button
-                        contentDescription = scope.strings.venue
+                        contentDescription = scope.strings.overview
                     },
                 color = Color.Transparent,
                 contentColor = scope.theme.onSurface,
@@ -330,7 +330,7 @@ public fun SeatLayerDockBar(
                     )
                     Spacer(Modifier.width(3.dp))
                     Text(
-                        scope.strings.venue,
+                        scope.strings.overview,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.ExtraBold,
                     )
@@ -441,7 +441,7 @@ private fun LegacySeatLayerPickerAccessibilityFilters(
                             }
                         }
                         AccessibilityOption(
-                            label = scope.strings.limitedView,
+                            label = scope.strings.hideLimitedView,
                             selected = scope.state.snapshot?.map?.hideLimitedView == true,
                         ) {
                             coroutineScope.launch {

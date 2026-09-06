@@ -2,44 +2,9 @@ package io.seatlayer.android
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class SeatLayerPickerClosurePlanningTest {
-    @Test
-    fun `accessibility plan mutates only changed supported settings then focuses positive filters`() {
-        val initial = SeatLayerPickerAccessibilityDraft(
-            keys = setOf("step-free"),
-            limitedView = false,
-            colorblindSafe = false,
-        )
-        val draft = SeatLayerPickerAccessibilityDraft(
-            keys = linkedSetOf("step-free", "companion"),
-            limitedView = true,
-            colorblindSafe = true,
-        )
-        val plan = SeatLayerPickerAccessibility.plan(
-            draft,
-            initial,
-            SeatLayerPickerAccessibilityAvailability(
-                accessibility = true,
-                limitedView = true,
-                colorblindSafe = false,
-            ),
-        )
-
-        assertEquals(
-            listOf(
-                SeatLayerPickerAccessibilityMutation.Accessibility(
-                    listOf("step-free", "companion"),
-                ),
-                SeatLayerPickerAccessibilityMutation.LimitedView(true),
-            ),
-            plan,
-        )
-        assertTrue(SeatLayerPickerAccessibility.shouldFocusSeats(plan))
-    }
-
     @Test
     fun `cart motion starts only after the pending seat is authoritatively retained`() {
         val pending = seat()

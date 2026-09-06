@@ -91,12 +91,12 @@ public data class SeatLayerPickerPartStyle(
 
 @Immutable
 public data class SeatLayerPickerStyles(
-    val buttonRadius: Dp = SeatLayerPickerTokens.RADIUS_BUTTON.dp,
-    val cardRadius: Dp = SeatLayerPickerTokens.RADIUS_CARD.dp,
-    val sheetRadius: Dp = SeatLayerPickerTokens.RADIUS_SHEET.dp,
-    val horizontalGutter: Dp = SeatLayerPickerTokens.SIZE_CONFIRM_CARD_GUTTER.dp,
-    val panelWidth: Dp = SeatLayerPickerTokens.SIZE_CONFIRM_CARD_MAX_WIDTH.dp,
-    val wideBreakpoint: Dp = SeatLayerPickerTokens.SIZE_WIDE_BREAKPOINT.dp,
+    val buttonRadius: Dp = SeatLayerRadiusTokens.BUTTON.dp,
+    val cardRadius: Dp = SeatLayerRadiusTokens.CARD.dp,
+    val sheetRadius: Dp = SeatLayerRadiusTokens.SHEET.dp,
+    val horizontalGutter: Dp = SeatLayerSizeTokens.CONFIRM_CARD_GUTTER.dp,
+    val panelWidth: Dp = SeatLayerSizeTokens.CONFIRM_CARD_MAX_WIDTH.dp,
+    val wideBreakpoint: Dp = SeatLayerSizeTokens.WIDE_BREAKPOINT.dp,
     val parts: Map<SeatLayerPickerPart, SeatLayerPickerPartStyle> = emptyMap(),
 ) {
     public operator fun get(part: SeatLayerPickerPart): SeatLayerPickerPartStyle =

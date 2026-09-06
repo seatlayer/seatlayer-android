@@ -346,8 +346,8 @@ private fun compactSeatLabel(
     strings: SeatLayerPickerStrings,
 ): String = listOfNotNull(
     seat.sectionLabel ?: seat.displayLabel ?: seat.label,
-    seat.rowLabel?.let { "${strings.row} $it" },
-    seat.seatNumber?.let { "${strings.seat} $it" },
+    seat.rowLabel?.let { "${strings.rowWord} $it" },
+    seat.seatNumber?.let { "${strings.seatWord} $it" },
 ).distinct().joinToString(" · ")
 
 /** Wide-layout form of the same confirmation state and commands. */
@@ -516,7 +516,7 @@ private fun TableDialog(
             value = quantity,
             minimum = minimum,
             maximum = maximum,
-            label = scope.strings.tableGuests,
+            label = scope.strings.chooseTableGuests,
             onValue = { quantity = it },
         )
         if (seat.tiers.isNotEmpty()) {
@@ -716,8 +716,8 @@ private fun SeatIdentity(
             )
             val details = listOfNotNull(
                 seat.sectionLabel,
-                seat.rowLabel?.let { "${scope.strings.row} $it" },
-                seat.seatNumber?.let { "${scope.strings.seat} $it" },
+                seat.rowLabel?.let { "${scope.strings.rowWord} $it" },
+                seat.seatNumber?.let { "${scope.strings.seatWord} $it" },
             ).joinToString(" · ")
             if (details.isNotEmpty()) {
                 Text(details, style = MaterialTheme.typography.bodySmall, color = scope.theme.muted)

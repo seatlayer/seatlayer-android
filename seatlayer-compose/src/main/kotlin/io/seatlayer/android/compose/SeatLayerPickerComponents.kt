@@ -151,9 +151,9 @@ public fun SeatLayerPickerHeader(
                 .fillMaxWidth()
                 .then(
                     if (compact) {
-                        Modifier.height(SeatLayerPickerTokens.SIZE_HEADER_HEIGHT.dp)
+                        Modifier.height(SeatLayerSizeTokens.HEADER_HEIGHT.dp)
                     } else {
-                        Modifier.heightIn(min = SeatLayerPickerTokens.SIZE_HEADER_HEIGHT.dp)
+                        Modifier.heightIn(min = SeatLayerSizeTokens.HEADER_HEIGHT.dp)
                     },
                 )
                 .padding(
@@ -166,7 +166,7 @@ public fun SeatLayerPickerHeader(
         ) {
             val brandLabel = branding?.brandName?.trim()?.takeIf(String::isNotEmpty)
             val brandSize = if (compact) {
-                SeatLayerPickerTokens.SIZE_HEADER_LOGO_SIZE.dp
+                SeatLayerSizeTokens.HEADER_LOGO_SIZE.dp
             } else {
                 36.dp
             }
@@ -350,7 +350,7 @@ private fun PickerLegendChip(
                 Text(
                     text = price,
                     color = if (selected) scope.theme.onAccent else scope.theme.onSurface,
-                    fontSize = SeatLayerPickerTokens.SIZE_LEGEND_CHIP_FONT_SIZE.sp,
+                    fontSize = SeatLayerSizeTokens.LEGEND_CHIP_FONT_SIZE.sp,
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1,
                 )
@@ -708,7 +708,7 @@ public fun SeatLayerPickerErrorView(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = scope.strings.unavailable,
+                text = scope.strings.errorMessage,
                 style = MaterialTheme.typography.titleMedium,
                 color = scope.theme.onSurface,
             )
@@ -743,7 +743,7 @@ public fun SeatLayerPickerEmptyView(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = scope.strings.soldOut,
+            text = scope.strings.soldOutTitle,
             style = MaterialTheme.typography.titleMedium,
             color = scope.theme.onSurface,
             modifier = Modifier.padding(28.dp),

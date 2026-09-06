@@ -18,7 +18,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
@@ -46,10 +45,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.seatlayer.android.SeatLayerPickerAccessNeed
-import io.seatlayer.android.SeatLayerPickerAccessibility
 import io.seatlayer.android.SeatLayerPickerAccessibilityAvailability
 import io.seatlayer.android.SeatLayerPickerAccessibilityDraft
-import io.seatlayer.android.SeatLayerPickerAccessibilityMutation
 import kotlinx.coroutines.launch
 
 /** Runtime-authored accessibility and colour filter sheet. */
@@ -114,19 +111,26 @@ private fun SeatLayerPickerAccessibilityFiltersContent(
         colorblindSafe = snapshot.map.colorblindSafe,
     )
     var expanded by remember(scope.stateHolder) { mutableStateOf(false) }
-    var initial by remember(scope.stateHolder) { mutableStateOf(currentDraft()) }
-    var draft by remember(scope.stateHolder) { mutableStateOf(currentDraft()) }
     var applying by remember(scope.stateHolder) { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    val draft = currentDraft()
+
+    // Every switch applies as it is flipped: the map narrows under the sheet,
+    // so the buyer sees what the filter did before deciding on the next one.
+    fun applyNow(mutation: suspend () -> Unit) {
+        if (applying) return
+        applying = true
+        coroutineScope.launch {
+            scope.performActionResult { mutation() }
+            applying = false
+        }
+    }
     val activeCount = currentKeys.size +
         (if (snapshot.map.hideLimitedView && limitedAvailable) 1 else 0) +
         (if (snapshot.map.colorblindSafe && colorblindAvailable) 1 else 0)
 
     fun open() {
         if (applying || scope.state.presentation.actionInFlight) return
-        val next = currentDraft()
-        initial = next
-        draft = next
         expanded = true
     }
 
@@ -184,70 +188,32 @@ private fun SeatLayerPickerAccessibilityFiltersContent(
                             ) {
                                 val next = draft.keys.toCollection(linkedSetOf())
                                 if (!next.add(need.key)) next.remove(need.key)
-                                draft = draft.copy(keys = next)
+                                applyNow { controller.setAccessibilityFilter(next.toList()) }
                             }
                         }
                     }
                 }
                 if (limitedAvailable) {
                     AccessibilityToggleOption(
-                        label = scope.strings.limitedView,
+                        label = scope.strings.hideLimitedView,
                         selected = draft.limitedView,
                         enabled = !applying,
-                    ) { draft = draft.copy(limitedView = !draft.limitedView) }
+                    ) { applyNow { controller.setLimitedViewFilter(!draft.limitedView) } }
                 }
                 if (colorblindAvailable) {
                     AccessibilityToggleOption(
                         label = scope.strings.colorblindSafe,
                         selected = draft.colorblindSafe,
                         enabled = !applying,
-                    ) { draft = draft.copy(colorblindSafe = !draft.colorblindSafe) }
+                    ) { applyNow { controller.setColorblindSafe(!draft.colorblindSafe) } }
                 }
             }
             Spacer(Modifier.height(12.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                TextButton(
-                    onClick = { expanded = false },
-                    enabled = !applying,
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
-                ) { Text(scope.strings.cancel) }
-                Button(
-                    onClick = {
-                        val mutations = SeatLayerPickerAccessibility.plan(
-                            draft = draft,
-                            initial = initial,
-                            available = availability,
-                        )
-                        applying = true
-                        coroutineScope.launch {
-                            val succeeded = scope.performActionResult {
-                                mutations.forEach { mutation ->
-                                    when (mutation) {
-                                        is SeatLayerPickerAccessibilityMutation.Accessibility ->
-                                            controller.setAccessibilityFilter(mutation.keys)
-                                        is SeatLayerPickerAccessibilityMutation.LimitedView ->
-                                            controller.setLimitedViewFilter(mutation.enabled)
-                                        is SeatLayerPickerAccessibilityMutation.ColorblindSafe ->
-                                            controller.setColorblindSafe(mutation.enabled)
-                                    }
-                                }
-                                if (
-                                    SeatLayerPickerAccessibility.shouldFocusSeats(mutations) &&
-                                    snapshot.map.rung != "seats" &&
-                                    controller.supportsCommand("picker.setRung")
-                                ) controller.setRung("seats")
-                            }
-                            applying = false
-                            if (succeeded) expanded = false
-                        }
-                    },
-                    enabled = !applying,
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
-                ) { Text(scope.strings.apply) }
-            }
+            TextButton(
+                onClick = { expanded = false },
+                enabled = !applying,
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+            ) { Text(scope.strings.dismiss) }
         }
     }
 }

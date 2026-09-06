@@ -1688,14 +1688,6 @@ public final class io.seatlayer.android.SeatLayerPickerAccessNeed {
   public boolean equals(java.lang.Object);
     descriptor: (Ljava/lang/Object;)Z
 }
-public final class io.seatlayer.android.SeatLayerPickerAccessibility {
-  public static final io.seatlayer.android.SeatLayerPickerAccessibility INSTANCE;
-    descriptor: Lio/seatlayer/android/SeatLayerPickerAccessibility;
-  public final java.util.List<io.seatlayer.android.SeatLayerPickerAccessibilityMutation> plan(io.seatlayer.android.SeatLayerPickerAccessibilityDraft, io.seatlayer.android.SeatLayerPickerAccessibilityDraft, io.seatlayer.android.SeatLayerPickerAccessibilityAvailability);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibilityDraft;Lio/seatlayer/android/SeatLayerPickerAccessibilityDraft;Lio/seatlayer/android/SeatLayerPickerAccessibilityAvailability;)Ljava/util/List;
-  public final boolean shouldFocusSeats(java.util.List<? extends io.seatlayer.android.SeatLayerPickerAccessibilityMutation>);
-    descriptor: (Ljava/util/List;)Z
-}
 public final class io.seatlayer.android.SeatLayerPickerAccessibilityAvailability {
   public io.seatlayer.android.SeatLayerPickerAccessibilityAvailability(boolean, boolean, boolean);
     descriptor: (ZZZ)V
@@ -1747,62 +1739,6 @@ public final class io.seatlayer.android.SeatLayerPickerAccessibilityDraft {
     descriptor: ()I
   public boolean equals(java.lang.Object);
     descriptor: (Ljava/lang/Object;)Z
-}
-public final class io.seatlayer.android.SeatLayerPickerAccessibilityMutation$Accessibility implements io.seatlayer.android.SeatLayerPickerAccessibilityMutation {
-  public io.seatlayer.android.SeatLayerPickerAccessibilityMutation$Accessibility(java.util.List<java.lang.String>);
-    descriptor: (Ljava/util/List;)V
-  public final java.util.List<java.lang.String> getKeys();
-    descriptor: ()Ljava/util/List;
-  public final java.util.List<java.lang.String> component1();
-    descriptor: ()Ljava/util/List;
-  public final io.seatlayer.android.SeatLayerPickerAccessibilityMutation$Accessibility copy(java.util.List<java.lang.String>);
-    descriptor: (Ljava/util/List;)Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$Accessibility;
-  public static io.seatlayer.android.SeatLayerPickerAccessibilityMutation$Accessibility copy$default(io.seatlayer.android.SeatLayerPickerAccessibilityMutation$Accessibility, java.util.List, int, java.lang.Object);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$Accessibility;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$Accessibility;
-  public java.lang.String toString();
-    descriptor: ()Ljava/lang/String;
-  public int hashCode();
-    descriptor: ()I
-  public boolean equals(java.lang.Object);
-    descriptor: (Ljava/lang/Object;)Z
-}
-public final class io.seatlayer.android.SeatLayerPickerAccessibilityMutation$ColorblindSafe implements io.seatlayer.android.SeatLayerPickerAccessibilityMutation {
-  public io.seatlayer.android.SeatLayerPickerAccessibilityMutation$ColorblindSafe(boolean);
-    descriptor: (Z)V
-  public final boolean getEnabled();
-    descriptor: ()Z
-  public final boolean component1();
-    descriptor: ()Z
-  public final io.seatlayer.android.SeatLayerPickerAccessibilityMutation$ColorblindSafe copy(boolean);
-    descriptor: (Z)Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$ColorblindSafe;
-  public static io.seatlayer.android.SeatLayerPickerAccessibilityMutation$ColorblindSafe copy$default(io.seatlayer.android.SeatLayerPickerAccessibilityMutation$ColorblindSafe, boolean, int, java.lang.Object);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$ColorblindSafe;ZILjava/lang/Object;)Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$ColorblindSafe;
-  public java.lang.String toString();
-    descriptor: ()Ljava/lang/String;
-  public int hashCode();
-    descriptor: ()I
-  public boolean equals(java.lang.Object);
-    descriptor: (Ljava/lang/Object;)Z
-}
-public final class io.seatlayer.android.SeatLayerPickerAccessibilityMutation$LimitedView implements io.seatlayer.android.SeatLayerPickerAccessibilityMutation {
-  public io.seatlayer.android.SeatLayerPickerAccessibilityMutation$LimitedView(boolean);
-    descriptor: (Z)V
-  public final boolean getEnabled();
-    descriptor: ()Z
-  public final boolean component1();
-    descriptor: ()Z
-  public final io.seatlayer.android.SeatLayerPickerAccessibilityMutation$LimitedView copy(boolean);
-    descriptor: (Z)Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$LimitedView;
-  public static io.seatlayer.android.SeatLayerPickerAccessibilityMutation$LimitedView copy$default(io.seatlayer.android.SeatLayerPickerAccessibilityMutation$LimitedView, boolean, int, java.lang.Object);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$LimitedView;ZILjava/lang/Object;)Lio/seatlayer/android/SeatLayerPickerAccessibilityMutation$LimitedView;
-  public java.lang.String toString();
-    descriptor: ()Ljava/lang/String;
-  public int hashCode();
-    descriptor: ()I
-  public boolean equals(java.lang.Object);
-    descriptor: (Ljava/lang/Object;)Z
-}
-public interface io.seatlayer.android.SeatLayerPickerAccessibilityMutation {
 }
 public final class io.seatlayer.android.SeatLayerPickerAvailabilityOutcome$Companion {
   public final io.seatlayer.android.SeatLayerPickerAvailabilityOutcome getUnsupported();

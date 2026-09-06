@@ -97,7 +97,7 @@ public fun SeatLayerPickerCartList(
     var expandedRun by remember { mutableStateOf<String?>(null) }
     if (runs.isEmpty()) {
         Text(
-            scope.strings.noTickets,
+            scope.strings.emptyTrayHint,
             modifier = modifier.padding(20.dp),
             color = scope.theme.muted,
             style = MaterialTheme.typography.bodyMedium,
@@ -168,7 +168,7 @@ private fun CartLineRow(
                     .size(48.dp)
                     .semantics {
                         role = Role.Button
-                        contentDescription = scope.strings.remove
+                        contentDescription = scope.strings.removeWord
                     },
                 color = Color.Transparent,
                 contentColor = scope.theme.muted,
@@ -210,7 +210,7 @@ private fun CartLineRow(
             enabled = !scope.state.presentation.actionInFlight,
             modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
         ) {
-            Text(scope.strings.remove)
+            Text(scope.strings.removeWord)
         }
     }
 }
@@ -261,7 +261,7 @@ public fun SeatLayerBestSeatsForm(modifier: Modifier = Modifier) {
     var zone by remember(snapshot.sessionId) { mutableStateOf<SeatLayerPickerZone?>(null) }
     val coroutineScope = rememberCoroutineScope()
     Column(modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(scope.strings.bestAvailable, style = MaterialTheme.typography.titleMedium)
+        Text(scope.strings.bestSeats, style = MaterialTheme.typography.titleMedium)
         PickerQuantityRow(
             value = quantity,
             maximum = snapshot.maxSelection.coerceAtLeast(1),
@@ -275,7 +275,7 @@ public fun SeatLayerBestSeatsForm(modifier: Modifier = Modifier) {
         )
         if (snapshot.bestAvailableZones.isNotEmpty()) {
             PickerChoiceMenu(
-                label = zone?.label ?: scope.strings.venue,
+                label = zone?.label ?: scope.strings.overview,
                 choices = snapshot.bestAvailableZones,
                 choiceLabel = SeatLayerPickerZone::label,
                 onSelected = { zone = it },
@@ -425,8 +425,8 @@ public fun SeatLayerPickerCartSheet(
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
             ) {
                 Text(
-                    if (presentation.cartExpanded) scope.strings.hideCart
-                    else "${scope.strings.showCart} · " +
+                    if (presentation.cartExpanded) scope.strings.collapseCart
+                    else "${scope.strings.expandCart} · " +
                         scope.strings.ticketCount(confirmed.totals.quantity),
                 )
             }
@@ -463,7 +463,7 @@ private fun CompactCartSheet(
     val emptyLabel = minimum?.let { price ->
         val currency = scope.state.snapshot?.currency.orEmpty()
         scope.strings.fromPrice(scope.moneyFormatter.format(price, currency))
-    } ?: scope.strings.noTickets
+    } ?: scope.strings.emptyTrayHint
 
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -486,9 +486,9 @@ private fun CompactCartSheet(
                     .semantics {
                         role = Role.Button
                         contentDescription = if (presentation.cartExpanded) {
-                            scope.strings.hideCart
+                            scope.strings.collapseCart
                         } else {
-                            scope.strings.showCart
+                            scope.strings.expandCart
                         }
                     },
                 color = Color.Transparent,
@@ -675,7 +675,7 @@ public fun SeatLayerPickerActionError(modifier: Modifier = Modifier) {
 @Composable
 public fun SeatLayerPickerUndoNotice(
     modifier: Modifier = Modifier,
-    durationMillis: Long = SeatLayerPickerTokens.MOTION_UNDO_WINDOW_MILLIS.toLong(),
+    durationMillis: Long = SeatLayerMotionTokens.UNDO_WINDOW.toLong(),
 ) {
     val scope = LocalSeatLayerPickerScope.current
     val undo = scope.state.presentation.removalUndo ?: return

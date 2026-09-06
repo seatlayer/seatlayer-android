@@ -391,12 +391,12 @@ public fun SeatLayerPicker3DNavigationControl(modifier: Modifier = Modifier) {
         border = BorderStroke(1.dp, scope.theme.divider),
     ) {
         Row {
-            ViewSegment(scope.strings.orbit, map.view3DNavigationMode != "pan") {
+            ViewSegment(scope.strings.orbitMode, map.view3DNavigationMode != "pan") {
                 coroutineScope.launch {
                     scope.performAction { scope.controller.setVenue3DNavigationMode("orbit") }
                 }
             }
-            ViewSegment(scope.strings.pan, map.view3DNavigationMode == "pan") {
+            ViewSegment(scope.strings.panMode, map.view3DNavigationMode == "pan") {
                 coroutineScope.launch {
                     scope.performAction { scope.controller.setVenue3DNavigationMode("pan") }
                 }
@@ -491,7 +491,7 @@ public fun SeatLayerPickerLimitedViewControl(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
     val enabled = scope.state.snapshot?.map?.hideLimitedView == true
     PickerRoundAction(
-        scopeLabel = scope.strings.limitedView,
+        scopeLabel = scope.strings.hideLimitedView,
         glyph = SeatLayerPickerGlyph.Eye,
         modifier = modifier,
         checked = enabled,
