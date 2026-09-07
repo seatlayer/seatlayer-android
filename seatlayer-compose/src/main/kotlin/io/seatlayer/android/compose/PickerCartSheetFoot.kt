@@ -63,6 +63,9 @@ internal fun SeatLayerPickerSheetFoot(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            // Where a ticket in the air is going. This line is what the ticket
+            // has just changed, so it is what the chip flies to.
+            .pickerFlightTarget(LocalSeatLayerPickerFlight.current)
             .then(
                 if (showHairline) {
                     Modifier.drawBehind {

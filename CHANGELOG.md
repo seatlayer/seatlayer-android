@@ -71,6 +71,12 @@ now comes from one locked design source.
   made, cached for the session, shared between cards asking for the same
   picture, and carried by a bearer that is re-minted before it lapses and never
   reaches a URL. Every failure is simply "no photograph".
+- **The confirmed ticket flies to the summary that counted it.** A labelled
+  chip in the seat's own category colour leaves the card for the cart's total
+  line, and the chip itself reports its arrival: the count and total swell on
+  the landing, and only then does the map give back the lift it took to keep
+  the seat clear. Under reduced motion no chip is made and nothing waits on
+  one.
 - **The phone map has one anchored control column.** The Map/3D control, the
   floor strip and the test badge each hold their own anchor, the discs are
   drawn from the design tokens, and the whole column crossfades and goes inert

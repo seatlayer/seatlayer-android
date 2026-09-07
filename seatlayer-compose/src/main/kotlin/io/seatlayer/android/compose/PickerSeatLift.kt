@@ -72,6 +72,7 @@ internal fun BoxScope.SeatLayerConfirmCardLayer(
     ) -> Unit,
 ) {
     val scope = LocalSeatLayerPickerScope.current
+    val flightState = LocalSeatLayerPickerFlight.current
     val presentation = scope.state.presentation
     val candidate = presentation.candidateSeat
     val snapshot = scope.state.snapshot
@@ -125,6 +126,12 @@ internal fun BoxScope.SeatLayerConfirmCardLayer(
     }
 
     if (shownSeat == null || shownIntent == null) return
+
+    // The colour the map paints this seat, which is the colour its ticket
+    // travels in.
+    val seatCategoryColor = parseColor(
+        snapshot?.categories?.firstOrNull { it.key == shownSeat.categoryKey }?.color.orEmpty(),
+    ) ?: scope.theme.accent
 
     var cardHeightPx by remember(shownSeat.id) { mutableFloatStateOf(0f) }
     var mapHeightPx by remember { mutableFloatStateOf(0f) }
@@ -198,7 +205,11 @@ internal fun BoxScope.SeatLayerConfirmCardLayer(
                 } else {
                     SeatLayerSizeTokens.CONFIRM_CARD_REST_INSET.dp
                 },
-            ),
+            )
+            // Where the ticket leaves from — the CARD's own centre, inside the
+            // insets, so the chip starts from the box the buyer just pressed
+            // rather than from the middle of a screen the card does not fill.
+            .pickerFlightOrigin(flightState),
     ) {
         content(
             shownSeat,
@@ -219,6 +230,7 @@ internal fun BoxScope.SeatLayerConfirmCardLayer(
                 // begun and nothing is left waiting on a beat that never plays.
                 if (animate) {
                     scope.controller.setCartLanding(SeatLayerPickerCartLanding.Flying)
+                    flightState.launch(seat.buyerFacingLabel, seatCategoryColor)
                 }
                 scope.controller.confirmPending(seat.tierId)
                 scope.callbacks.onSeatSelected(seat)
