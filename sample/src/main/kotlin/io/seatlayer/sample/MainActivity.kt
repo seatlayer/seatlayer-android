@@ -7,6 +7,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.lifecycleScope
+import io.seatlayer.android.BuyerAccessToken
+import io.seatlayer.android.BuyerAccessTokenProvider
 import io.seatlayer.android.ReadyInfo
 import io.seatlayer.android.SeatLayerConfiguration
 import io.seatlayer.android.SeatLayerChartLoad
@@ -26,6 +28,12 @@ import kotlinx.coroutines.launch
  *
  * Select one with the `seatlayerIntegration` intent extra. The default remains
  * the ready-made Compose picker used by device smoke tests.
+ *
+ * The event may be named by the `seatlayerEvent` extra. Everything a walk needs
+ * that must not be seen — the API base, a publishable key, a buyer bearer —
+ * comes from [SampleDebugInputs] instead, because an intent extra is readable
+ * from `ps` and from logcat. With none of it present this app opens the demo
+ * event on the SDK's own defaults, exactly as it always has.
  */
 public class MainActivity : ComponentActivity() {
     private var releaseResources: (() -> Unit)? = null
@@ -33,10 +41,15 @@ public class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val debug = SampleDebugInputs.read(this)
         val configuration = SeatLayerConfiguration(
-            event = intent.getStringExtra(EXTRA_EVENT) ?: DEFAULT_EVENT,
+            event = intent.getStringExtra(EXTRA_EVENT) ?: debug.event ?: DEFAULT_EVENT,
+            apiBase = debug.apiBase,
+            publicKey = debug.publicKey,
             currency = "USD",
             maxSelection = 4,
+            buyerAccessToken = debug.buyerAccessToken(),
+            buyerAccessTokenProvider = debug.buyerAccessTokenProvider(),
             hostInfo = mapOf("app" to "SeatLayerAndroidSample"),
         )
         when (intent.getStringExtra(EXTRA_INTEGRATION) ?: READY_COMPOSE) {
@@ -142,6 +155,24 @@ public class MainActivity : ComponentActivity() {
 
     private val checkoutHandler: suspend (SeatLayerPickerCheckoutHandoff) -> Unit =
         { handoff -> Log.i(TAG, "checkout lines=${handoff.lineItems.size}") }
+
+    /** The bearer as configured, or none, so an absent file changes nothing. */
+    private fun SampleDebugInputs.buyerAccessToken(): BuyerAccessToken? =
+        buyerToken?.let { BuyerAccessToken(token = it, expiresAt = buyerTokenExpiresAt) }
+
+    /**
+     * Re-reads the file when the SDK asks for a fresh bearer, so an operator can
+     * push a newly minted token mid-walk rather than the walk dying on expiry.
+     * A real host would mint one here; this app has no credentials to mint with.
+     * The reason is not logged: it would say which event lapsed.
+     */
+    private fun SampleDebugInputs.buyerAccessTokenProvider(): BuyerAccessTokenProvider? {
+        if (buyerToken == null) return null
+        return BuyerAccessTokenProvider {
+            SampleDebugInputs.read(this@MainActivity).buyerAccessToken()
+                ?: error("no buyer access token is available")
+        }
+    }
 
     private fun logReady(info: ReadyInfo) {
         Log.i(

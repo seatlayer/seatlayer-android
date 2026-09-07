@@ -45,6 +45,11 @@ fail() { printf '[walk] FAILED: %s\n' "$*" >&2; exit 1; }
 note() { printf '[walk] note: %s\n' "$*" >&2; }
 
 cleanup() {
+  # The pushed properties file carries the buyer bearer; it does not outlive the
+  # walk. `pm clear` at launch would not reach it, so it is removed by name.
+  if [[ -n "${DEVICE_DEBUG_PROPERTIES:-}" ]]; then
+    adb_device shell rm -f "$DEVICE_DEBUG_PROPERTIES" >/dev/null 2>&1 || true
+  fi
   [[ -n "$WORK_DIR" && -d "$WORK_DIR" ]] && rm -rf "$WORK_DIR"
   return 0
 }
@@ -66,6 +71,14 @@ done
 #
 # Nothing that identifies an event, a backend or a buyer is committed. Each of
 # these must be exported by the operator; the script never echoes their values.
+#
+# Only the event key travels as an intent extra. Everything else — the API base,
+# the publishable key, the buyer bearer — is written into a properties file and
+# pushed into the sample app's own external files directory, because an
+# `am start --es` extra is visible in `ps` to every process on the device and is
+# written verbatim into logcat by ActivityManager, where it outlives the run.
+# The file is created with mode 600, deleted from the device when the walk ends,
+# and its contents are never echoed.
 
 require_env() {
   local name="$1" purpose="$2"
@@ -77,8 +90,13 @@ require_env() {
 require_env SEATLAYER_WALK_EVENT "the event the sample app opens"
 require_env SEATLAYER_WALK_API_BASE "the API base URL the picker talks to"
 # SEATLAYER_WALK_PUBLIC_KEY and SEATLAYER_WALK_TOKEN are optional: set them for
-# a private or key-scoped event.
+# a private or key-scoped event. SEATLAYER_WALK_TOKEN_EXPIRES_AT is that token's
+# expiry in epoch milliseconds; without it the SDK refreshes reactively.
 # SEATLAYER_WALK_AVD names the emulator to boot when none is running.
+
+DEBUG_PROPERTIES_NAME="seatlayer-debug.properties"
+DEVICE_FILES_DIR="/sdcard/Android/data/$APPLICATION_ID/files"
+DEVICE_DEBUG_PROPERTIES="$DEVICE_FILES_DIR/$DEBUG_PROPERTIES_NAME"
 
 # ------------------------------------------------------------- prerequisites
 
@@ -110,12 +128,14 @@ check_prerequisites() {
     missing_prerequisite=1
   fi
 
-  if ! grep -q 'seatlayerEvent' "$REPO_ROOT/sample/src/main/kotlin/io/seatlayer/sample/MainActivity.kt" 2>/dev/null; then
+  local activity="$REPO_ROOT/sample/src/main/kotlin/io/seatlayer/sample/MainActivity.kt"
+  if ! grep -q 'seatlayerEvent' "$activity" 2>/dev/null; then
     printf '[walk] missing prerequisite: the sample app no longer reads the seatlayerEvent intent extra\n' >&2
     missing_prerequisite=1
   fi
-  if ! grep -q 'seatlayerApiBase' "$REPO_ROOT/sample/src/main/kotlin/io/seatlayer/sample/MainActivity.kt" 2>/dev/null; then
-    note "the sample app does not read a seatlayerApiBase intent extra; the walk will pass it anyway and the picker will use its built-in default. Add the extra to the sample to point the walk at a different backend."
+  if ! grep -q 'SampleDebugInputs' "$activity" 2>/dev/null; then
+    printf '[walk] missing prerequisite: the sample app no longer reads its debug properties file, so the API base, key and buyer token cannot reach it\n' >&2
+    missing_prerequisite=1
   fi
 
   (( missing_prerequisite == 0 )) || fail "prerequisites are missing; nothing was launched"
@@ -357,6 +377,35 @@ probe_blocked_regions() {
   capture "blocked-region-probe"
 }
 
+# ------------------------------------------------------- credentials on device
+
+push_debug_properties() {
+  # Written locally with a private umask, pushed, then chmod'd on the device.
+  # No value is ever passed on a command line and none is ever printed.
+  local staged="$WORK_DIR/$DEBUG_PROPERTIES_NAME"
+  local previous_umask; previous_umask="$(umask)"
+  umask 077
+  : > "$staged"
+  printf 'apiBase=%s\n' "$SEATLAYER_WALK_API_BASE" >> "$staged"
+  if [[ -n "${SEATLAYER_WALK_PUBLIC_KEY:-}" ]]; then
+    printf 'publicKey=%s\n' "$SEATLAYER_WALK_PUBLIC_KEY" >> "$staged"
+  fi
+  if [[ -n "${SEATLAYER_WALK_TOKEN:-}" ]]; then
+    printf 'buyerToken=%s\n' "$SEATLAYER_WALK_TOKEN" >> "$staged"
+  fi
+  if [[ -n "${SEATLAYER_WALK_TOKEN_EXPIRES_AT:-}" ]]; then
+    printf 'buyerTokenExpiresAt=%s\n' "$SEATLAYER_WALK_TOKEN_EXPIRES_AT" >> "$staged"
+  fi
+  umask "$previous_umask"
+
+  adb_device shell mkdir -p "$DEVICE_FILES_DIR" >/dev/null 2>&1 || true
+  adb_device push "$staged" "$DEVICE_DEBUG_PROPERTIES" >/dev/null 2>&1 \
+    || fail "could not place the debug properties file on the device. The app's external files directory exists only once the app has been installed; check that the install above succeeded."
+  adb_device shell chmod 600 "$DEVICE_DEBUG_PROPERTIES" >/dev/null 2>&1 || true
+  rm -f "$staged"
+  log "placed the walk's inputs on the device"
+}
+
 # ----------------------------------------------------------------- the launch
 
 launch_app() {
@@ -366,14 +415,14 @@ launch_app() {
   adb_device shell pm clear "$APPLICATION_ID" >/dev/null 2>&1 || true
   adb_device logcat -c >/dev/null 2>&1 || true
 
-  # Values reach the app as intent extras and are never echoed by this script.
+  push_debug_properties
+
+  # Only the event key and the integration name travel as extras. Neither is a
+  # secret; everything that is went into the file above.
   local -a extras=(
     --es seatlayerEvent "$SEATLAYER_WALK_EVENT"
-    --es seatlayerApiBase "$SEATLAYER_WALK_API_BASE"
     --es seatlayerIntegration "${SEATLAYER_WALK_INTEGRATION:-ready-compose}"
   )
-  [[ -n "${SEATLAYER_WALK_PUBLIC_KEY:-}" ]] && extras+=(--es seatlayerPublicKey "$SEATLAYER_WALK_PUBLIC_KEY")
-  [[ -n "${SEATLAYER_WALK_TOKEN:-}" ]] && extras+=(--es seatlayerBuyerToken "$SEATLAYER_WALK_TOKEN")
 
   adb_device shell am start -W -n "$ACTIVITY" "${extras[@]}" >/dev/null \
     || fail "could not start $ACTIVITY"

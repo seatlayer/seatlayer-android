@@ -52,8 +52,9 @@ their values.
 | --- | --- | --- |
 | `SEATLAYER_WALK_EVENT` | yes | the event the sample app opens |
 | `SEATLAYER_WALK_API_BASE` | yes | the API base URL the picker talks to |
-| `SEATLAYER_WALK_PUBLIC_KEY` | no | a key-scoped event's public key |
+| `SEATLAYER_WALK_PUBLIC_KEY` | no | a key-scoped event's publishable key |
 | `SEATLAYER_WALK_TOKEN` | no | a private event's buyer access token |
+| `SEATLAYER_WALK_TOKEN_EXPIRES_AT` | no | that token's expiry, epoch milliseconds |
 | `SEATLAYER_WALK_AVD` | when no device is attached | the AVD to boot |
 | `SEATLAYER_WALK_APK` | no | an already-built sample APK (default: the debug build output) |
 | `SEATLAYER_WALK_OUT` | no | where frames are written |
@@ -63,6 +64,63 @@ their values.
 | `SEATLAYER_WALK_EXPECT_SIZE`, `_EXPECT_DENSITY` | no | the screen the reference frames were captured on |
 | `SEATLAYER_WALK_LABELS` | no | an alternative locale strings file for the control labels |
 | `SEATLAYER_WALK_PYTHON` | no | the Python interpreter to use |
+
+### How the credentials reach the app
+
+Only `SEATLAYER_WALK_EVENT` and the integration name travel as intent extras.
+Neither is a secret, and everything that is does **not** go that way: an
+`am start --es` extra sits on a command line every process on the device can
+read out of `ps`, and ActivityManager writes the whole intent into logcat, where
+it outlives the run and ends up in any bug report taken afterwards.
+
+The API base, the publishable key and the buyer bearer are written instead into
+a properties file and pushed into the sample app's own external files directory:
+
+```
+/sdcard/Android/data/io.seatlayer.sample/files/seatlayer-debug.properties
+```
+
+The walk stages the file with `umask 077`, pushes it, `chmod 600`s it on the
+device, and deletes it from the device when the run ends. No value is ever
+passed on a command line and none is ever printed.
+
+`SampleDebugInputs` in the sample app reads it at launch. Every key is optional,
+and every failure — absent, unreadable, malformed — is the same as absent, so
+**with no file present the sample behaves exactly as it does today**: the demo
+event on the SDK's own defaults. The reader is deliberately silent about the
+file even when it is missing; a message naming it would tell a shared device it
+exists.
+
+To run the walk by hand, or to open the app on a real event without the walk,
+keep the same file beside the repository as `sample/seatlayer-debug.properties`
+— `.gitignore` excludes it, confirm with `git check-ignore -v
+sample/seatlayer-debug.properties` — and push it yourself:
+
+```
+adb push sample/seatlayer-debug.properties \
+  /sdcard/Android/data/io.seatlayer.sample/files/seatlayer-debug.properties
+```
+
+| Key | What it supplies |
+| --- | --- |
+| `event` | the event to open, when no `seatlayerEvent` extra is given |
+| `apiBase` | the API base URL the picker talks to |
+| `publicKey` | a key-scoped event's publishable key |
+| `buyerToken` | a private event's buyer access token |
+| `buyerTokenExpiresAt` | that token's expiry, in epoch milliseconds |
+
+The bearer is minted per event and expires. When the SDK asks for a fresh one
+the sample re-reads the file rather than caching the first token for the
+session, so an operator can push a newly minted token mid-walk instead of the
+walk dying on expiry. A real host would mint one in that callback; the sample
+has no credentials to mint with.
+
+`adb shell setprop debug.seatlayer.*` is deliberately not supported. A bearer
+token is far longer than the system-property value limit, so that route would
+work for the harmless values and silently truncate the one that matters.
+
+Nothing about this is referenced from a committed Gradle or manifest file, and
+there is no `BuildConfig` constant and no committed default anywhere in it.
 
 Taps on native chrome are located by label: the script reads the English labels
 out of `Design/locale_strings.json`, so renaming a string in the design source

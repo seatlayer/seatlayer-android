@@ -12,3 +12,7 @@ captures/
 
 # Device-walk frames and diffs
 artifacts/
+
+# Device-walk inputs: the API base, key and buyer bearer the sample reads at
+# runtime. Never committed, never packaged, never printed.
+sample/seatlayer-debug.properties
