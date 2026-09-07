@@ -115,14 +115,19 @@ composable `logo` slot. All of the new fields have defaults.
 | `SeatLayerPickerDenseRun` | Every ticket is its own cart line; read `SeatLayerPickerCartLine` |
 | `SeatLayerPickerProjections.denseRuns` | `SeatLayerPickerProjections.confirmedCart(items, pending).items` |
 | `SeatLayerPickerZoomControls` | `SeatLayerPickerZoomInButton`, `SeatLayerPickerZoomOutButton` |
-| `SeatLayerPickerUndoNotice` | `SeatLayerPickerToastLayer` |
+| `SeatLayerPickerAccessibility` | `SeatLayerPickerController.setAccessibilityFilter`, `setLimitedViewHidden`, `setColorblindSafe` |
+| `SeatLayerPickerAccessibilityMutation` | — the plan is gone; each switch applies itself |
+
+`SeatLayerPickerAccessibility` planned a batch of mutations from two drafts and
+handed them back for a host to apply. The accessibility sheet is now switch rows
+that apply live, so there is no draft to diff and no plan to carry: call the
+controller method for the switch the buyer moved.
+`SeatLayerPickerAccessibilityDraft` and `SeatLayerPickerAccessibilityAvailability`
+both remain.
 
 `SeatLayerPickerZoomControls` drew a fixed pair. The map's control column is
 now assembled from one disc per control, so a host-owned layout places exactly
 the discs it wants and each keeps its own enabled rule.
-`SeatLayerPickerUndoNotice` was one notice with one action; the toast band is
-the single surface for every transient sentence the picker says, undo
-included.
 
 The dense run collapsed structurally equivalent addressed seats into one row.
 It hid the seat a buyer was looking for behind a summary they then had to open,
@@ -130,6 +135,22 @@ and a row they cannot act on directly is not a shorter list. A host that drew
 its own list from `denseRuns` iterates `confirmedCart(cartLines, pendingSeat).items`
 instead; each item is one `SeatLayerPickerCartLine` and carries its own removal
 identity.
+
+## Changed signatures
+
+`SeatLayerPickerUndoNotice` is **not** removed — a host that places its own
+parts can still place it — but it no longer takes the undo window as a
+parameter:
+
+| 0.3.x | 0.4.0 |
+| --- | --- |
+| `SeatLayerPickerUndoNotice(modifier, durationMillis)` | `SeatLayerPickerUndoNotice(modifier)` |
+
+The window is the design source's own value, so a picker that shows the notice
+and the toast band cannot show two different windows. Drop the argument. If you
+were not placing parts by hand, prefer `SeatLayerPickerToastLayer`: it is the
+single surface for every transient sentence the picker says, undo included, and
+the ready-made picker already draws it.
 
 ## Changed defaults
 
@@ -156,7 +177,7 @@ never strand a buyer with no way back to the venue.
 5. If you relied on the section dock bar, set
    `SeatLayerPickerOptions(showDockBar = true)`.
 6. Replace `SeatLayerPickerZoomControls` with the individual zoom buttons, and
-   `SeatLayerPickerUndoNotice` with `SeatLayerPickerToastLayer`.
+   drop the duration argument from any `SeatLayerPickerUndoNotice` call.
 7. Confirm the renderer origin `https://cdn.seatlayer.io` is still registered on
    your publishable key; the pinned page moves to
    `seatlayer-js@0.84.1/mobile.html`.

@@ -102,6 +102,38 @@ now comes from one locked design source.
 - **The hold countdown is drawn for a host-owned hold too.** The buyer's time
   is running whoever holds the seats; only the offer of more time is withheld
   from a hold the picker cannot mutate.
+- **The whole picker is one accessible screen, not a pile of controls.** What a
+  seat card, the ticket sheet, the accessibility sheet or a buyer state covers
+  is inert to a screen reader while it is up, so a swipe cannot wander into a
+  map the buyer cannot act on. The picker declares one reading order — header,
+  price rail, map, the map's controls, the dock, prompts, notices, the sheet —
+  rather than inheriting whatever order the layout happens to produce. The map
+  is named as one region with the actions it offers, instead of inventing a
+  control per seat on a canvas that has none. Every control carries a name, the
+  seat card is announced as a dialog its answers can be reached from, and
+  closing a sheet returns focus to the map rather than to the top of the
+  screen. There are exactly two live regions — the toast band and the hold
+  countdown — so an announcement is never said twice.
+- **Every surface grows with the platform text setting, to its own ceiling.**
+  Type scales with the buyer's setting and each surface clamps where it would
+  otherwise push its own controls off the screen. Bold text is left to the
+  platform rather than being re-implemented, and the reduced-motion setting is
+  now read in one place, so a single system switch quiets every animation the
+  picker plays.
+- **A buyer who came back to a checkout the host is holding can still act.**
+  A resumed host-owned hold no longer leaves Continue dead and the cart frozen:
+  the picker distinguishes a hold it may mutate from one it may not, and only
+  withholds what it genuinely cannot do.
+- **A cart card prints the short row word**, so a ticket reads the way the
+  venue labels it rather than in the long form.
+- **The empty ticket tray keeps its own ceiling** instead of stretching to the
+  height a full tray would take.
+- **Native chrome that sits over a lowered map still swallows its own taps.**
+  The region registry treats a lowered map cover as authoritative, so a control
+  standing over the map cannot leak a tap to the seat underneath it.
+- **A picker with no host-named locale uses the generated token table** rather
+  than falling back to English, so all 37 dictionaries are reachable without
+  the host naming one.
 - **Tokens, strings and 37 locale dictionaries are generated** from a checked-in
   design source under `Design/`, locked by a four-key SHA-256 file and shared
   with the other SeatLayer buyer SDKs. The generated Kotlin is checked in and
@@ -139,8 +171,12 @@ every width, and the fit control's switch is now `showZoomToFitControl`
 `showOverviewControl`, `showZoomControls`, `showZoomToFitControl` and
 `showColorblindControl` read `Boolean?`, where null means "whatever this width
 should do". `SeatLayerPickerZoomControls` is replaced by the individual
-`SeatLayerPickerZoomInButton` and `SeatLayerPickerZoomOutButton`, and
-`SeatLayerPickerUndoNotice` by `SeatLayerPickerToastLayer`.
+`SeatLayerPickerZoomInButton` and `SeatLayerPickerZoomOutButton`.
+`SeatLayerPickerUndoNotice` remains, for a host that places it itself, but it
+draws through the toast card and no longer takes a duration: the undo window is
+the design source's own. `SeatLayerPickerToastLayer` is the surface a picker
+that does not place parts by hand wants, and it says the undo sentence along
+with every other transient one.
 `SeatLayerPickerTheme` requires the new field names when constructed
 positionally.
 

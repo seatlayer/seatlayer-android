@@ -237,10 +237,9 @@ Supplemental Android-only copy that is absent from a locale dictionary falls
 back to its typed English value.
 
 The default colors, radii, spacing, elevations, type sizes, motion durations,
-haptic decisions, breakpoints, and minimum targets come from
-`seatlayer-compose/src/main/resources/io/seatlayer/android/compose/picker_tokens.json`.
-`scripts/generate-picker-tokens.py` generates `SeatLayerPickerTokens.kt`, and
-the release gate rejects drift between them. Theme roles also include a paired
+haptic decisions, breakpoints, and minimum targets come from `Design/tokens.json`.
+`node tool/generate-picker-tokens.mjs` generates the `*.g.kt` token objects, and
+the release gate re-runs it in `--check` mode and rejects drift between them. Theme roles also include a paired
 `SeatLayerPickerMapTheme`, so live light/dark or brand changes repaint native
 chrome and renderer-owned map roles together without recreating the session.
 
