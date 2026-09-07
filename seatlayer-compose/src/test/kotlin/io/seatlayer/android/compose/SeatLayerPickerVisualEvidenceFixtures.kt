@@ -149,7 +149,9 @@ internal fun pickerEvidenceScope(
                 seatId = "seat-a12",
                 title = "Section 102 · Row A · Seat 12",
                 caption = "Drag to look around from this seat",
-                badge = null,
+                // The disclosure is the runtime's finding, carried on the
+                // event; the strip prints it and never re-derives it.
+                badge = "Real view",
                 real = true,
                 generated = false,
                 dragHint = "Drag to explore",

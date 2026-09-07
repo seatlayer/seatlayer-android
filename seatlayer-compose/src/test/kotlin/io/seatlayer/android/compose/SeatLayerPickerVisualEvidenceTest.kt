@@ -108,7 +108,9 @@ public class SeatLayerPickerVisualEvidenceTest {
             themeMode = SeatLayerPickerThemeMode.Dark,
         )
         composeRule.onNodeWithContentDescription("Previous seat").assertIsDisplayed()
-        composeRule.onNodeWithText("View from here").assertIsDisplayed()
+        composeRule.onNodeWithText("Open venue 360°").assertIsDisplayed()
+        composeRule.onNodeWithText("Show whole venue").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Back to venue").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Next seat").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Recentre on the stage").assertIsDisplayed()
     }
