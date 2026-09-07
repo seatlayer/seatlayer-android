@@ -1,6 +1,7 @@
 package io.seatlayer.android.compose
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -51,6 +52,18 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
     }
     LaunchedEffect(dockVisible) {
         if (!dockVisible) onBottomMeasured(0)
+    }
+    // A tap on the venue is the way an open sheet is put away. The map itself
+    // is already inert while the sheet is open, so the tap has to be caught
+    // here rather than answered by the renderer.
+    if (regularMap && scope.state.presentation.cartExpanded) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .pointerInput(Unit) {
+                    detectTapGestures { scope.controller.setCartSheetExpanded(false) }
+                },
+        )
     }
     // Only chrome drawn OVER the map is counted here. The header, the price
     // rail and the cart sheet are rows of the same column as the map surface,
@@ -326,17 +339,10 @@ internal fun WideSidePanel(builders: SeatLayerPickerBuilders) {
                         )
                     }
                 }
-                SeatLayerPickerAttribution(
-                    Modifier
-                        .align(Alignment.End)
-                        .padding(end = 8.dp),
-                )
-                if (confirmed.items.isNotEmpty()) {
-                    SeatLayerPickerPart(
-                        SeatLayerPickerPart.CheckoutBar,
-                        builders[SeatLayerPickerPart.CheckoutBar],
-                    ) { SeatLayerPickerCheckoutBar() }
-                }
+                SeatLayerPickerPart(
+                    SeatLayerPickerPart.CheckoutBar,
+                    builders[SeatLayerPickerPart.CheckoutBar],
+                ) { SeatLayerPickerCheckoutBar() }
             }
         }
     }
@@ -394,14 +400,11 @@ internal fun PickerCart(
                     builders[SeatLayerPickerPart.BestAvailable],
                 ) { SeatLayerBestSeatsForm() }
             },
-            checkoutBar = {
+            checkoutBar = { onFindBestSeats ->
                 SeatLayerPickerPart(
                     SeatLayerPickerPart.CheckoutBar,
                     builders[SeatLayerPickerPart.CheckoutBar],
-                ) {
-                    if (compact) SeatLayerBookButton(Modifier.padding(12.dp))
-                    else SeatLayerPickerCheckoutBar()
-                }
+                ) { SeatLayerBookButton(onFindBestSeats = onFindBestSeats) }
             },
             compact = compact,
         )
@@ -439,7 +442,10 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
         builders[SeatLayerPickerPart.TablePrompt],
     ) { SeatLayerPickerTablePrompt() }
 
-    if (!immersive) Column(
+    // The sheet's own foot carries the lapse notice and the inline action
+    // error. They are only raised over the map where there is no foot to hold
+    // them, or a buyer with no ticket panel would never be told.
+    if (!immersive && !scope.options.chrome.showTicketPanel) Column(
         modifier = Modifier
             .align(Alignment.Center)
             .padding(end = if (wide) scope.styles.panelWidth else 0.dp),
@@ -453,7 +459,13 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
             SeatLayerPickerPart.ActionError,
             builders[SeatLayerPickerPart.ActionError],
         ) { SeatLayerPickerActionError(Modifier.width(360.dp)) }
-        SeatLayerPickerUndoNotice(Modifier.align(Alignment.CenterHorizontally))
+    }
+    if (!immersive) {
+        SeatLayerPickerToastLayer(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            bottomInset = bottomPadding,
+            lifted = scope.state.presentation.candidateSeat != null,
+        )
     }
 
     if (!wide && !immersive && (!compact || !scope.options.chrome.showTicketPanel)) {
