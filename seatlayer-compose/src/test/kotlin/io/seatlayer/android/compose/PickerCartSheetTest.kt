@@ -31,6 +31,7 @@ import io.seatlayer.android.SeatLayerPickerThemeMode
 import java.lang.reflect.Proxy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonObject
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -142,6 +143,20 @@ public class PickerCartSheetTest {
     }
 
     @Test
+    public fun removingATicketTellsTheHostWhichSeatLeft() {
+        val removed = mutableListOf<String>()
+        val scope = selectedCartScope(
+            callbacks = SeatLayerPickerCallbacks(onSeatRemoved = { removed += it.label }),
+        )
+        withCommands(scope, "picker.removeCartLine")
+        recordCommands(scope)
+        render(scope)
+        composeRule.onNodeWithContentDescription("Remove seat Section 102 12").performClick()
+        composeRule.waitForIdle()
+        assertEquals(listOf("A-12"), removed)
+    }
+
+    @Test
     public fun theCartStopsAtThreeCardsAndTheRestIsScrolledTo() {
         val scope = pickerEvidenceScope(
             PickerEvidenceScenario.Cart,
@@ -245,10 +260,13 @@ public class PickerCartSheetTest {
     // ---- fixtures -------------------------------------------------------
 
     /** A cart whose lines are joined to seats the runtime says are selected. */
-    private fun selectedCartScope(): SeatLayerPickerScope {
+    private fun selectedCartScope(
+        callbacks: SeatLayerPickerCallbacks? = null,
+    ): SeatLayerPickerScope {
         val scope = pickerEvidenceScope(
             PickerEvidenceScenario.Cart,
             SeatLayerPickerThemeMode.Light,
+            callbacks = callbacks,
         )
         mutate(scope) { state ->
             val snapshot = state.snapshot ?: return@mutate state

@@ -138,7 +138,13 @@ public fun SeatLayerCartCard(
     fun remove() {
         if (removing) return
         scope.controller.emitHaptic(SeatLayerPickerHapticCue.TicketRemoved)
-        coroutineScope.launch { scope.controller.removeWithUndo(line) }
+        coroutineScope.launch {
+            val removed = scope.controller.removeWithUndo(line)
+            // The host is told which seat left, and only where the runtime
+            // named one: a line with no seat behind it — a best-available
+            // result, a resumed hold — has no seat to hand over.
+            if (removed && seat != null) scope.callbacks.onSeatRemoved(seat)
+        }
     }
 
     Box(modifier = modifier.fillMaxWidth()) {
@@ -280,7 +286,13 @@ public fun SeatLayerCartCard(
                 if (removable) {
                     PickerCardAction(
                         glyph = SeatLayerPickerGlyph.Close,
-                        label = "${scope.strings.removeSeat} $name",
+                        // Named down to the seat: three cards in one section
+                        // all reading "Remove seat" is three identical buttons.
+                        label = listOfNotNull(
+                            scope.strings.removeSeat,
+                            name,
+                            line.seatNumber ?: line.displayLabel ?: line.label,
+                        ).joinToString(separator = " "),
                         enabled = !removing,
                         onClick = ::remove,
                     )

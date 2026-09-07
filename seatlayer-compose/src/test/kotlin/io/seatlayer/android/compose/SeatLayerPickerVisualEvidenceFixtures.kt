@@ -80,6 +80,7 @@ internal fun pickerEvidenceScope(
     scenario: PickerEvidenceScenario,
     themeMode: SeatLayerPickerThemeMode,
     options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
+    callbacks: SeatLayerPickerCallbacks? = null,
 ): SeatLayerPickerScope {
     val holder = SeatLayerPickerStateHolder(
         configuration = SeatLayerConfiguration(event = EVIDENCE_EVENT),
@@ -173,7 +174,7 @@ internal fun pickerEvidenceScope(
         bundleInfo = bundle,
     )
     installEvidenceState(holder, state, bundle)
-    return EvidenceScope(holder, themeMode, options)
+    return EvidenceScope(holder, themeMode, options, callbacks ?: SeatLayerPickerCallbacks())
 }
 
 private fun evidencePresentation(
@@ -259,6 +260,7 @@ private class EvidenceScope(
     override val stateHolder: SeatLayerPickerStateHolder,
     override val themeMode: SeatLayerPickerThemeMode,
     override val options: SeatLayerPickerOptions,
+    override val callbacks: SeatLayerPickerCallbacks,
 ) : SeatLayerPickerScope {
     override val state: SeatLayerPickerState get() = stateHolder.state.value
     override val controller = stateHolder.controller
@@ -273,7 +275,6 @@ private class EvidenceScope(
         SeatLayerMoneyFormatter { amount, currency ->
             "$currency ${"%.2f".format(java.util.Locale.US, amount)}"
         }
-    override val callbacks: SeatLayerPickerCallbacks = SeatLayerPickerCallbacks()
 }
 
 @Composable
