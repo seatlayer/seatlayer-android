@@ -1,12 +1,8 @@
 package io.seatlayer.android.compose
 
-import android.provider.Settings
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.spring
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import kotlin.math.abs
 import kotlin.math.sqrt
 
@@ -156,27 +152,3 @@ internal fun pickerSheetSettleSpec(reducedMotion: Boolean): AnimationSpec<Float>
     } else {
         pickerSheetSpring()
     }
-
-/**
- * Whether this device has asked for animations to be removed.
- *
- * Read once per composition from the platform's own animator scale: a buyer who
- * has turned animations off in Accessibility has said it for every app, and the
- * picker has no business asking again.
- */
-@Composable
-internal fun pickerReducedMotion(): Boolean {
-    val context = LocalContext.current
-    // A capture is one frame of a moving surface, so it asks for the settled
-    // one. See [LocalSeatLayerPickerCapture].
-    if (LocalSeatLayerPickerCapture.current) return true
-    return remember(context) {
-        runCatching {
-            Settings.Global.getFloat(
-                context.contentResolver,
-                Settings.Global.ANIMATOR_DURATION_SCALE,
-                1f,
-            ) == 0f
-        }.getOrDefault(false)
-    }
-}

@@ -366,7 +366,7 @@ private fun PickerAccessSwitch(on: Boolean) {
     val offset by animateDpAsState(
         targetValue = if (on) travel.dp else 0.dp,
         animationSpec = tween(
-            durationMillis = if (seatLayerPickerMotionEnabled()) {
+            durationMillis = if (!pickerReducedMotion()) {
                 SeatLayerMotionTokens.CROSSFADE
             } else {
                 0

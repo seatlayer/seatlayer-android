@@ -1,7 +1,5 @@
 package io.seatlayer.android.compose
 
-import android.animation.ValueAnimator
-import android.os.Build
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -65,18 +63,6 @@ import io.seatlayer.android.SeatLayerPickerPhase
 import kotlinx.coroutines.launch
 
 /**
- * Whether motion may play at all on this device.
- *
- * One accessor decides for every surface, so none of them can forget: a
- * platform that has turned animations off gets the settled state directly,
- * and anything sequenced behind a skipped animation runs immediately.
- */
-@Composable
-internal fun seatLayerPickerMotionEnabled(): Boolean = remember {
-    Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
-}
-
-/**
  * Says, once, that a hold lapsed — and offers the seats back where it can.
  *
  * A persistent line where the buyer's tickets were, and nothing blocking. A
@@ -94,67 +80,72 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
     val lapse = scope.state.holdLapse ?: return
     val coroutineScope = rememberCoroutineScope()
     val recoverable = lapse.recoverableLabels.size
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                start = LAPSE_PAD_START.dp,
-                top = LAPSE_PAD_TOP.dp,
-                end = LAPSE_PAD_END.dp,
-                bottom = LAPSE_PAD_BOTTOM.dp,
-            )
-            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(Modifier.weight(1f)) {
-            Text(
-                scope.strings.holdLapsedTitle,
-                color = scope.theme.text,
-                fontSize = LAPSE_TITLE_SIZE.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = scope.theme.fontFamily,
-            )
-            seatLayerHoldLapseBody(scope.strings, lapse)?.let { body ->
-                Text(
-                    body,
-                    color = scope.theme.mutedText,
-                    fontSize = LAPSE_BODY_SIZE.sp,
-                    fontFamily = scope.theme.fontFamily,
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(
+                    start = LAPSE_PAD_START.dp,
+                    top = LAPSE_PAD_TOP.dp,
+                    end = LAPSE_PAD_END.dp,
+                    bottom = LAPSE_PAD_BOTTOM.dp,
                 )
-            }
-        }
-        if (recoverable > 0) {
-            TextButton(
-                onClick = {
-                    coroutineScope.launch {
-                        scope.performAction {
-                            scope.controller.reselectLapsedSeats(
-                                scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
-                            )
-                        }
-                    }
-                },
-                modifier = Modifier.heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
-            ) {
+                .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(Modifier.weight(1f)) {
                 Text(
-                    scope.strings.reselectSeats(recoverable),
-                    color = scope.theme.accent,
+                    scope.strings.holdLapsedTitle,
+                    color = scope.theme.text,
                     fontSize = LAPSE_TITLE_SIZE.sp,
                     fontWeight = FontWeight.ExtraBold,
                     fontFamily = scope.theme.fontFamily,
                 )
+                seatLayerHoldLapseBody(scope.strings, lapse)?.let { body ->
+                    Text(
+                        body,
+                        color = scope.theme.mutedText,
+                        fontSize = LAPSE_BODY_SIZE.sp,
+                        fontFamily = scope.theme.fontFamily,
+                    )
+                }
             }
-        } else {
-            TextButton(
-                onClick = scope.controller::dismissHoldLapse,
-                modifier = Modifier.heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
-            ) {
-                Text(
-                    scope.strings.dismiss,
-                    color = scope.theme.mutedText,
-                    fontSize = LAPSE_BODY_SIZE.sp,
-                    fontFamily = scope.theme.fontFamily,
-                )
+            if (recoverable > 0) {
+                TextButton(
+                    onClick = {
+                        coroutineScope.launch {
+                            scope.performAction {
+                                scope.controller.reselectLapsedSeats(
+                                    scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier.heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+                ) {
+                    Text(
+                        scope.strings.reselectSeats(recoverable),
+                        color = scope.theme.accent,
+                        fontSize = LAPSE_TITLE_SIZE.sp,
+                        fontWeight = FontWeight.ExtraBold,
+                        fontFamily = scope.theme.fontFamily,
+                    )
+                }
+            } else {
+                TextButton(
+                    onClick = scope.controller::dismissHoldLapse,
+                    modifier = Modifier.heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+                ) {
+                    Text(
+                        scope.strings.dismiss,
+                        color = scope.theme.mutedText,
+                        fontSize = LAPSE_BODY_SIZE.sp,
+                        fontFamily = scope.theme.fontFamily,
+                    )
+                }
             }
         }
     }
@@ -235,57 +226,62 @@ public fun SeatLayerPickerActionError(modifier: Modifier = Modifier) {
             detail = scope.strings.holdAlreadyHeldBody
         }
     }
-    Surface(
-        modifier = modifier
-            .fillMaxWidth()
-            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Assertive },
-        color = scope.theme.error,
-        contentColor = scope.theme.onAccent,
-        shape = RoundedCornerShape(scope.styles.cardRadius),
-    ) {
-        Row(
-            modifier = Modifier.padding(
-                horizontal = ERROR_PAD_X.dp,
-                vertical = ERROR_PAD_Y.dp,
-            ),
-            verticalAlignment = Alignment.Top,
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Surface(
+            modifier = modifier
+                .fillMaxWidth()
+                .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Assertive },
+            color = scope.theme.error,
+            contentColor = scope.theme.onAccent,
+            shape = RoundedCornerShape(scope.styles.cardRadius),
         ) {
-            Column(Modifier.weight(1f)) {
-                Text(
-                    title,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = scope.theme.fontFamily,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                detail?.let {
+            Row(
+                modifier = Modifier.padding(
+                    horizontal = ERROR_PAD_X.dp,
+                    vertical = ERROR_PAD_Y.dp,
+                ),
+                verticalAlignment = Alignment.Top,
+            ) {
+                Column(Modifier.weight(1f)) {
                     Text(
-                        it,
-                        style = MaterialTheme.typography.bodySmall,
+                        title,
+                        fontWeight = FontWeight.Bold,
                         fontFamily = scope.theme.fontFamily,
-                        maxLines = 3,
+                        maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                     )
+                    detail?.let {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.bodySmall,
+                            fontFamily = scope.theme.fontFamily,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    release?.let { onRelease ->
+                        TextButton(
+                            onClick = onRelease,
+                            modifier = Modifier.heightIn(
+                                min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                            ),
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = scope.theme.onAccent,
+                            ),
+                        ) { Text(scope.strings.releaseAndChangeSeats) }
+                    }
                 }
-                release?.let { onRelease ->
-                    TextButton(
-                        onClick = onRelease,
-                        modifier = Modifier.heightIn(
-                            min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
-                        ),
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = scope.theme.onAccent,
-                        ),
-                    ) { Text(scope.strings.releaseAndChangeSeats) }
-                }
+                TextButton(
+                    onClick = scope.controller::dismissError,
+                    modifier = Modifier.sizeIn(minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = scope.theme.onAccent,
+                    ),
+                ) { Text(scope.strings.dismiss) }
             }
-            TextButton(
-                onClick = scope.controller::dismissError,
-                modifier = Modifier.sizeIn(minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
-                colors = ButtonDefaults.textButtonColors(
-                    contentColor = scope.theme.onAccent,
-                ),
-            ) { Text(scope.strings.dismiss) }
         }
     }
 }
@@ -303,31 +299,36 @@ private const val ERROR_PAD_Y: Float = 10f
 @Composable
 public fun SeatLayerPickerLoadingView(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scope.theme.background)
-            .clearAndSetSemantics {
-                contentDescription = scope.strings.loading
-                progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
-            },
-        contentAlignment = Alignment.Center,
-    ) {
-        LinearProgressIndicator(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .height(2.dp),
-            color = scope.theme.accent,
-            trackColor = scope.theme.accent.copy(alpha = 0.12f),
-        )
-        VenueLoadingSilhouette(
-            color = scope.theme.accent,
-            modifier = Modifier
-                .fillMaxWidth(0.78f)
-                .widthIn(max = 420.dp)
-                .aspectRatio(10f / 7f),
-        )
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(scope.theme.background)
+                .clearAndSetSemantics {
+                    contentDescription = scope.strings.loading
+                    progressBarRangeInfo = ProgressBarRangeInfo.Indeterminate
+                },
+            contentAlignment = Alignment.Center,
+        ) {
+            LinearProgressIndicator(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .height(2.dp),
+                color = scope.theme.accent,
+                trackColor = scope.theme.accent.copy(alpha = 0.12f),
+            )
+            VenueLoadingSilhouette(
+                color = scope.theme.accent,
+                modifier = Modifier
+                    .fillMaxWidth(0.78f)
+                    .widthIn(max = 420.dp)
+                    .aspectRatio(10f / 7f),
+            )
+        }
     }
 }
 
@@ -337,7 +338,7 @@ private fun VenueLoadingSilhouette(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    val animationsEnabled = seatLayerPickerMotionEnabled()
+    val animationsEnabled = !pickerReducedMotion()
     val transition = rememberInfiniteTransition(label = "seatlayer-venue-loading")
     val sweep by transition.animateFloat(
         initialValue = 0.45f,
@@ -396,44 +397,49 @@ public fun SeatLayerPickerErrorView(
     modifier: Modifier = Modifier,
 ) {
     val scope = LocalSeatLayerPickerScope.current
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scope.theme.background)
-            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier = Modifier.padding(ERROR_VIEW_GUTTER.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(scope.theme.background)
+                .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = scope.strings.mapDidNotLoad,
-                modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.titleMedium,
-                color = scope.theme.text,
-                fontFamily = scope.theme.fontFamily,
-            )
-            Spacer(Modifier.height(ERROR_VIEW_GAP.dp))
-            Text(
-                text = scope.strings.checkConnection,
-                style = MaterialTheme.typography.bodySmall,
-                color = scope.theme.mutedText,
-                fontFamily = scope.theme.fontFamily,
-            )
-            Spacer(Modifier.height(ERROR_VIEW_ACTION_GAP.dp))
-            Button(
-                onClick = onRetry,
-                modifier = Modifier.sizeIn(
-                    minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
-                ),
-                shape = RoundedCornerShape(scope.styles.buttonRadius),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = scope.theme.accent,
-                    contentColor = scope.theme.onAccent,
-                ),
+            Column(
+                modifier = Modifier.padding(ERROR_VIEW_GUTTER.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(scope.strings.retry, fontFamily = scope.theme.fontFamily)
+                Text(
+                    text = scope.strings.mapDidNotLoad,
+                    modifier = Modifier.semantics { heading() },
+                    style = MaterialTheme.typography.titleMedium,
+                    color = scope.theme.text,
+                    fontFamily = scope.theme.fontFamily,
+                )
+                Spacer(Modifier.height(ERROR_VIEW_GAP.dp))
+                Text(
+                    text = scope.strings.checkConnection,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = scope.theme.mutedText,
+                    fontFamily = scope.theme.fontFamily,
+                )
+                Spacer(Modifier.height(ERROR_VIEW_ACTION_GAP.dp))
+                Button(
+                    onClick = onRetry,
+                    modifier = Modifier.sizeIn(
+                        minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                    ),
+                    shape = RoundedCornerShape(scope.styles.buttonRadius),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = scope.theme.accent,
+                        contentColor = scope.theme.onAccent,
+                    ),
+                ) {
+                    Text(scope.strings.retry, fontFamily = scope.theme.fontFamily)
+                }
             }
         }
     }
@@ -448,17 +454,22 @@ public fun SeatLayerPickerEmptyView(
     modifier: Modifier = Modifier,
 ) {
     val scope = LocalSeatLayerPickerScope.current
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scope.theme.background.copy(alpha = 0.94f)),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            text = scope.strings.soldOutTitle,
-            style = MaterialTheme.typography.titleMedium,
-            color = scope.theme.text,
-            modifier = Modifier.padding(28.dp),
-        )
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(scope.theme.background.copy(alpha = 0.94f)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = scope.strings.soldOutTitle,
+                style = MaterialTheme.typography.titleMedium,
+                color = scope.theme.text,
+                modifier = Modifier.padding(28.dp),
+            )
+        }
     }
 }

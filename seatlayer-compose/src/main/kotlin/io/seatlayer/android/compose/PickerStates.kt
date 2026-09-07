@@ -81,47 +81,52 @@ public fun SeatLayerPickerSoldOutOverlay(modifier: Modifier = Modifier) {
             ?: snapshot?.event?.name
             ?: scope.strings.soldOutEyebrow
         ).uppercase()
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scope.theme.background.copy(alpha = STATE_VEIL_OPACITY))
-            .semantics(mergeDescendants = true) {
-                liveRegion = LiveRegionMode.Polite
-            },
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier = Modifier.padding(STATE_GUTTER.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(scope.theme.background.copy(alpha = STATE_VEIL_OPACITY))
+                .semantics(mergeDescendants = true) {
+                    liveRegion = LiveRegionMode.Polite
+                },
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                eyebrow,
-                color = scope.theme.accent,
-                fontSize = SOLD_OUT_EYEBROW_SIZE.sp,
-                letterSpacing = SOLD_OUT_EYEBROW_TRACKING.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = scope.theme.fontFamily,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(STATE_SMALL_GAP.dp))
-            Text(
-                scope.strings.soldOutTitle,
-                modifier = Modifier.semantics { heading() },
-                color = scope.theme.text,
-                fontSize = SOLD_OUT_TITLE_SIZE.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = scope.theme.fontFamily,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(STATE_SMALL_GAP.dp))
-            Text(
-                scope.strings.soldOutCopy,
-                modifier = Modifier.widthIn(max = STATE_COPY_WIDTH.dp),
-                color = scope.theme.mutedText,
-                fontSize = STATE_BODY_SIZE.sp,
-                fontFamily = scope.theme.fontFamily,
-                textAlign = TextAlign.Center,
-            )
+            Column(
+                modifier = Modifier.padding(STATE_GUTTER.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    eyebrow,
+                    color = scope.theme.accent,
+                    fontSize = SOLD_OUT_EYEBROW_SIZE.sp,
+                    letterSpacing = SOLD_OUT_EYEBROW_TRACKING.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFamily = scope.theme.fontFamily,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(STATE_SMALL_GAP.dp))
+                Text(
+                    scope.strings.soldOutTitle,
+                    modifier = Modifier.semantics { heading() },
+                    color = scope.theme.text,
+                    fontSize = SOLD_OUT_TITLE_SIZE.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFamily = scope.theme.fontFamily,
+                    textAlign = TextAlign.Center,
+                )
+                Spacer(Modifier.height(STATE_SMALL_GAP.dp))
+                Text(
+                    scope.strings.soldOutCopy,
+                    modifier = Modifier.widthIn(max = STATE_COPY_WIDTH.dp),
+                    color = scope.theme.mutedText,
+                    fontSize = STATE_BODY_SIZE.sp,
+                    fontFamily = scope.theme.fontFamily,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
@@ -238,82 +243,87 @@ public fun SeatLayerPickerAccessPanel(modifier: Modifier = Modifier) {
     val telling = seatLayerPickerAccessTelling(scope.strings, reason)
     var retrying by remember(scope.stateHolder) { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scope.theme.background.copy(alpha = ACCESS_VEIL_OPACITY))
-            .semantics(mergeDescendants = true) {
-                liveRegion = LiveRegionMode.Polite
-            },
-        contentAlignment = Alignment.Center,
-    ) {
-        Surface(
-            modifier = Modifier
-                .padding(STATE_GUTTER.dp)
-                .widthIn(max = ACCESS_CARD_WIDTH.dp),
-            color = scope.theme.surface,
-            contentColor = scope.theme.text,
-            shape = RoundedCornerShape(scope.theme.radius),
-            border = BorderStroke(1.dp, scope.theme.divider),
-            shadowElevation = SeatLayerElevationTokens.CONFIRM_CARD.dp,
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(scope.theme.background.copy(alpha = ACCESS_VEIL_OPACITY))
+                .semantics(mergeDescendants = true) {
+                    liveRegion = LiveRegionMode.Polite
+                },
+            contentAlignment = Alignment.Center,
         ) {
-            Column(
-                modifier = Modifier.padding(
-                    start = STATE_GUTTER.dp,
-                    top = ACCESS_CARD_PAD_TOP.dp,
-                    end = STATE_GUTTER.dp,
-                    bottom = STATE_GUTTER.dp,
-                ),
-                horizontalAlignment = Alignment.CenterHorizontally,
+            Surface(
+                modifier = Modifier
+                    .padding(STATE_GUTTER.dp)
+                    .widthIn(max = ACCESS_CARD_WIDTH.dp),
+                color = scope.theme.surface,
+                contentColor = scope.theme.text,
+                shape = RoundedCornerShape(scope.theme.radius),
+                border = BorderStroke(1.dp, scope.theme.divider),
+                shadowElevation = SeatLayerElevationTokens.CONFIRM_CARD.dp,
             ) {
-                AccessBadge(spinning = retrying)
-                Spacer(Modifier.height(STATE_GAP.dp))
-                Text(
-                    telling.title,
-                    modifier = Modifier.semantics { heading() },
-                    color = scope.theme.text,
-                    fontSize = ACCESS_TITLE_SIZE.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    fontFamily = scope.theme.fontFamily,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(Modifier.height(STATE_SMALL_GAP.dp))
-                Text(
-                    telling.body,
-                    color = scope.theme.mutedText,
-                    fontSize = STATE_BODY_SIZE.sp,
-                    fontFamily = scope.theme.fontFamily,
-                    textAlign = TextAlign.Center,
-                )
-                Spacer(Modifier.height(ACCESS_ACTION_GAP.dp))
-                Button(
-                    onClick = {
-                        if (retrying) return@Button
-                        retrying = true
-                        coroutineScope.launch {
-                            try {
-                                recoverPickerAccess(scope, paused = reason == "paused")
-                            } finally {
-                                retrying = false
-                            }
-                        }
-                    },
-                    enabled = !retrying,
-                    modifier = Modifier.sizeIn(
-                        minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                Column(
+                    modifier = Modifier.padding(
+                        start = STATE_GUTTER.dp,
+                        top = ACCESS_CARD_PAD_TOP.dp,
+                        end = STATE_GUTTER.dp,
+                        bottom = STATE_GUTTER.dp,
                     ),
-                    shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = scope.theme.accent,
-                        contentColor = scope.theme.onAccent,
-                    ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+                    AccessBadge(spinning = retrying)
+                    Spacer(Modifier.height(STATE_GAP.dp))
                     Text(
-                        telling.action,
-                        fontSize = STATE_BODY_SIZE.sp,
+                        telling.title,
+                        modifier = Modifier.semantics { heading() },
+                        color = scope.theme.text,
+                        fontSize = ACCESS_TITLE_SIZE.sp,
                         fontWeight = FontWeight.ExtraBold,
                         fontFamily = scope.theme.fontFamily,
+                        textAlign = TextAlign.Center,
                     )
+                    Spacer(Modifier.height(STATE_SMALL_GAP.dp))
+                    Text(
+                        telling.body,
+                        color = scope.theme.mutedText,
+                        fontSize = STATE_BODY_SIZE.sp,
+                        fontFamily = scope.theme.fontFamily,
+                        textAlign = TextAlign.Center,
+                    )
+                    Spacer(Modifier.height(ACCESS_ACTION_GAP.dp))
+                    Button(
+                        onClick = {
+                            if (retrying) return@Button
+                            retrying = true
+                            coroutineScope.launch {
+                                try {
+                                    recoverPickerAccess(scope, paused = reason == "paused")
+                                } finally {
+                                    retrying = false
+                                }
+                            }
+                        },
+                        enabled = !retrying,
+                        modifier = Modifier.sizeIn(
+                            minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                        ),
+                        shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = scope.theme.accent,
+                            contentColor = scope.theme.onAccent,
+                        ),
+                    ) {
+                        Text(
+                            telling.action,
+                            fontSize = STATE_BODY_SIZE.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            fontFamily = scope.theme.fontFamily,
+                        )
+                    }
                 }
             }
         }
@@ -350,7 +360,7 @@ private fun AccessBadge(spinning: Boolean) {
     // Progress the buyer asked for is not decoration: a retry that shows
     // nothing is a button that looks broken. It still stops turning for a
     // viewer who asked for less movement, who gets the disabled button.
-    val turning = spinning && seatLayerPickerMotionEnabled()
+    val turning = spinning && !pickerReducedMotion()
     val transition = rememberInfiniteTransition(label = "seatlayer-access-retry")
     val angle by transition.animateFloat(
         initialValue = 0f,

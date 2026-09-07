@@ -190,39 +190,44 @@ public fun SeatLayerPickerToastCard(
         SeatLayerPickerToastTone.Success -> theme.success
     }
     val spoken = listOfNotNull(toast.message, toast.actionLabel).joinToString(separator = ", ")
-    Surface(
-        modifier = modifier
-            .widthIn(max = ToastLiterals.MAX_WIDTH.dp)
-            .semantics(mergeDescendants = false) {
-                liveRegion = LiveRegionMode.Polite
-                contentDescription = spoken
-            },
-        shape = RoundedCornerShape(ToastLiterals.RADIUS.dp),
-        color = theme.surface,
-        contentColor = theme.text,
-        border = BorderStroke(1.dp, border),
-    ) {
-        Row(
-            modifier = Modifier.padding(
-                start = ToastLiterals.PAD_X.dp,
-                end = if (toast.actionLabel == null) ToastLiterals.PAD_X.dp else 0.dp,
-                top = ToastLiterals.PAD_Y.dp,
-                bottom = ToastLiterals.PAD_Y.dp,
-            ),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(ToastLiterals.PAD_X.dp),
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Surface(
+            modifier = modifier
+                .widthIn(max = ToastLiterals.MAX_WIDTH.dp)
+                .semantics(mergeDescendants = false) {
+                    liveRegion = LiveRegionMode.Polite
+                    contentDescription = spoken
+                },
+            shape = RoundedCornerShape(ToastLiterals.RADIUS.dp),
+            color = theme.surface,
+            contentColor = theme.text,
+            border = BorderStroke(1.dp, border),
         ) {
-            Text(
-                text = toast.message,
-                modifier = Modifier.weight(1f, fill = false),
-                color = theme.text,
-                fontSize = SeatLayerTypeTokens.PEEK_SUMMARY_SIZE.sp,
-                fontWeight = FontWeight(SeatLayerTypeTokens.PEEK_SUMMARY_WEIGHT),
-            )
-            val action = toast.actionLabel
-            val onAction = toast.onAction
-            if (action != null && onAction != null) {
-                PickerToastAction(label = action, onPress = onAction)
+            Row(
+                modifier = Modifier.padding(
+                    start = ToastLiterals.PAD_X.dp,
+                    end = if (toast.actionLabel == null) ToastLiterals.PAD_X.dp else 0.dp,
+                    top = ToastLiterals.PAD_Y.dp,
+                    bottom = ToastLiterals.PAD_Y.dp,
+                ),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(ToastLiterals.PAD_X.dp),
+            ) {
+                Text(
+                    text = toast.message,
+                    modifier = Modifier.weight(1f, fill = false),
+                    color = theme.text,
+                    fontSize = SeatLayerTypeTokens.PEEK_SUMMARY_SIZE.sp,
+                    fontWeight = FontWeight(SeatLayerTypeTokens.PEEK_SUMMARY_WEIGHT),
+                )
+                val action = toast.actionLabel
+                val onAction = toast.onAction
+                if (action != null && onAction != null) {
+                    PickerToastAction(label = action, onPress = onAction)
+                }
             }
         }
     }

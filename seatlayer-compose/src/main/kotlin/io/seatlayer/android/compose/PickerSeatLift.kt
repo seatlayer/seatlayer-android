@@ -78,7 +78,7 @@ internal fun BoxScope.SeatLayerConfirmCardLayer(
     val candidate = presentation.candidateSeat
     val snapshot = scope.state.snapshot
     val coroutineScope = androidx.compose.runtime.rememberCoroutineScope()
-    val animate = seatLayerAnimationsEnabled()
+    val animate = !pickerReducedMotion()
 
     // The card keeps drawing itself for the length of its own sweep after the
     // seat has stopped being a candidate: the cart is told on the press, and

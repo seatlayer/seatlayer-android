@@ -165,83 +165,87 @@ public fun SeatLayerPickerCartSheet(
         bodyValue = pickerRubberBand(raw, 0f, detents.top)
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .offset { IntOffset(0, (-belowPeek * density).roundToInt()) },
-    ) {
-        Column(
-            modifier = Modifier
+    // The sheet scrolls, so it carries the higher ceiling; the peek row
+    // inside it keeps its own, lower one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_SHEET) {
+        Box(
+            modifier = modifier
                 .fillMaxWidth()
-                .background(ground, shape)
-                .drawBehind {
-                    drawLine(
-                        color = hairline,
-                        start = Offset(0f, 0f),
-                        end = Offset(size.width, 0f),
-                        strokeWidth = 1f,
-                    )
-                }
-                .draggable(
-                    state = dragState,
-                    orientation = Orientation.Vertical,
-                    onDragStarted = {
-                        settleJob?.cancel()
-                        dragStart = rest
-                        raw = bodyValue
-                        travel = 0f
-                    },
-                    onDragStopped = { velocityPixels ->
-                        val velocity = -velocityPixels / density
-                        settleTo(
-                            detents.settleWithFloor(bodyValue, velocity, dragStart, travel),
-                            velocity,
-                        )
-                    },
-                ),
+                .offset { IntOffset(0, (-belowPeek * density).roundToInt()) },
         ) {
-            Spacer(Modifier.height(SeatLayerSizeTokens.SHEET_HEAD_HEIGHT.dp))
-            PickerCartRegion(
-                height = bodyValue.coerceAtLeast(0f),
-                open = open,
-                hasTickets = hasTickets,
-                cartList = cartList,
-                bestAvailable = bestAvailable,
-                onCartMeasured = { cartNatural = it },
-                onExtrasMeasured = { extrasNatural = it },
-            )
-            SeatLayerPickerSheetFoot(
-                showHairline = open && hasTickets,
-                checkoutBar = checkoutBar,
-                // The sheet answers its own controls itself and then publishes
-                // the answer, rather than waiting to be told what it just did.
-                onOpenFinder = {
-                    settleTo(PickerSheetRest.Content, 0f)
-                    scope.controller.setCartSheetExpanded(true)
-                },
-                onOpenCart = {
-                    settleTo(PickerSheetRest.Content, 0f)
-                    scope.controller.setCartSheetExpanded(true)
-                },
-                collapsed = !open,
-                modifier = Modifier.onGloballyPositioned { footHeight = it.size.height / density },
-            )
-        }
-        // The handle straddles the sheet's own top edge. It is not drawn at all
-        // while a confirm card is up: the disc sat half under the card's scrim,
-        // and the card is the only question until it is answered.
-        if (!confirming) {
-            PickerSheetHandle(
-                open = open,
-                onToggle = {
-                    settleTo(
-                        if (open) PickerSheetRest.Peek else PickerSheetRest.Content,
-                        0f,
-                    )
-                    scope.controller.setCartSheetExpanded(!open)
-                },
-                modifier = Modifier.align(Alignment.TopCenter),
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(ground, shape)
+                    .drawBehind {
+                        drawLine(
+                            color = hairline,
+                            start = Offset(0f, 0f),
+                            end = Offset(size.width, 0f),
+                            strokeWidth = 1f,
+                        )
+                    }
+                    .draggable(
+                        state = dragState,
+                        orientation = Orientation.Vertical,
+                        onDragStarted = {
+                            settleJob?.cancel()
+                            dragStart = rest
+                            raw = bodyValue
+                            travel = 0f
+                        },
+                        onDragStopped = { velocityPixels ->
+                            val velocity = -velocityPixels / density
+                            settleTo(
+                                detents.settleWithFloor(bodyValue, velocity, dragStart, travel),
+                                velocity,
+                            )
+                        },
+                    ),
+            ) {
+                Spacer(Modifier.height(SeatLayerSizeTokens.SHEET_HEAD_HEIGHT.dp))
+                PickerCartRegion(
+                    height = bodyValue.coerceAtLeast(0f),
+                    open = open,
+                    hasTickets = hasTickets,
+                    cartList = cartList,
+                    bestAvailable = bestAvailable,
+                    onCartMeasured = { cartNatural = it },
+                    onExtrasMeasured = { extrasNatural = it },
+                )
+                SeatLayerPickerSheetFoot(
+                    showHairline = open && hasTickets,
+                    checkoutBar = checkoutBar,
+                    // The sheet answers its own controls itself and then publishes
+                    // the answer, rather than waiting to be told what it just did.
+                    onOpenFinder = {
+                        settleTo(PickerSheetRest.Content, 0f)
+                        scope.controller.setCartSheetExpanded(true)
+                    },
+                    onOpenCart = {
+                        settleTo(PickerSheetRest.Content, 0f)
+                        scope.controller.setCartSheetExpanded(true)
+                    },
+                    collapsed = !open,
+                    modifier = Modifier.onGloballyPositioned { footHeight = it.size.height / density },
+                )
+            }
+            // The handle straddles the sheet's own top edge. It is not drawn at all
+            // while a confirm card is up: the disc sat half under the card's scrim,
+            // and the card is the only question until it is answered.
+            if (!confirming) {
+                PickerSheetHandle(
+                    open = open,
+                    onToggle = {
+                        settleTo(
+                            if (open) PickerSheetRest.Peek else PickerSheetRest.Content,
+                            0f,
+                        )
+                        scope.controller.setCartSheetExpanded(!open)
+                    },
+                    modifier = Modifier.align(Alignment.TopCenter),
+                )
+            }
         }
     }
 }
@@ -307,6 +311,7 @@ private fun PickerCartRegion(
     onCartMeasured: (Float) -> Unit,
     onExtrasMeasured: (Float) -> Unit,
 ) {
+    val scope = LocalSeatLayerPickerScope.current
     val density = LocalDensity.current.density
     val scrollState = rememberScrollState()
     LaunchedEffect(hasTickets) { if (!hasTickets) onCartMeasured(0f) }
@@ -356,7 +361,19 @@ private fun PickerCartRegion(
                     // holds a button that can do nothing, and the sentence
                     // above it is why.
                     SeatLayerPickerSalesClosedStatement()
-                    if (!hasTickets) bestAvailable()
+                    if (!hasTickets) {
+                        // An empty tray says how a seat gets into it. Spoken
+                        // only: the form under it is the visible answer, and a
+                        // sentence printed above it would say twice what the
+                        // button already says once.
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = scope.strings.emptyTrayHint
+                                },
+                        ) { bestAvailable() }
+                    }
                 }
             }
         }

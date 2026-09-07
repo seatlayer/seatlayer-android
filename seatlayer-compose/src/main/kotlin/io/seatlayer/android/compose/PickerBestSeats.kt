@@ -37,8 +37,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -239,7 +241,12 @@ private fun <T> PickerBestSeatsSelect(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(SeatLayerSizeTokens.BEST_SEATS_SELECT_HEIGHT.dp)
+                .height(
+                    pickerScaledExtent(
+                        SeatLayerSizeTokens.BEST_SEATS_SELECT_HEIGHT,
+                        SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                    ),
+                )
                 .clickable { expanded = true }
                 .semantics { role = Role.Button },
             shape = RoundedCornerShape(SeatLayerRadiusTokens.CONTROL.dp),
@@ -305,7 +312,12 @@ private fun PickerQuantityStepper(
     Surface(
         modifier = Modifier
             .width(SeatLayerSizeTokens.BEST_SEATS_STEPPER_WIDTH.dp)
-            .height(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+            .height(
+                pickerScaledExtent(
+                    SeatLayerSizeTokens.MINIMUM_HIT_TARGET,
+                    SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                ),
+            ),
         shape = RoundedCornerShape(SeatLayerRadiusTokens.CONTROL.dp),
         color = theme.surface,
         contentColor = theme.text,
@@ -320,7 +332,11 @@ private fun PickerQuantityStepper(
             )
             Text(
                 text = value.toString(),
-                modifier = Modifier.weight(1f),
+                // The number the two keys move, said when it moves: the buyer
+                // presses a key, not the figure between them.
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { liveRegion = LiveRegionMode.Polite },
                 color = theme.text,
                 fontSize = SeatLayerTypeTokens.BEST_SEATS_SELECT_SIZE.sp,
                 fontWeight = FontWeight(BestSeatsLiterals.KEY_GLYPH_WEIGHT),
@@ -384,7 +400,12 @@ private fun PickerBestSeatsAction(
     val theme = scope.theme
     Surface(
         modifier = modifier
-            .height(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
+            .height(
+                pickerScaledExtent(
+                    SeatLayerSizeTokens.MINIMUM_HIT_TARGET,
+                    SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                ),
+            )
             .clickable(enabled = enabled, onClick = onPress)
             .semantics { role = Role.Button },
         shape = RoundedCornerShape(SeatLayerRadiusTokens.CONTROL.dp),

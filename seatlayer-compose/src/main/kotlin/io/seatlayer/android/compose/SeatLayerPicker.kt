@@ -180,6 +180,12 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
         mapFramed = true
     }
 
+    // One predicate, read once, for the whole screen: while a surface is
+    // holding it, everything painted before that surface is inert to assistive
+    // technology. The toast band, the prompts and the cart stay audible —
+    // they are the answer, the question and what the seat is added to.
+    val covered = pickerDecisionSurfaceUp()
+
     CompositionLocalProvider(LocalPickerBlockedRegions provides blockedRegions) {
     BoxWithConstraints(
         modifier = modifier
@@ -194,19 +200,45 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
         }
         if (wide) {
             val coroutineScope = rememberCoroutineScope()
-            Column(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().pickerReadingOrderGroup()) {
                 if (!panorama) {
-                    PickerHeader(
-                        builders = builders,
-                        onClose = callbacks.onClose,
-                        coroutineScope = coroutineScope,
-                        compact = false,
-                    )
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.HEADER)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
+                        PickerHeader(
+                            builders = builders,
+                            onClose = callbacks.onClose,
+                            coroutineScope = coroutineScope,
+                            compact = false,
+                        )
+                    }
                 }
-                Row(Modifier.weight(1f).fillMaxWidth()) {
-                    Box(Modifier.weight(1f).fillMaxHeight()) {
-                        movableMap(Modifier.fillMaxSize(), reloadGeneration)
-                        WideMapChrome(builders)
+                Row(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP),
+                ) {
+                    Box(Modifier.weight(1f).fillMaxHeight().pickerReadingOrderGroup()) {
+                        Box(
+                            Modifier
+                                .matchParentSize()
+                                .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP)
+                                .pickerHiddenFromAccessibility(covered),
+                        ) {
+                            Box(
+                                Modifier
+                                    .matchParentSize()
+                                    .pickerVenueMapRegion()
+                                    .pickerMapFocusReturn(covered),
+                            ) {
+                                movableMap(Modifier.fillMaxSize(), reloadGeneration)
+                            }
+                            WideMapChrome(builders)
+                        }
                         CommonOverlays(
                             builders = builders,
                             wide = true,
@@ -216,32 +248,64 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                             onRetry = { reloadGeneration += 1 },
                         )
                     }
-                    WideSidePanel(builders)
+                    WideSidePanel(
+                        builders = builders,
+                        modifier = Modifier
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.SHEET),
+                    )
                 }
             }
         } else {
             val coroutineScope = rememberCoroutineScope()
-            Column(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().pickerReadingOrderGroup()) {
                 if (!panorama) {
-                    PickerHeader(
-                        builders = builders,
-                        onClose = callbacks.onClose,
-                        coroutineScope = coroutineScope,
-                        compact = true,
-                    )
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.HEADER)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
+                        PickerHeader(
+                            builders = builders,
+                            onClose = callbacks.onClose,
+                            coroutineScope = coroutineScope,
+                            compact = true,
+                        )
+                    }
                 }
                 if (options.chrome.showPriceRail && state.isReady && mapFramed) {
                     // The header, the price rail and the sheet are ROWS OF ONE
                     // COLUMN with the map: the map surface begins and ends at
                     // their edges, so nothing reads through the rail and the
                     // rail is not part of the band the runtime frames inside.
-                    SeatLayerPickerPart(
-                        SeatLayerPickerPart.Legend,
-                        builders[SeatLayerPickerPart.Legend],
-                    ) { SeatLayerPriceLegend(compact = true) }
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.RAIL)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
+                        SeatLayerPickerPart(
+                            SeatLayerPickerPart.Legend,
+                            builders[SeatLayerPickerPart.Legend],
+                        ) { SeatLayerPriceLegend(compact = true) }
+                    }
                 }
-                Box(Modifier.weight(1f).fillMaxWidth()) {
-                    movableMap(Modifier.fillMaxSize(), reloadGeneration)
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP),
+                ) {
+                    Box(
+                        Modifier
+                            .matchParentSize()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP)
+                            .pickerVenueMapRegion()
+                            .pickerMapFocusReturn(covered)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
+                        movableMap(Modifier.fillMaxSize(), reloadGeneration)
+                    }
                     CompactChrome(
                         builders = builders,
                         bottomPadding = (bottomChromePixels / density).dp,
@@ -262,7 +326,13 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                     state.isReady &&
                     !SeatLayerPickerProjections.isProvenEmpty(state.snapshot)
                 ) {
-                    PickerCart(builders, compact = true)
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.SHEET),
+                    ) {
+                        PickerCart(builders, compact = true)
+                    }
                 }
             }
         }

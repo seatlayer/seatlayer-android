@@ -70,89 +70,87 @@ public fun SeatLayerPriceLegend(
     val coroutineScope = rememberCoroutineScope()
 
     val content: @Composable () -> Unit = {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(
-                    if (compact) {
-                        SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp
-                    } else {
-                        LEGEND_WIDE_HEIGHT
-                    },
-                )
-                .padding(
-                    horizontal = resolvedStyle.horizontalPadding
-                        ?: if (compact) LEGEND_PADDING_X_COMPACT else LEGEND_PADDING_X_WIDE,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            // THE WAY OUT COMES FIRST AND NEVER SCROLLS AWAY. It is simply not
-            // in the scroller: a buyer who has narrowed the map to one price
-            // has to be able to get back without hunting for the chip.
-            PickerLegendChip(
-                label = scope.strings.allPrices,
-                spoken = scope.strings.allPrices,
-                dot = null,
-                selected = active.isEmpty(),
-                compact = compact,
-                naming = false,
-            ) {
-                coroutineScope.launch {
-                    scope.performAction {
-                        scope.controller.setCategoryFilter(emptyList(), focus = true)
-                    }
-                }
-            }
-            Spacer(Modifier.width(SeatLayerSizeTokens.ACCESS_STEP_GAP.dp))
-            LazyRow(
-                modifier = Modifier.fillMaxWidth(),
-                // Horizontal only: a vertical pad inside a fixed band steals
-                // the chip's touch target off the bottom of the design source's
-                // 44 dp minimum.
-                contentPadding = PaddingValues(horizontal = LEGEND_SCROLLER_PADDING),
-                horizontalArrangement = Arrangement.spacedBy(
-                    SeatLayerSizeTokens.ACCESS_STEP_GAP.dp,
-                ),
+        // The rail is a fixed band of prices, and a clipped price is worse
+        // than a slightly smaller one: it grows to the rail ceiling.
+        SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_RAIL) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(pickerRailBandHeight(compact))
+                    .padding(
+                        horizontal = resolvedStyle.horizontalPadding
+                            ?: if (compact) LEGEND_PADDING_X_COMPACT else LEGEND_PADDING_X_WIDE,
+                    ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                items(categories, key = SeatLayerPickerCategory::key) { category ->
-                    val selected = category.key in active
-                    val amount = pickerCategoryAmount(
-                        category = category,
-                        currency = currency,
-                        formatter = scope.moneyFormatter,
-                    )
-                    PickerLegendChip(
-                        // The phone chip is the PRICE alone; the wide chip is
-                        // name · price. A category with no configured price
-                        // wears its name on both.
-                        label = when {
-                            amount == null -> category.label
-                            compact -> amount
-                            else -> "${category.label} · $amount"
-                        },
-                        // The NAME is spoken even where only the price is drawn.
-                        spoken = pickerCategorySpoken(category, amount, counted),
-                        dot = parseColor(category.color) ?: scope.theme.accent,
-                        selected = selected,
-                        compact = compact,
-                        naming = true,
-                    ) {
-                        coroutineScope.launch {
-                            scope.performAction {
-                                scope.controller.setCategoryFilter(
-                                    if (selected) emptyList() else listOf(category.key),
-                                    // On BOTH directions: clearing without it
-                                    // left the buyer inside the drill-in they
-                                    // were already in.
-                                    focus = true,
-                                )
-                            }
+                // THE WAY OUT COMES FIRST AND NEVER SCROLLS AWAY. It is simply not
+                // in the scroller: a buyer who has narrowed the map to one price
+                // has to be able to get back without hunting for the chip.
+                PickerLegendChip(
+                    label = scope.strings.allPrices,
+                    spoken = scope.strings.allPrices,
+                    dot = null,
+                    selected = active.isEmpty(),
+                    compact = compact,
+                    naming = false,
+                ) {
+                    coroutineScope.launch {
+                        scope.performAction {
+                            scope.controller.setCategoryFilter(emptyList(), focus = true)
                         }
                     }
                 }
-                if (!compact) {
-                    item { PickerUnavailableKey() }
+                Spacer(Modifier.width(SeatLayerSizeTokens.ACCESS_STEP_GAP.dp))
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    // Horizontal only: a vertical pad inside a fixed band steals
+                    // the chip's touch target off the bottom of the design source's
+                    // 44 dp minimum.
+                    contentPadding = PaddingValues(horizontal = LEGEND_SCROLLER_PADDING),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        SeatLayerSizeTokens.ACCESS_STEP_GAP.dp,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    items(categories, key = SeatLayerPickerCategory::key) { category ->
+                        val selected = category.key in active
+                        val amount = pickerCategoryAmount(
+                            category = category,
+                            currency = currency,
+                            formatter = scope.moneyFormatter,
+                        )
+                        PickerLegendChip(
+                            // The phone chip is the PRICE alone; the wide chip is
+                            // name · price. A category with no configured price
+                            // wears its name on both.
+                            label = when {
+                                amount == null -> category.label
+                                compact -> amount
+                                else -> "${category.label} · $amount"
+                            },
+                            // The NAME is spoken even where only the price is drawn.
+                            spoken = pickerCategorySpoken(category, amount, counted),
+                            dot = parseColor(category.color) ?: scope.theme.accent,
+                            selected = selected,
+                            compact = compact,
+                            naming = true,
+                        ) {
+                            coroutineScope.launch {
+                                scope.performAction {
+                                    scope.controller.setCategoryFilter(
+                                        if (selected) emptyList() else listOf(category.key),
+                                        // On BOTH directions: clearing without it
+                                        // left the buyer inside the drill-in they
+                                        // were already in.
+                                        focus = true,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    if (!compact) {
+                        item { PickerUnavailableKey() }
+                    }
                 }
             }
         }
@@ -233,13 +231,7 @@ private fun PickerLegendChip(
     // 24 dp chip is dead space that a thumb lands in constantly.
     Box(
         modifier = Modifier
-            .height(
-                if (compact) {
-                    SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp
-                } else {
-                    LEGEND_WIDE_HEIGHT
-                },
-            )
+            .height(pickerRailBandHeight(compact))
             .clickable(onClick = onClick)
             .semantics(mergeDescendants = true) {
                 role = Role.Button
@@ -251,9 +243,12 @@ private fun PickerLegendChip(
         Surface(
             modifier = Modifier.heightIn(
                 min = if (compact) {
-                    SeatLayerSizeTokens.LEGEND_CHIP_HEIGHT.dp
+                    pickerScaledExtent(
+                        SeatLayerSizeTokens.LEGEND_CHIP_HEIGHT,
+                        SeatLayerTypeTokens.SCALE_CLAMP_RAIL,
+                    )
                 } else {
-                    LEGEND_WIDE_HEIGHT
+                    pickerRailBandHeight(compact = false)
                 },
             ),
             shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
@@ -353,6 +348,22 @@ private const val LEGEND_UNAVAILABLE_WEIGHT = 650
 private const val LEGEND_WAY_OUT_WEIGHT = 750
 private const val LEGEND_WIDE_DOT_GROWTH = 3f
 private val LEGEND_WIDE_HEIGHT: Dp = 40.dp
+
+/**
+ * The band a price chip stands in, grown by the platform's text setting.
+ *
+ * A fixed band becomes a ceiling the moment a buyer scales their text up, and
+ * a price taller than its band clips. At the platform default it is unchanged.
+ */
+@Composable
+private fun pickerRailBandHeight(compact: Boolean): Dp = pickerScaledExtent(
+    if (compact) {
+        SeatLayerSizeTokens.MINIMUM_HIT_TARGET
+    } else {
+        LEGEND_WIDE_HEIGHT.value
+    },
+    SeatLayerTypeTokens.SCALE_CLAMP_RAIL,
+)
 private val LEGEND_WIDE_ELEVATION: Dp = 1.dp
 private val LEGEND_WIDE_FONT_SIZE = 12.sp
 private val LEGEND_PADDING_X_COMPACT: Dp = 10.dp
