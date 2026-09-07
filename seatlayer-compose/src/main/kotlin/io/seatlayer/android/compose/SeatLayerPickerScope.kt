@@ -176,6 +176,12 @@ public fun SeatLayerPickerScope(
         LaunchedEffect(stateHolder, callbacks.onHoldExpired) {
             stateHolder.holdExpiries.collect { callbacks.onHoldExpired() }
         }
+        // Seats taken from under the buyer. Also an event rather than a state:
+        // the next snapshot shows a shorter cart, which is what removing a
+        // seat looks like too.
+        LaunchedEffect(stateHolder, callbacks.onSelectedObjectUnavailable) {
+            stateHolder.unavailableSelections.collect(callbacks.onSelectedObjectUnavailable)
+        }
         // One session the server will no longer answer for, told once per
         // reason. `onAccessExpired` is the narrower of the two: it fires only
         // where the session itself lapsed rather than where the link was

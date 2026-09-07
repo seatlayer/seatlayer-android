@@ -32,6 +32,9 @@ public class SeatLayerPickerStateHolder(
     )
     private val mutableReloadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private val mutableHoldExpiries = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val mutableUnavailableSelections = MutableSharedFlow<List<String>>(
+        extraBufferCapacity = 1,
+    )
     private val answeredSeatIdentities = linkedSetOf<String>()
     private var presentationSessionId: String? = null
 
@@ -64,6 +67,16 @@ public class SeatLayerPickerStateHolder(
      * like. Only this event says the time ran out.
      */
     public val holdExpiries: SharedFlow<Unit> = mutableHoldExpiries.asSharedFlow()
+
+    /**
+     * Seats the buyer had, that the server has since given to someone else.
+     *
+     * Carried as an event rather than read off a snapshot: by the time the
+     * next snapshot arrives the seats are simply gone, and a host cannot tell
+     * a seat taken away from a seat the buyer removed.
+     */
+    public val unavailableSelections: SharedFlow<List<String>> =
+        mutableUnavailableSelections.asSharedFlow()
     public val controller: SeatLayerPickerController = SeatLayerPickerController(this)
 
     public suspend fun close() {
@@ -176,6 +189,13 @@ public class SeatLayerPickerStateHolder(
     internal fun acceptHoldExpired() {
         holdExpiredReported = true
         mutableHoldExpiries.tryEmit(Unit)
+    }
+
+    /** The runtime's own report that held seats went to someone else. */
+    internal fun acceptSelectedObjectsUnavailable(value: JsonElement?) {
+        val event = decodeSelectedObjectsUnavailable(value) ?: return
+        if (event.labels.isEmpty()) return
+        mutableUnavailableSelections.tryEmit(event.labels)
     }
 
     internal fun acceptSeatView(value: JsonElement?) {

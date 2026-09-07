@@ -272,11 +272,9 @@ public data class SeatLayerPickerStyles(
  * Host callbacks the picker raises.
  *
  * The names match every SeatLayer buyer SDK, so the whole shared surface is
- * declared here at once. Thirteen of them — from [onSelectionValidityChanged]
- * through [onContinue] — are additive and not yet raised by this SDK's own
- * chrome; they stay inert (a no-op default that is never invoked) until the
- * screens that own those moments land, and a host may wire them today without
- * a later source change.
+ * declared here at once. Every one of them is raised by this SDK's own chrome:
+ * a callback that is declared and never invoked is a promise a host wires an
+ * integration against and then never hears from.
  */
 public data class SeatLayerPickerCallbacks(
     val onCheckout: suspend (SeatLayerPickerCheckoutHandoff) -> Unit = {},

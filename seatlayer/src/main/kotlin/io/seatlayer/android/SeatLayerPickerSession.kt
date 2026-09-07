@@ -126,6 +126,8 @@ internal class SeatLayerPickerSession(
                 (payload as? JsonObject)?.get("snapshot") ?: payload,
             )
             "seat.retap" -> stateHolder.acceptSeatRetap(payload)
+            "selection.unavailable" ->
+                stateHolder.acceptSelectedObjectsUnavailable(payload)
             "hold.expired" -> stateHolder.acceptHoldExpired()
             "seatView.changed" -> stateHolder.acceptSeatView(
                 (payload as? JsonObject)?.get("seatView") ?: payload,
