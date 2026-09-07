@@ -413,34 +413,14 @@ private fun PickerAccessRowGlyph(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    if (iconKey == PICKER_ACCESS_CONTRAST_KEY) {
-        PickerContrastGlyph(color = color, modifier = modifier)
+    // The shared per-attribute set is asked first, so a provision wears its
+    // OWN mark. It also carries the colour row's contrast disc, authored
+    // beside the seat attributes rather than in them.
+    if (seatLayerSeatIconPath(iconKey) != null) {
+        SeatLayerSeatIcon(iconKey, color, modifier)
         return
     }
     SeatLayerPickerIcon(seatLayerAccessRowGlyph(iconKey), color, modifier)
-}
-
-/** The colour row's own mark: a disc half filled, half outlined. */
-@Composable
-private fun PickerContrastGlyph(color: Color, modifier: Modifier = Modifier) {
-    Canvas(modifier) {
-        val radius = size.minDimension / 2f
-        val centre = Offset(size.width / 2f, size.height / 2f)
-        drawCircle(
-            color = color,
-            radius = radius - size.minDimension * STROKE_RATIO / 2f,
-            center = centre,
-            style = Stroke(width = size.minDimension * STROKE_RATIO),
-        )
-        drawArc(
-            color = color,
-            startAngle = 90f,
-            sweepAngle = 180f,
-            useCenter = true,
-            topLeft = Offset(centre.x - radius, centre.y - radius),
-            size = androidx.compose.ui.geometry.Size(radius * 2f, radius * 2f),
-        )
-    }
 }
 
 /** The ⓘ, outlined when the sentence is closed and solid when it is open. */
@@ -487,11 +467,12 @@ private const val STROKE_RATIO: Float = 0.105f
 internal const val PICKER_ACCESS_CONTRAST_KEY: String = "contrast"
 
 /**
- * Which shared drawing an attribute key resolves to.
+ * The mark a key with no drawing of its own falls back to.
  *
- * The per-attribute set is authored once and shared with the seat card's note
- * rows, so a provision looks the same wherever it is named. Keys the set has
- * no drawing for fall back to the accessibility mark rather than to nothing.
+ * The per-attribute set is asked first and answers for every provision the
+ * runtime names. A key that set has never heard of still gets a mark rather
+ * than a gap, and a view restriction reads as an eye rather than as a
+ * wheelchair.
  */
 internal fun seatLayerAccessRowGlyph(iconKey: String): SeatLayerPickerGlyph = when (iconKey) {
     "restrictedView", "obstructedView" -> SeatLayerPickerGlyph.Eye
