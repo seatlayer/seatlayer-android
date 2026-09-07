@@ -111,7 +111,11 @@ public fun SeatLayerCartCard(
     val seat = pickerSeatBehind(line, snapshot?.selection.orEmpty())
     val category = snapshot?.categories?.firstOrNull { it.key == line.categoryKey }
     val name = line.sectionLabel ?: category?.label ?: (line.displayLabel ?: line.label)
-    val position = pickerCardPositionLine(line, category?.label, name)
+    // The line's own section first, the joined seat's second — and only then
+    // the ticket type, which is a name and never a place to strip a row with.
+    val section = line.sectionLabel ?: seat?.sectionLabel
+    val row = pickerRowLabel(line.rowLabel, section, pickerSectionCode(snapshot, section))
+    val position = pickerCardPositionLine(line, category?.label, name, row)
     val amount = scope.moneyFormatter.format(line.total, line.currency)
     val held = snapshot?.hold?.owner == "host"
     val removable = !scope.options.readOnly
@@ -133,7 +137,15 @@ public fun SeatLayerCartCard(
     } else {
         theme.divider
     }
-    val spoken = pickerCardSpokenLabel(scope.strings, line, category?.label, name, amount, notes)
+    val spoken = pickerCardSpokenLabel(
+        strings = scope.strings,
+        line = line,
+        categoryLabel = category?.label,
+        name = name,
+        rowLabel = row,
+        amount = amount,
+        notes = notes,
+    )
 
     // Swipe travel is kept in pixels: it is compared against the card's own
     // measured width and moved by the finger, both of which arrive in pixels.
@@ -439,13 +451,20 @@ internal fun pickerSeatBehind(
     ?: selection.firstOrNull { it.objectId == line.objectId }
     ?: selection.firstOrNull { it.id == line.objectId }
 
-/** Row, seat and ticket type, the line's own address first and the seat's second. */
+/**
+ * Row, seat and ticket type, the line's own address first and the seat's second.
+ *
+ * [rowLabel] is the SHORT row word — `Q`, not the chart's qualified `211-Q`.
+ * The card already prints the section beside it, and repeating it inside the
+ * row reads as an address stuttering.
+ */
 internal fun pickerCardPositionLine(
     line: SeatLayerPickerCartLine,
     categoryLabel: String?,
     name: String,
+    rowLabel: String? = line.rowLabel,
 ): String = listOfNotNull(
-    line.rowLabel?.takeIf(String::isNotBlank),
+    rowLabel?.takeIf(String::isNotBlank),
     line.seatNumber?.takeIf(String::isNotBlank),
     categoryLabel?.takeIf { it.isNotBlank() && !it.equals(name, ignoreCase = true) },
 ).joinToString(separator = " · ")
@@ -458,10 +477,11 @@ internal fun pickerCardSpokenLabel(
     name: String,
     amount: String,
     notes: List<SeatLayerPickerSeatNote>,
+    rowLabel: String? = line.rowLabel,
 ): String {
     val identity = listOfNotNull(
         name.takeIf(String::isNotBlank),
-        line.rowLabel?.takeIf(String::isNotBlank),
+        rowLabel?.takeIf(String::isNotBlank),
         line.seatNumber?.takeIf(String::isNotBlank),
     )
     return buildList {

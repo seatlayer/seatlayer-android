@@ -235,6 +235,18 @@ public class PickerCartRulesTest {
     }
 
     @Test
+    public fun theCardPrintsTheShortRowWord_notTheQualifiedOne() {
+        val line = cartLine("211-Q-12", row = "211-Q", seat = "12")
+            .copy(sectionLabel = "211")
+        val row = pickerRowLabel(line.rowLabel, line.sectionLabel, null)
+        assertEquals("Q", row)
+        assertEquals(
+            "Q · 12 · Lower Bowl",
+            pickerCardPositionLine(line, "Lower Bowl", "211", row),
+        )
+    }
+
+    @Test
     public fun aLineFindsItsSeatBySeatId_thenLabel_thenObject() {
         val seat = seat(id = "seat-1", label = "A-12", objectId = "obj-1")
         assertEquals(seat, pickerSeatBehind(cartLine("A-12").copy(seatId = "seat-1"), listOf(seat)))

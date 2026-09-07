@@ -169,9 +169,11 @@ public class PickerCartSheetTest {
             val snapshot = state.snapshot ?: return@mutate state
             val first = snapshot.cartLines.first()
             val lines = listOf(
-                first.copy(lineKey = "row_102-A"),
+                first.copy(lineKey = "row_102-A", sectionLabel = "102", rowLabel = "102-A"),
                 first.copy(
                     lineKey = "row_102-A",
+                    sectionLabel = "102",
+                    rowLabel = "102-A",
                     label = "A-13",
                     objectId = "seat-A-13",
                     seatId = "seat-A-13",
@@ -187,8 +189,10 @@ public class PickerCartSheetTest {
             )
         }
         render(scope)
+        // The SHORT row word beside each seat, not the chart's qualified one.
         composeRule.onNodeWithText("A · 12", substring = true).assertIsDisplayed()
         composeRule.onNodeWithText("A · 13", substring = true).assertIsDisplayed()
+        composeRule.onAllNodesWithText("102-A", substring = true).assertCountEquals(0)
     }
 
     @Test
