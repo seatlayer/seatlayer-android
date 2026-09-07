@@ -6,6 +6,10 @@ import io.seatlayer.android.SEATLAYER_PICKER_SNAPSHOT_SCHEMA
 import io.seatlayer.android.SeatLayerConfiguration
 import io.seatlayer.android.SeatLayerPickerAccessNeed
 import io.seatlayer.android.SeatLayerPickerBranding
+import io.seatlayer.android.SeatLayerPickerCartLine
+import io.seatlayer.android.SeatLayerPickerCategory
+import io.seatlayer.android.SeatLayerPickerCheckoutHandoff
+import io.seatlayer.android.SeatLayerPickerGeneralAdmissionArea
 import io.seatlayer.android.SeatLayerPickerEventDetails
 import io.seatlayer.android.SeatLayerPickerHold
 import io.seatlayer.android.SeatLayerPickerMapState
@@ -38,6 +42,8 @@ internal fun pickerAccessScope(
     options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
     themeMode: SeatLayerPickerThemeMode = SeatLayerPickerThemeMode.Light,
     capabilities: Set<String> = setOf("accessibilityFilter", "limitedViewFilter"),
+    categories: List<SeatLayerPickerCategory> = emptyList(),
+    generalAdmissionAreas: List<SeatLayerPickerGeneralAdmissionArea> = emptyList(),
 ): SeatLayerPickerScope {
     val holder = SeatLayerPickerStateHolder(SeatLayerConfiguration(event = FIXTURE_EVENT))
     val snapshot = SeatLayerPickerSnapshot(
@@ -57,10 +63,10 @@ internal fun pickerAccessScope(
             salesClosed = salesClosed,
         ),
         branding = FIXTURE_BRANDING,
-        categories = emptyList(),
+        categories = categories,
         zones = emptyList(),
         sections = emptyList(),
-        generalAdmissionAreas = emptyList(),
+        generalAdmissionAreas = generalAdmissionAreas,
         bestAvailableZones = emptyList(),
         map = SeatLayerPickerMapState(
             rung = "sections",
@@ -148,3 +154,62 @@ private val FIXTURE_BRANDING = SeatLayerPickerBranding(
 
 private const val FIXTURE_EVENT = "ev_states_fixture"
 private const val FIXTURE_SESSION = "fixture-session"
+
+/** One seated category, free unless a test says otherwise. */
+internal fun fixtureCategory(
+    key: String = "standard",
+    available: Int = 40,
+    notForSale: Boolean = false,
+): SeatLayerPickerCategory = SeatLayerPickerCategory(
+    key = key,
+    label = "Standard",
+    color = "#006C67",
+    priceMin = 40.0,
+    priceMax = 60.0,
+    available = available,
+    notForSale = notForSale,
+    tiers = emptyList(),
+)
+
+/** One standing area, which is what stops a seated sell-out reading as one. */
+internal fun fixtureStandingArea(): SeatLayerPickerGeneralAdmissionArea =
+    SeatLayerPickerGeneralAdmissionArea(
+        id = "ga-floor",
+        label = "Standing floor",
+        capacity = 300,
+        available = 48,
+        categoryKey = "standard",
+        price = 54.0,
+        currency = "USD",
+        tiers = emptyList(),
+    )
+
+/** The capability the host is handed at checkout, and the sale it becomes. */
+internal fun fixtureHandoff(
+    holdId: String = "hold-1",
+    quantity: Int = 2,
+): SeatLayerPickerCheckoutHandoff = SeatLayerPickerCheckoutHandoff(
+    holdId = holdId,
+    expiresAt = 1_800_000_000.0,
+    currency = "USD",
+    lineItems = listOf(
+        SeatLayerPickerCartLine(
+            lineKey = "line-1",
+            label = "102-A-12",
+            displayLabel = "102 · A · 12",
+            displayType = "seat",
+            objectId = "seat-a12",
+            objectType = "seat",
+            categoryKey = "standard",
+            tierId = null,
+            unitPrice = 50.0,
+            currency = "USD",
+            quantity = quantity,
+            seatId = "seat-a12",
+            sectionLabel = "102",
+            rowLabel = "A",
+            seatNumber = "12",
+        ),
+    ),
+    total = 100.0,
+)
