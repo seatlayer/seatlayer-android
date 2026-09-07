@@ -265,8 +265,14 @@ public data class SeatLayerPickerCallbacks(
     val onSeatSelected: (SeatLayerPickerSelectedSeat) -> Unit = {},
     val onSeatRemoved: (SeatLayerPickerSelectedSeat) -> Unit = {},
     val onSeatViewOpened: (String) -> Unit = {},
-    /** The buyer asked how a modelled view was produced. */
-    val onSeatConfidence: (SeatLayerPickerSeatConfidence) -> Unit = {},
+    /**
+     * The buyer asked how a modelled view was produced.
+     *
+     * Null on purpose rather than an empty lambda: the card offers the passport
+     * as a control ONLY where a host can act on it, and a chip that opens
+     * nothing is worse than the sentence it replaced.
+     */
+    val onSeatConfidence: ((SeatLayerPickerSeatConfidence) -> Unit)? = null,
     val onContinue: () -> Unit = {},
 )
 
