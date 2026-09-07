@@ -150,6 +150,7 @@ public class SeatLayerPickerStateHolder(
         if (behavior.readOnly || !state.value.isReady) return
         val root = value as? kotlinx.serialization.json.JsonObject
         val seat = decodeSeatLayerPickerRetappedSeat(root?.get("seat") ?: value) ?: return
+        if (!seat.mayBeAskedAbout(state.value.snapshot?.hold?.active == true)) return
         update { current ->
             if (current.presentation.candidateSeat != null) current
             else current.copy(
@@ -379,9 +380,14 @@ public class SeatLayerPickerStateHolder(
         // as answered, and every tap after that is asked about, including the
         // ones that join a live hold.
         val mayPrompt = !behavior.readOnly
+        // A seat nobody can take raises no card: sold and blocked never, and
+        // held only while the picker's own hold is live, which is when the
+        // buyer's own seats report as held.
+        val ownHold = snapshot.hold.active
         val pendingTable = if (mayPrompt) {
             snapshot.selection.asReversed().firstOrNull { seat ->
                 seat.isVariableTable &&
+                    seat.mayBeAskedAbout(ownHold) &&
                     SeatLayerPickerProjections.seatIdentity(seat) !in answeredSeatIdentities
             }
         } else {
@@ -390,6 +396,7 @@ public class SeatLayerPickerStateHolder(
         val unanswered = if (mayPrompt && behavior.confirmSelection) {
             snapshot.selection.asReversed().firstOrNull { seat ->
                 !seat.isVariableTable &&
+                    seat.mayBeAskedAbout(ownHold) &&
                     SeatLayerPickerProjections.seatIdentity(seat) !in answeredSeatIdentities
             }
         } else {
