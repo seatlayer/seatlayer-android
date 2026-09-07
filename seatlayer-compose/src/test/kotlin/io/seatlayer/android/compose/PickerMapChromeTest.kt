@@ -5,6 +5,9 @@ import io.seatlayer.android.SeatLayerPickerCategory
 import io.seatlayer.android.SeatLayerPickerFloorInfo
 import io.seatlayer.android.SeatLayerPickerMapState
 import io.seatlayer.android.SeatLayerPickerSectionSummary
+import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.runCurrent
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -98,6 +101,50 @@ public class PickerMapChromeTest {
         assertEquals(2, registry.regions.value.size)
         registry.clear()
         assertTrue(registry.regions.value.isEmpty())
+    }
+
+    @Test
+    public fun aLoweredCoverLeavesTheRegistryEmpty(): Unit = runTest {
+        val registry = PickerBlockedRegionRegistry()
+        val key = Any()
+        registry.raise(key)
+        registry.set(key, SeatLayerPickerBlockedRegion(0.0, 0.0, 36.0, 36.0))
+        registry.release(key, backgroundScope)
+        advanceTimeBy(PICKER_BLOCKED_REGION_LINGER_MS + 1)
+        runCurrent()
+        assertTrue("a cover that goes takes its guard", registry.regions.value.isEmpty())
+    }
+
+    @Test
+    public fun aMeasurementArrivingMidLoweringNeverPutsTheGuardBack(): Unit = runTest {
+        // The take-down is not instant: the cover is still on screen while it
+        // fades, so a layout pass lands after the lowering has been delivered.
+        // A cover that answered that pass stayed registered for good, and the
+        // buyer could not tap a seat again for the rest of the session.
+        val registry = PickerBlockedRegionRegistry()
+        val key = Any()
+        registry.set(key, SeatLayerPickerBlockedRegion(0.0, 0.0, 36.0, 36.0))
+        registry.release(key, backgroundScope)
+        registry.set(key, SeatLayerPickerBlockedRegion(1.0, 1.0, 36.0, 36.0))
+        advanceTimeBy(PICKER_BLOCKED_REGION_LINGER_MS + 1)
+        runCurrent()
+        assertTrue(registry.regions.value.isEmpty())
+    }
+
+    @Test
+    public fun aRaiseLowerRaiseSettlesOnExactlyOneRegistration(): Unit = runTest {
+        val registry = PickerBlockedRegionRegistry()
+        val key = Any()
+        val rect = SeatLayerPickerBlockedRegion(0.0, 0.0, 36.0, 36.0)
+        registry.raise(key)
+        registry.set(key, rect)
+        registry.release(key, backgroundScope)
+        registry.raise(key)
+        registry.set(key, rect)
+        advanceTimeBy(PICKER_BLOCKED_REGION_LINGER_MS * 2)
+        runCurrent()
+        assertEquals(1, registry.regions.value.size)
+        assertEquals(rect, registry.regions.value.single())
     }
 
     @Test
