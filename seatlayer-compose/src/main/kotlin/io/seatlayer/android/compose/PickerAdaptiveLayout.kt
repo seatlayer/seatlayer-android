@@ -91,6 +91,9 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
         )
     }
 
+    // Under a card the control column fades and goes inert; it is not
+    // unmounted, so nothing reflows when the card is answered.
+    val cardUp = scope.state.presentation.candidateSeat != null
     if (regularMap && scope.state.isReady && scope.options.chrome.showMapControls) {
         if (scope.options.chrome.showAccessibilityControl) {
             SeatLayerPickerPart(
@@ -100,7 +103,8 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
                 SeatLayerPickerAccessibilityFilters(
                     modifier = Modifier
                         .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding + 8.dp),
+                        .padding(start = 8.dp, bottom = bottomPadding + 8.dp)
+                        .pickerFadeUnderCard(cardUp),
                     compact = true,
                 )
             }
@@ -112,7 +116,8 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 8.dp, bottom = bottomPadding + 8.dp),
+                    .padding(end = 8.dp, bottom = bottomPadding + 8.dp)
+                    .pickerFadeUnderCard(cardUp),
             ) {
                 if (snapshot?.map?.canZoomOut == true && scope.options.chrome.showOverviewControl) {
                     SeatLayerPickerStepOutControl()
@@ -134,22 +139,25 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
         }
     }
 
-    if (regularMap && scope.options.chrome.showConfirmCard &&
-        scope.state.presentation.pendingSeat != null
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(scope.confirmScrim()),
-            contentAlignment = Alignment.Center,
-        ) {
+    // The card is a fixed sheet at the foot of the map, not a centred modal:
+    // the MAP moves to keep the seat clear of it. It is mounted for a retap
+    // even with no pending add, or the runtime reports the second tap and
+    // nothing appears.
+    if ((regularMap || venue3D) && scope.options.chrome.showConfirmCard) {
+        SeatLayerConfirmCardLayer(
+            bottomBand = if (dockVisible) bottomPadding else 0.dp,
+            immersive = venue3D,
+        ) { seat, intent, answered, onAnswered ->
             SeatLayerPickerPart(
                 SeatLayerPickerPart.ConfirmCard,
                 builders[SeatLayerPickerPart.ConfirmCard],
             ) {
-                SeatLayerConfirmCard(
-                    modifier = Modifier.padding(horizontal = 15.dp),
-                    compact = true,
+                SeatLayerConfirmCardBody(
+                    seat = seat,
+                    intent = intent,
+                    answered = answered,
+                    onAnswered = onAnswered,
+                    immersive = venue3D,
                 )
             }
         }
@@ -189,7 +197,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
         }
     }
     if (scope.options.chrome.showConfirmCard &&
-        scope.state.presentation.pendingSeat != null
+        scope.state.presentation.candidateSeat != null
     ) {
         Box(
             modifier = Modifier
