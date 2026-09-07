@@ -1,14 +1,180 @@
+final class io.seatlayer.android.compose.AttributionLiterals {
+  public static final io.seatlayer.android.compose.AttributionLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/AttributionLiterals;
+  public static final float OPACITY = 0.72f;
+    descriptor: F
+  public static final float MARK_GAP = 5.0f;
+    descriptor: F
+  public static final float MARK_SIZE = 16.0f;
+    descriptor: F
+  public static final float MARK_RADIUS = 4.0f;
+    descriptor: F
+  public static final float MARK_INSET_RATIO = 0.19f;
+    descriptor: F
+  public static final float BAR_HEIGHT_RATIO = 0.18f;
+    descriptor: F
+  public static final float BAR_ONE = 1.0f;
+    descriptor: F
+  public static final float BAR_TWO = 0.7f;
+    descriptor: F
+  public static final float BAR_THREE = 0.4f;
+    descriptor: F
+  public static final float LETTER_SPACING = 0.22f;
+    descriptor: F
+  public final long plate-0d7_KjU();
+    descriptor: ()J
+  public final long ink-0d7_KjU();
+    descriptor: ()J
+}
+final class io.seatlayer.android.compose.BestSeatsLiterals {
+  public static final io.seatlayer.android.compose.BestSeatsLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/BestSeatsLiterals;
+  public static final int INITIAL_QUANTITY = 2;
+    descriptor: I
+  public static final float PLATE_PAD = 8.0f;
+    descriptor: F
+  public static final float PLATE_RADIUS = 11.0f;
+    descriptor: F
+  public static final float BORDER_ACCENT = 0.34f;
+    descriptor: F
+  public static final float WASH_FROM = 0.05f;
+    descriptor: F
+  public static final float WASH_TO = 0.11f;
+    descriptor: F
+  public static final float ROW_GAP = 6.0f;
+    descriptor: F
+  public static final float TITLE_SPARKLE = 14.0f;
+    descriptor: F
+  public static final float SPARKLE_GAP = 6.0f;
+    descriptor: F
+  public static final float TITLE_SIZE = 12.5f;
+    descriptor: F
+  public static final int TITLE_WEIGHT = 800;
+    descriptor: I
+  public static final float INFO_SIZE = 15.0f;
+    descriptor: F
+  public static final float EXPLAIN_SIZE = 12.0f;
+    descriptor: F
+  public static final float EXPLAIN_PAD_TOP = 4.0f;
+    descriptor: F
+  public static final float SELECT_PAD_START = 9.0f;
+    descriptor: F
+  public static final float SELECT_PAD_END = 10.0f;
+    descriptor: F
+  public static final float SELECT_CHEVRON = 16.0f;
+    descriptor: F
+  public static final float KEY_SIZE = 34.0f;
+    descriptor: F
+  public static final float KEY_RADIUS = 7.0f;
+    descriptor: F
+  public static final float KEY_WASH = 0.1f;
+    descriptor: F
+  public static final float KEY_GLYPH_SIZE = 14.0f;
+    descriptor: F
+  public static final int KEY_GLYPH_WEIGHT = 800;
+    descriptor: I
+  public static final float ACTION_SPARKLE = 13.0f;
+    descriptor: F
+  public static final float ACTION_PAD_X = 10.0f;
+    descriptor: F
+  public static final float BUSY_ALPHA = 0.8f;
+    descriptor: F
+  public static final float SPINNER_SIZE = 14.0f;
+    descriptor: F
+  public static final float SPINNER_STROKE = 2.0f;
+    descriptor: F
+}
+final class io.seatlayer.android.compose.CartCardLiterals {
+  public static final io.seatlayer.android.compose.CartCardLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/CartCardLiterals;
+  public static final float PAD_LEADING = 12.0f;
+    descriptor: F
+  public static final float PAD_TOP = 4.0f;
+    descriptor: F
+  public static final float PAD_TRAILING = 4.0f;
+    descriptor: F
+  public static final float PAD_BOTTOM = 4.0f;
+    descriptor: F
+  public static final float MARK_GAP = 10.0f;
+    descriptor: F
+  public static final float AMOUNT_GAP = 8.0f;
+    descriptor: F
+  public static final float DOT_SIZE = 9.0f;
+    descriptor: F
+  public static final float DOT_RING_ALPHA = 0.22f;
+    descriptor: F
+  public static final float LOCK_DISC_SIZE = 17.0f;
+    descriptor: F
+  public static final float LOCK_DISC_WASH = 0.18f;
+    descriptor: F
+  public static final float LOCK_GLYPH_SIZE = 10.0f;
+    descriptor: F
+  public static final float HELD_WASH = 0.07f;
+    descriptor: F
+  public static final float HELD_BORDER = 0.45f;
+    descriptor: F
+  public static final float ACTION_GLYPH_SIZE = 18.0f;
+    descriptor: F
+  public static final float ACTION_RADIUS = 8.0f;
+    descriptor: F
+  public static final float SWIPE_GLYPH_SIZE = 16.0f;
+    descriptor: F
+  public static final float SWIPE_GLYPH_INSET = 14.0f;
+    descriptor: F
+}
+public final class io.seatlayer.android.compose.CartSheetLiterals {
+  public static final io.seatlayer.android.compose.CartSheetLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/CartSheetLiterals;
+  public static final float HANDLE_SHADOW_BLUR = 10.0f;
+    descriptor: F
+  public static final float HANDLE_CHEVRON_SIZE = 16.0f;
+    descriptor: F
+  public static final float SEAT_LINE_FONT_SIZE = 12.0f;
+    descriptor: F
+  public static final int SEAT_LINE_WEIGHT = 600;
+    descriptor: I
+  public static final float SEAT_LINE_PAD_TOP = 3.0f;
+    descriptor: F
+  public static final float SEAT_LINE_GLYPH_SIZE = 16.0f;
+    descriptor: F
+  public static final float SEAT_LINE_GLYPH_GAP = 6.0f;
+    descriptor: F
+  public static final float SWELL_SCALE = 0.3f;
+    descriptor: F
+  public static final float SWELL_PEAK = 0.45f;
+    descriptor: F
+  public static final int $stable;
+    descriptor: I
+}
+final class io.seatlayer.android.compose.CheckoutCtaLiterals {
+  public static final io.seatlayer.android.compose.CheckoutCtaLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/CheckoutCtaLiterals;
+  public static final float DISABLED_GROUND_ALPHA = 0.08f;
+    descriptor: F
+  public static final float DISABLED_INK_ALPHA = 0.55f;
+    descriptor: F
+  public static final float SPINNER_SIZE = 16.0f;
+    descriptor: F
+  public static final float SPINNER_STROKE = 2.0f;
+    descriptor: F
+  public static final float SPINNER_GAP = 8.0f;
+    descriptor: F
+}
 public final class io.seatlayer.android.compose.ComposableSingletons$PickerAdaptiveLayoutKt {
   public static final io.seatlayer.android.compose.ComposableSingletons$PickerAdaptiveLayoutKt INSTANCE;
     descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerAdaptiveLayoutKt;
   public io.seatlayer.android.compose.ComposableSingletons$PickerAdaptiveLayoutKt();
     descriptor: ()V
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-706910269$seatlayer_compose();
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.BoxScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-75783490$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-782093497$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-247735635$seatlayer_compose();
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.BoxScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-843887751$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$19163952$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1969964031$seatlayer_compose();
-    descriptor: ()Lkotlin/jvm/functions/Function2;
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.BoxScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1169471421$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1305129506$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-213994360$seatlayer_compose();
@@ -21,59 +187,57 @@ public final class io.seatlayer.android.compose.ComposableSingletons$PickerAdapt
     descriptor: ()Lkotlin/jvm/functions/Function2;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1487103604$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$342102733$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1272516938$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-213387083$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1623129124$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$76491806$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1092315202$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$2056524309$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1200462023$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-2045511786$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1028047942$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1852580585$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-855633861$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$512111023$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-989836077$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-2041515674$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-829987446$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1227020694$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$29760954$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-949664327$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1110947549$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function2;
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$766637446$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
 }
-public final class io.seatlayer.android.compose.ComposableSingletons$PickerBestSeatsKt {
-  public static final io.seatlayer.android.compose.ComposableSingletons$PickerBestSeatsKt INSTANCE;
-    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerBestSeatsKt;
-  public io.seatlayer.android.compose.ComposableSingletons$PickerBestSeatsKt();
+public final class io.seatlayer.android.compose.ComposableSingletons$PickerCartSheetFootKt {
+  public static final io.seatlayer.android.compose.ComposableSingletons$PickerCartSheetFootKt INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerCartSheetFootKt;
+  public io.seatlayer.android.compose.ComposableSingletons$PickerCartSheetFootKt();
     descriptor: ()V
-  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.RowScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1882369428$seatlayer_compose();
+  public final kotlin.jvm.functions.Function3<kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$2110614523$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function3;
-  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.RowScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-231313333$seatlayer_compose();
-    descriptor: ()Lkotlin/jvm/functions/Function3;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$388487221$seatlayer_compose();
-    descriptor: ()Lkotlin/jvm/functions/Function2;
 }
 public final class io.seatlayer.android.compose.ComposableSingletons$PickerCartSheetKt {
   public static final io.seatlayer.android.compose.ComposableSingletons$PickerCartSheetKt INSTANCE;
     descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerCartSheetKt;
   public io.seatlayer.android.compose.ComposableSingletons$PickerCartSheetKt();
     descriptor: ()V
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1857353915$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1953938054$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1172023272$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1655698599$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$2067651760$seatlayer_compose();
-    descriptor: ()Lkotlin/jvm/functions/Function2;
+  public final kotlin.jvm.functions.Function3<kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$262889043$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
 }
-public final class io.seatlayer.android.compose.ComposableSingletons$PickerConfirmCardKt {
-  public static final io.seatlayer.android.compose.ComposableSingletons$PickerConfirmCardKt INSTANCE;
-    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerConfirmCardKt;
-  public io.seatlayer.android.compose.ComposableSingletons$PickerConfirmCardKt();
+public final class io.seatlayer.android.compose.ComposableSingletons$PickerCheckoutCtaKt {
+  public static final io.seatlayer.android.compose.ComposableSingletons$PickerCheckoutCtaKt INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerCheckoutCtaKt;
+  public io.seatlayer.android.compose.ComposableSingletons$PickerCheckoutCtaKt();
     descriptor: ()V
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1373376799$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-818022656$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
 }
 public final class io.seatlayer.android.compose.ComposableSingletons$PickerDockBarKt {
@@ -81,7 +245,7 @@ public final class io.seatlayer.android.compose.ComposableSingletons$PickerDockB
     descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerDockBarKt;
   public io.seatlayer.android.compose.ComposableSingletons$PickerDockBarKt();
     descriptor: ()V
-  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1602327184$seatlayer_compose();
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-940065878$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
 }
 public final class io.seatlayer.android.compose.ComposableSingletons$PickerHeaderKt {
@@ -91,6 +255,26 @@ public final class io.seatlayer.android.compose.ComposableSingletons$PickerHeade
     descriptor: ()V
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$578073869$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
+}
+public final class io.seatlayer.android.compose.ComposableSingletons$PickerMapControlsKt {
+  public static final io.seatlayer.android.compose.ComposableSingletons$PickerMapControlsKt INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerMapControlsKt;
+  public io.seatlayer.android.compose.ComposableSingletons$PickerMapControlsKt();
+    descriptor: ()V
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.BoxScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-287561834$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.BoxScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$62017727$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.layout.BoxScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-1441080579$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
+}
+public final class io.seatlayer.android.compose.ComposableSingletons$PickerPriceRailKt {
+  public static final io.seatlayer.android.compose.ComposableSingletons$PickerPriceRailKt INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$PickerPriceRailKt;
+  public io.seatlayer.android.compose.ComposableSingletons$PickerPriceRailKt();
+    descriptor: ()V
+  public final kotlin.jvm.functions.Function3<androidx.compose.foundation.lazy.LazyItemScope, androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1888264982$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function3;
 }
 public final class io.seatlayer.android.compose.ComposableSingletons$PickerPromptsKt {
   public static final io.seatlayer.android.compose.ComposableSingletons$PickerPromptsKt INSTANCE;
@@ -108,6 +292,14 @@ public final class io.seatlayer.android.compose.ComposableSingletons$PickerTicke
   public io.seatlayer.android.compose.ComposableSingletons$PickerTicketTiersKt();
     descriptor: ()V
   public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$-27181119$seatlayer_compose();
+    descriptor: ()Lkotlin/jvm/functions/Function2;
+}
+public final class io.seatlayer.android.compose.ComposableSingletons$SeatLayerPickerKt {
+  public static final io.seatlayer.android.compose.ComposableSingletons$SeatLayerPickerKt INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/ComposableSingletons$SeatLayerPickerKt;
+  public io.seatlayer.android.compose.ComposableSingletons$SeatLayerPickerKt();
+    descriptor: ()V
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLambda$1629307726$seatlayer_compose();
     descriptor: ()Lkotlin/jvm/functions/Function2;
 }
 public final class io.seatlayer.android.compose.ComposableSingletons$SeatLayerPickerSelectionMotionKt {
@@ -170,19 +362,161 @@ final class io.seatlayer.android.compose.DefaultSeatLayerPickerScope implements 
   public io.seatlayer.android.compose.DefaultSeatLayerPickerScope(io.seatlayer.android.SeatLayerPickerStateHolder, io.seatlayer.android.SeatLayerPickerState, io.seatlayer.android.compose.SeatLayerPickerTheme, java.lang.String, io.seatlayer.android.compose.SeatLayerPickerStrings, io.seatlayer.android.compose.SeatLayerPickerOptions, io.seatlayer.android.compose.SeatLayerPickerStyles, io.seatlayer.android.compose.SeatLayerMoneyFormatter, io.seatlayer.android.compose.SeatLayerPickerCallbacks, kotlin.jvm.internal.DefaultConstructorMarker);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerStateHolder;Lio/seatlayer/android/SeatLayerPickerState;Lio/seatlayer/android/compose/SeatLayerPickerTheme;Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerStrings;Lio/seatlayer/android/compose/SeatLayerPickerOptions;Lio/seatlayer/android/compose/SeatLayerPickerStyles;Lio/seatlayer/android/compose/SeatLayerMoneyFormatter;Lio/seatlayer/android/compose/SeatLayerPickerCallbacks;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
+final class io.seatlayer.android.compose.HeaderLiterals {
+  public static final io.seatlayer.android.compose.HeaderLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/HeaderLiterals;
+  public static final float PAD_X = 12.0f;
+    descriptor: F
+  public static final float PAD_Y = 4.0f;
+    descriptor: F
+  public static final float MARK_GAP = 10.0f;
+    descriptor: F
+  public static final float PILL_GAP = 6.0f;
+    descriptor: F
+  public static final int NAME_WEIGHT = 700;
+    descriptor: I
+  public static final float CLOSED_PILL_WASH = 0.08f;
+    descriptor: F
+  public static final float PILL_PAD_X = 10.0f;
+    descriptor: F
+  public static final float PILL_PAD_Y = 5.0f;
+    descriptor: F
+  public static final float CLOSE_GLYPH_SIZE = 14.0f;
+    descriptor: F
+}
+final class io.seatlayer.android.compose.HoldPillLiterals {
+  public static final io.seatlayer.android.compose.HoldPillLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/HoldPillLiterals;
+  public static final long TICK_MILLIS = 500l;
+    descriptor: J
+  public static final float RESTING_ACCENT_MIX = 0.12f;
+    descriptor: F
+  public static final float DOT_SIZE = 6.0f;
+    descriptor: F
+  public static final float DOT_GAP = 6.0f;
+    descriptor: F
+  public static final float DOT_BREATH_FLOOR = 0.45f;
+    descriptor: F
+  public static final float PAD_X = 10.0f;
+    descriptor: F
+  public static final float PAD_Y = 5.0f;
+    descriptor: F
+}
+public final class io.seatlayer.android.compose.PickerAccessRowModel {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.PickerAccessRowModel(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, boolean, boolean, boolean, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZZZLjava/lang/String;)V
+  public io.seatlayer.android.compose.PickerAccessRowModel(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, boolean, boolean, boolean, java.lang.String, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZZZLjava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final java.lang.String getKey();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getIconKey();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getNote();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer getCount();
+    descriptor: ()Ljava/lang/Integer;
+  public final boolean getChecked();
+    descriptor: ()Z
+  public final boolean getEnabled();
+    descriptor: ()Z
+  public final boolean getReservesCountColumn();
+    descriptor: ()Z
+  public final java.lang.String getJumpLabel();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component4();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.Integer component5();
+    descriptor: ()Ljava/lang/Integer;
+  public final boolean component6();
+    descriptor: ()Z
+  public final boolean component7();
+    descriptor: ()Z
+  public final boolean component8();
+    descriptor: ()Z
+  public final java.lang.String component9();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.compose.PickerAccessRowModel copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, boolean, boolean, boolean, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZZZLjava/lang/String;)Lio/seatlayer/android/compose/PickerAccessRowModel;
+  public static io.seatlayer.android.compose.PickerAccessRowModel copy$default(io.seatlayer.android.compose.PickerAccessRowModel, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Integer, boolean, boolean, boolean, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/PickerAccessRowModel;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;ZZZLjava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/compose/PickerAccessRowModel;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
 public final class io.seatlayer.android.compose.PickerAccessibilityControlKt {
   public static final void AccessibilityLauncher(androidx.compose.ui.Modifier, boolean, int, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int);
     descriptor: (Landroidx/compose/ui/Modifier;ZIZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-  public static final void AccessibilityNeedChip(io.seatlayer.android.SeatLayerPickerAccessNeed, boolean, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessNeed;ZZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
-  public static final void AccessibilityToggleOption(java.lang.String, boolean, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int);
-    descriptor: (Ljava/lang/String;ZZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+  public static final void SeatLayerPickerAccessibleStepper(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final int pickerAccessibleSectionCount(io.seatlayer.android.SeatLayerPickerSnapshot);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSnapshot;)I
+}
+public final class io.seatlayer.android.compose.PickerAccessibilityRowsKt {
+  public static final float PICKER_ACCESS_ROW_HEIGHT = 50.0f;
+    descriptor: F
+  public static final float PICKER_ACCESS_COUNT_COLUMN = 68.0f;
+    descriptor: F
+  public static final java.lang.String PICKER_ACCESS_ZERO_COUNT = "0";
+    descriptor: Ljava/lang/String;
+  public static final java.lang.String PICKER_ACCESS_CONTRAST_KEY = "contrast";
+    descriptor: Ljava/lang/String;
+  public static final void PickerAccessRow(io.seatlayer.android.compose.PickerAccessRowModel, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/compose/PickerAccessRowModel;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void PickerAccessGroupHeading(java.lang.String, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final io.seatlayer.android.compose.SeatLayerPickerGlyph seatLayerAccessRowGlyph(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/compose/SeatLayerPickerGlyph;
+  public static final float seatLayerAccessSheetMaxHeight(float);
+    descriptor: (F)F
+  public static final void PickerAccessMapGroup(java.util.List<io.seatlayer.android.compose.PickerAccessRowModel>, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super io.seatlayer.android.compose.PickerAccessRowModel, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/util/List;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+  public static final void PickerAccessSheetWidth(kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int);
+    descriptor: (Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+  public static final java.lang.String seatLayerAccessibleStepLabel(io.seatlayer.android.compose.SeatLayerPickerStrings, io.seatlayer.android.SeatLayerPickerAccessibleStep);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Lio/seatlayer/android/SeatLayerPickerAccessibleStep;)Ljava/lang/String;
 }
 public final class io.seatlayer.android.compose.PickerAccessibilitySheetKt {
   public static final void SeatLayerPickerAccessibilityFilters(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
-  public static final void SeatLayerPickerAccessibilityFiltersForEvidence(io.seatlayer.android.SeatLayerPickerAccessibilityAvailability, androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibilityAvailability;Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerAccessibilityFiltersForEvidence(io.seatlayer.android.SeatLayerPickerAccessibilityAvailability, androidx.compose.ui.Modifier, boolean, boolean, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibilityAvailability;Landroidx/compose/ui/Modifier;ZZLandroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerAccessibleTour {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.PickerAccessibleTour();
+    descriptor: ()V
+  public final io.seatlayer.android.SeatLayerPickerAccessibleStep getStep();
+    descriptor: ()Lio/seatlayer/android/SeatLayerPickerAccessibleStep;
+  public final java.util.List<java.lang.String> getTypes();
+    descriptor: ()Ljava/util/List;
+  public final boolean getExhausted();
+    descriptor: ()Z
+  public final boolean getWalking();
+    descriptor: ()Z
+  public final void begin(java.util.List<java.lang.String>);
+    descriptor: (Ljava/util/List;)V
+  public final boolean covers(java.util.Collection<java.lang.String>);
+    descriptor: (Ljava/util/Collection;)Z
+  public final boolean enter();
+    descriptor: ()Z
+  public final void arrive(io.seatlayer.android.SeatLayerPickerAccessibleStep);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerAccessibleStep;)V
+  public final void stumble();
+    descriptor: ()V
 }
 public final class io.seatlayer.android.compose.PickerAdaptiveLayoutKt {
   public static final void CompactChrome-942rkJo(androidx.compose.foundation.layout.BoxScope, io.seatlayer.android.compose.SeatLayerPickerBuilders, float, kotlin.jvm.functions.Function1<? super java.lang.Integer, kotlin.Unit>, kotlin.jvm.functions.Function1<? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int);
@@ -191,6 +525,8 @@ public final class io.seatlayer.android.compose.PickerAdaptiveLayoutKt {
     descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;)I
   public static final float compactMapControlsRequiredHeight(int);
     descriptor: (I)F
+  public static final androidx.compose.ui.Modifier pickerSwallowTouches(androidx.compose.ui.Modifier, boolean);
+    descriptor: (Landroidx/compose/ui/Modifier;Z)Landroidx/compose/ui/Modifier;
   public static final void WideMapChrome(androidx.compose.foundation.layout.BoxScope, io.seatlayer.android.compose.SeatLayerPickerBuilders, androidx.compose.runtime.Composer, int);
     descriptor: (Landroidx/compose/foundation/layout/BoxScope;Lio/seatlayer/android/compose/SeatLayerPickerBuilders;Landroidx/compose/runtime/Composer;I)V
   public static final void WideSidePanel(io.seatlayer.android.compose.SeatLayerPickerBuilders, androidx.compose.runtime.Composer, int);
@@ -199,8 +535,8 @@ public final class io.seatlayer.android.compose.PickerAdaptiveLayoutKt {
     descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerBuilders;Lkotlin/jvm/functions/Function0;Lkotlinx/coroutines/CoroutineScope;ZLandroidx/compose/runtime/Composer;II)V
   public static final void PickerCart(io.seatlayer.android.compose.SeatLayerPickerBuilders, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerBuilders;ZLandroidx/compose/runtime/Composer;II)V
-  public static final void CommonOverlays-FJfuzF0(androidx.compose.foundation.layout.BoxScope, io.seatlayer.android.compose.SeatLayerPickerBuilders, boolean, boolean, float, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int);
-    descriptor: (Landroidx/compose/foundation/layout/BoxScope;Lio/seatlayer/android/compose/SeatLayerPickerBuilders;ZZFLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+  public static final void CommonOverlays-iHT-50w(androidx.compose.foundation.layout.BoxScope, io.seatlayer.android.compose.SeatLayerPickerBuilders, boolean, boolean, float, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/foundation/layout/BoxScope;Lio/seatlayer/android/compose/SeatLayerPickerBuilders;ZZFZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
 }
 public final class io.seatlayer.android.compose.PickerAttributionKt {
   public static final void SeatLayerPickerAttribution(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
@@ -210,35 +546,187 @@ public final class io.seatlayer.android.compose.PickerBestSeatsKt {
   public static final void SeatLayerBestSeatsForm(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
+public final class io.seatlayer.android.compose.PickerBlockedRegionRegistry {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.PickerBlockedRegionRegistry();
+    descriptor: ()V
+  public final kotlinx.coroutines.flow.StateFlow<java.util.List<io.seatlayer.android.SeatLayerPickerBlockedRegion>> getRegions();
+    descriptor: ()Lkotlinx/coroutines/flow/StateFlow;
+  public final void bindMap(androidx.compose.ui.layout.LayoutCoordinates);
+    descriptor: (Landroidx/compose/ui/layout/LayoutCoordinates;)V
+  public final androidx.compose.ui.layout.LayoutCoordinates mapCoordinates();
+    descriptor: ()Landroidx/compose/ui/layout/LayoutCoordinates;
+  public final void measure(java.lang.Object, androidx.compose.ui.layout.LayoutCoordinates, float);
+    descriptor: (Ljava/lang/Object;Landroidx/compose/ui/layout/LayoutCoordinates;F)V
+  public final void set(java.lang.Object, io.seatlayer.android.SeatLayerPickerBlockedRegion);
+    descriptor: (Ljava/lang/Object;Lio/seatlayer/android/SeatLayerPickerBlockedRegion;)V
+  public final void forget(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)V
+  public final void release(java.lang.Object, kotlinx.coroutines.CoroutineScope);
+    descriptor: (Ljava/lang/Object;Lkotlinx/coroutines/CoroutineScope;)V
+  public final void clear();
+    descriptor: ()V
+}
+public final class io.seatlayer.android.compose.PickerBlockedRegionsKt$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+    descriptor: [I
+}
+public final class io.seatlayer.android.compose.PickerBlockedRegionsKt {
+  public static final long PICKER_BLOCKED_REGION_LINGER_MS = 600l;
+    descriptor: J
+  public static final double pickerFiniteEdge(float);
+    descriptor: (F)D
+  public static final double pickerFiniteExtent(double);
+    descriptor: (D)D
+  public static final androidx.compose.runtime.ProvidableCompositionLocal<io.seatlayer.android.compose.PickerBlockedRegionRegistry> getLocalPickerBlockedRegions();
+    descriptor: ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+  public static final io.seatlayer.android.compose.PickerBlockedRegionRegistry rememberPickerBlockedRegions(androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/runtime/Composer;I)Lio/seatlayer/android/compose/PickerBlockedRegionRegistry;
+  public static final void PickerMapChromeRegion(androidx.compose.ui.Modifier, boolean, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.BoxScope, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+  public static final androidx.compose.foundation.layout.PaddingValues padding-VpY3zN4(io.seatlayer.android.compose.PickerMapAnchor, float, float);
+    descriptor: (Lio/seatlayer/android/compose/PickerMapAnchor;FF)Landroidx/compose/foundation/layout/PaddingValues;
+  public static androidx.compose.foundation.layout.PaddingValues padding-VpY3zN4$default(io.seatlayer.android.compose.PickerMapAnchor, float, float, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/PickerMapAnchor;FFILjava/lang/Object;)Landroidx/compose/foundation/layout/PaddingValues;
+  public static final void PickerMapAnchorRegion-YlGCr2M(androidx.compose.foundation.layout.BoxScope, io.seatlayer.android.compose.PickerMapAnchor, androidx.compose.ui.Modifier, float, float, boolean, kotlin.jvm.functions.Function3<? super androidx.compose.foundation.layout.BoxScope, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/foundation/layout/BoxScope;Lio/seatlayer/android/compose/PickerMapAnchor;Landroidx/compose/ui/Modifier;FFZLkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerBookedOverlayKt {
+  public static final void SeatLayerPickerBookedOverlay(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerCardTextKt {
+  public static final void SeatLayerPickerTypeClamp(float, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int);
+    descriptor: (FLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;I)V
+  public static final void SeatLayerPickerText-18c2hus(java.lang.String, androidx.compose.ui.Modifier, long, long, androidx.compose.ui.text.font.FontWeight, int, int, androidx.compose.ui.text.TextStyle, boolean, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;Landroidx/compose/ui/Modifier;JJLandroidx/compose/ui/text/font/FontWeight;IILandroidx/compose/ui/text/TextStyle;ZLandroidx/compose/runtime/Composer;II)V
+}
 public final class io.seatlayer.android.compose.PickerCartCardsKt {
   public static final void SeatLayerPickerCartList(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerCartCard(io.seatlayer.android.SeatLayerPickerCartLine, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final boolean pickerCanOpenSeatView(io.seatlayer.android.SeatLayerPickerSelectedSeat, androidx.compose.runtime.Composer, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Landroidx/compose/runtime/Composer;I)Z
+  public static final boolean pickerSwipeCommits(float, float, float);
+    descriptor: (FFF)Z
+  public static final io.seatlayer.android.SeatLayerPickerSelectedSeat pickerSeatBehind(io.seatlayer.android.SeatLayerPickerCartLine, java.util.List<io.seatlayer.android.SeatLayerPickerSelectedSeat>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;Ljava/util/List;)Lio/seatlayer/android/SeatLayerPickerSelectedSeat;
+  public static final java.lang.String pickerCardPositionLine(io.seatlayer.android.SeatLayerPickerCartLine, java.lang.String, java.lang.String);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+  public static final java.lang.String pickerCardSpokenLabel(io.seatlayer.android.compose.SeatLayerPickerStrings, io.seatlayer.android.SeatLayerPickerCartLine, java.lang.String, java.lang.String, java.lang.String, java.util.List<io.seatlayer.android.SeatLayerPickerSeatNote>);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Lio/seatlayer/android/SeatLayerPickerCartLine;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Ljava/lang/String;
+  public static final java.lang.String pickerSeatNoteTitle(io.seatlayer.android.compose.SeatLayerPickerStrings, java.lang.String);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Ljava/lang/String;)Ljava/lang/String;
   public static final void PickerDivider(androidx.compose.runtime.Composer, int);
     descriptor: (Landroidx/compose/runtime/Composer;I)V
 }
+public final class io.seatlayer.android.compose.PickerCartSheetFootKt {
+  public static final void SeatLayerPickerSheetFoot(boolean, androidx.compose.ui.Modifier, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function3<? super kotlin.jvm.functions.Function0<kotlin.Unit>, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (ZLandroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;II)V
+  public static final void PickerTotalLine(boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final java.lang.String pickerCartSeatLine(java.util.List<io.seatlayer.android.SeatLayerPickerCartLine>);
+    descriptor: (Ljava/util/List;)Ljava/lang/String;
+  public static final float pickerSwellCurve(float);
+    descriptor: (F)F
+}
 public final class io.seatlayer.android.compose.PickerCartSheetKt {
-  public static final void SeatLayerPickerCartSheet(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, boolean, androidx.compose.runtime.Composer, int, int);
-    descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;ZLandroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerCartSheet(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, kotlin.jvm.functions.Function3<? super kotlin.jvm.functions.Function0<kotlin.Unit>, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, boolean, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function3;ZLandroidx/compose/runtime/Composer;II)V
+  public static final io.seatlayer.android.compose.PickerSheetDetents pickerSheetDetents(float, float, float, float, boolean);
+    descriptor: (FFFFZ)Lio/seatlayer/android/compose/PickerSheetDetents;
 }
 public final class io.seatlayer.android.compose.PickerCheckoutCtaKt {
+  public static final io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState seatLayerCheckoutCtaState(io.seatlayer.android.compose.SeatLayerPickerStrings, java.lang.String, boolean, boolean, boolean, boolean, io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy, io.seatlayer.android.SelectionValidity, int, int, boolean, boolean);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Ljava/lang/String;ZZZZLio/seatlayer/android/compose/SeatLayerPickerCheckoutBusy;Lio/seatlayer/android/SelectionValidity;IIZZ)Lio/seatlayer/android/compose/SeatLayerPickerCheckoutCtaState;
+  public static final io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState rememberCheckoutCtaState(java.lang.String, boolean, boolean, androidx.compose.runtime.Composer, int);
+    descriptor: (Ljava/lang/String;ZZLandroidx/compose/runtime/Composer;I)Lio/seatlayer/android/compose/SeatLayerPickerCheckoutCtaState;
+  public static final void SeatLayerBookButton(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerCtaButton(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState, io.seatlayer.android.compose.SeatLayerPickerPartStyle, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerCheckoutCtaState;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
   public static final void SeatLayerPickerCheckoutBar(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;Landroidx/compose/runtime/Composer;II)V
-  public static final void SeatLayerBookButton(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
-    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerColorContrastKt {
+  public static final float pickerRelativeLuminance-8_81llA(long);
+    descriptor: (J)F
+  public static final float pickerContrastRatio--OWjLjI(long, long);
+    descriptor: (JJ)F
+  public static final long pickerWash-1VYSb5o(long, float, long);
+    descriptor: (JFJ)J
+  public static final long getSEATLAYER_BAND_INK_LIGHT();
+    descriptor: ()J
+  public static final long getSEATLAYER_BAND_INK_DARK();
+    descriptor: ()J
+  public static final long seatLayerPickerConfirmBandInk-8_81llA(long);
+    descriptor: (J)J
+  public static final long pickerReadableAccent-jRlVdoo(long, long, long, long);
+    descriptor: (JJJJ)J
+  public static long pickerReadableAccent-jRlVdoo$default(long, long, long, long, int, java.lang.Object);
+    descriptor: (JJJJILjava/lang/Object;)J
+  public static final long pickerNoteBodyInk-jxsXWHM(long, long, float);
+    descriptor: (JJF)J
+  public static final boolean pickerColorsAgree--OWjLjI(long, long);
+    descriptor: (JJ)Z
+}
+public final class io.seatlayer.android.compose.PickerConfirmCardActionsKt {
+  public static final float SEATLAYER_CONFIRM_CANCEL_SHARE = 0.34f;
+    descriptor: F
+  public static final boolean seatLayerAnimationsEnabled(androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/runtime/Composer;I)Z
+  public static final void SeatLayerConfirmActions(java.lang.String, java.lang.String, boolean, boolean, float, boolean, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.focus.FocusRequester, androidx.compose.runtime.Composer, int, int, int);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;ZZFZZLkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/focus/FocusRequester;Landroidx/compose/runtime/Composer;III)V
+  public static final void SeatLayerAnswerMark-cf5BqRc(boolean, float, long, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (ZFJLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerSee3DSquare(boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (ZLkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final float rememberPressSweep(boolean, boolean, androidx.compose.runtime.Composer, int);
+    descriptor: (ZZLandroidx/compose/runtime/Composer;I)F
+}
+public final class io.seatlayer.android.compose.PickerConfirmCardInspectionKt {
+  public static final void SeatLayerConfidenceTeaser(io.seatlayer.android.SeatLayerPickerSeatConfidence, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSeatConfidence;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerInspectionRow(kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerFocusPrimaryOnArrival(androidx.compose.ui.focus.FocusRequester, java.lang.Object, androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/ui/focus/FocusRequester;Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)V
 }
 public final class io.seatlayer.android.compose.PickerConfirmCardKt {
   public static final void SeatLayerConfirmCard(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;ZLandroidx/compose/runtime/Composer;II)V
   public static final void SeatLayerPickerSeatConfirmation(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerConfirmCardBody(io.seatlayer.android.SeatLayerPickerSelectedSeat, io.seatlayer.android.SeatLayerPickerCardIntent, boolean, kotlin.jvm.functions.Function1<? super io.seatlayer.android.SeatLayerPickerSelectedSeat, kotlin.Unit>, androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, boolean, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Lio/seatlayer/android/SeatLayerPickerCardIntent;ZLkotlin/jvm/functions/Function1;Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;ZLandroidx/compose/runtime/Composer;II)V
 }
 public final class io.seatlayer.android.compose.PickerConfirmCardPartsKt {
-  public static final void CompactInspectionButton(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerGlyph, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int);
-    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerGlyph;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)V
+  public static final java.util.List<io.seatlayer.android.compose.SeatLayerIdentityCell> seatLayerIdentityCells(io.seatlayer.android.SeatLayerPickerSelectedSeat, io.seatlayer.android.compose.SeatLayerPickerStrings, java.lang.String);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Lio/seatlayer/android/compose/SeatLayerPickerStrings;Ljava/lang/String;)Ljava/util/List;
+  public static java.util.List seatLayerIdentityCells$default(io.seatlayer.android.SeatLayerPickerSelectedSeat, io.seatlayer.android.compose.SeatLayerPickerStrings, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Lio/seatlayer/android/compose/SeatLayerPickerStrings;Ljava/lang/String;ILjava/lang/Object;)Ljava/util/List;
+  public static final java.lang.String seatLayerRowWord(io.seatlayer.android.SeatLayerPickerSelectedSeat, io.seatlayer.android.compose.SeatLayerPickerStrings);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Lio/seatlayer/android/compose/SeatLayerPickerStrings;)Ljava/lang/String;
+  public static final java.lang.String seatLayerPlaceWord(io.seatlayer.android.SeatLayerPickerSelectedSeat, io.seatlayer.android.compose.SeatLayerPickerStrings);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Lio/seatlayer/android/compose/SeatLayerPickerStrings;)Ljava/lang/String;
+  public static final java.lang.String pickerRowLabel(java.lang.String, java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+  public static java.lang.String pickerRowLabel$default(java.lang.String, java.lang.String, java.lang.String, int, java.lang.Object);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Ljava/lang/String;
+  public static final void SeatLayerConfirmIdentityGrid(io.seatlayer.android.SeatLayerPickerSelectedSeat, boolean, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;ZLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final java.lang.String seatLayerIdentitySentence(java.util.List<io.seatlayer.android.compose.SeatLayerIdentityCell>, io.seatlayer.android.compose.SeatLayerPickerStrings);
+    descriptor: (Ljava/util/List;Lio/seatlayer/android/compose/SeatLayerPickerStrings;)Ljava/lang/String;
+  public static final void SeatLayerConfirmCategoryBand-OadGlvw(io.seatlayer.android.SeatLayerPickerCategory, long, java.lang.Double, java.lang.String, boolean, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCategory;JLjava/lang/Double;Ljava/lang/String;ZLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerConfirmTierNote(java.lang.String, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final java.lang.String pickerSectionCode(io.seatlayer.android.SeatLayerPickerSnapshot, java.lang.String);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSnapshot;Ljava/lang/String;)Ljava/lang/String;
   public static final java.lang.String compactSeatLabel(io.seatlayer.android.SeatLayerPickerSelectedSeat, io.seatlayer.android.compose.SeatLayerPickerStrings);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Lio/seatlayer/android/compose/SeatLayerPickerStrings;)Ljava/lang/String;
-  public static final void SeatIdentity(io.seatlayer.android.SeatLayerPickerSelectedSeat, double, java.lang.String, androidx.compose.runtime.Composer, int, int);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;DLjava/lang/String;Landroidx/compose/runtime/Composer;II)V
 }
 public final class io.seatlayer.android.compose.PickerDockBarKt {
   public static final void SeatLayerDockBar(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, androidx.compose.runtime.Composer, int, int);
@@ -249,26 +737,160 @@ public final class io.seatlayer.android.compose.PickerFloorRailKt {
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
   public static final void SeatLayerFloorStrip(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+  public static final float pickerFloorStripHeight(boolean);
+    descriptor: (Z)F
+  public static final java.lang.String pickerFloorLabel(io.seatlayer.android.SeatLayerPickerFloorInfo, java.lang.String);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerFloorInfo;Ljava/lang/String;)Ljava/lang/String;
   public static final java.util.List<io.seatlayer.android.SeatLayerPickerFloorInfo> pickerAuthoredFloors(java.util.List<io.seatlayer.android.SeatLayerPickerFloorInfo>);
     descriptor: (Ljava/util/List;)Ljava/util/List;
+}
+public final class io.seatlayer.android.compose.PickerGlass {
+  public static final int $stable;
+    descriptor: I
+  public final long getGround-0d7_KjU();
+    descriptor: ()J
+  public final long getLine-0d7_KjU();
+    descriptor: ()J
+  public final long getInk-0d7_KjU();
+    descriptor: ()J
+  public final float getBlur();
+    descriptor: ()F
+  public final long component1-0d7_KjU();
+    descriptor: ()J
+  public final long component2-0d7_KjU();
+    descriptor: ()J
+  public final long component3-0d7_KjU();
+    descriptor: ()J
+  public final float component4();
+    descriptor: ()F
+  public final io.seatlayer.android.compose.PickerGlass copy-qwTeutE(long, long, long, float);
+    descriptor: (JJJF)Lio/seatlayer/android/compose/PickerGlass;
+  public static io.seatlayer.android.compose.PickerGlass copy-qwTeutE$default(io.seatlayer.android.compose.PickerGlass, long, long, long, float, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/PickerGlass;JJJFILjava/lang/Object;)Lio/seatlayer/android/compose/PickerGlass;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.compose.PickerGlass(long, long, long, float, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (JJJFLkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 public final class io.seatlayer.android.compose.PickerHeaderKt {
   public static final void SeatLayerPickerHeader(kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, io.seatlayer.android.compose.SeatLayerPickerPartStyle, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Lkotlin/jvm/functions/Function0;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;ZLandroidx/compose/runtime/Composer;II)V
 }
 public final class io.seatlayer.android.compose.PickerHoldPillKt {
+  public static final androidx.compose.runtime.ProvidableCompositionLocal<kotlin.jvm.functions.Function0<java.lang.Long>> getLocalSeatLayerPickerClock();
+    descriptor: ()Landroidx/compose/runtime/ProvidableCompositionLocal;
   public static final void SeatLayerPickerHoldCountdown(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final long seatLayerNormalizeEpochMillis(double);
+    descriptor: (D)J
+  public static final long seatLayerHoldSecondsLeft(long, long);
+    descriptor: (JJ)J
+  public static final boolean seatLayerHoldIsExpiring(long);
+    descriptor: (J)Z
+  public static final java.lang.String seatLayerHoldClock(long);
+    descriptor: (J)Ljava/lang/String;
+  public static final java.lang.String seatLayerHoldAnnouncement(long, io.seatlayer.android.compose.SeatLayerPickerStrings);
+    descriptor: (JLio/seatlayer/android/compose/SeatLayerPickerStrings;)Ljava/lang/String;
 }
-public final class io.seatlayer.android.compose.PickerMapControlsKt$WhenMappings {
+public final class io.seatlayer.android.compose.PickerHoldPromptsKt$WhenMappings {
   public static final int[] $EnumSwitchMapping$0;
     descriptor: [I
 }
+public final class io.seatlayer.android.compose.PickerHoldPromptsKt {
+  public static final long SEATLAYER_HOLD_EXTEND_THRESHOLD_MS = 60000l;
+    descriptor: J
+  public static final int SEATLAYER_HOLD_EXTEND_STEP_MINUTES = 5;
+    descriptor: I
+  public static final io.seatlayer.android.compose.SeatLayerHoldExtendAnswer seatLayerHoldExtendAnswer(io.seatlayer.android.compose.SeatLayerPickerStrings, io.seatlayer.android.compose.SeatLayerHoldExtendOutcome);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;)Lio/seatlayer/android/compose/SeatLayerHoldExtendAnswer;
+  public static final long seatLayerHoldExpiryMillis(double);
+    descriptor: (D)J
+  public static final void SeatLayerPickerExtendHoldPrompt(androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super io.seatlayer.android.compose.SeatLayerHoldExtendAnswer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+  public static final boolean resolvedExtendHoldPrompt(io.seatlayer.android.compose.SeatLayerPickerOptions, boolean);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerOptions;Z)Z
+}
+public final class io.seatlayer.android.compose.PickerImmersiveGlassKt {
+  public static final io.seatlayer.android.compose.PickerGlass pickerControlGlass();
+    descriptor: ()Lio/seatlayer/android/compose/PickerGlass;
+  public static final io.seatlayer.android.compose.PickerGlass pickerCaptionGlass();
+    descriptor: ()Lio/seatlayer/android/compose/PickerGlass;
+  public static final void PickerGlassSurface(io.seatlayer.android.compose.PickerGlass, androidx.compose.ui.graphics.Shape, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/compose/PickerGlass;Landroidx/compose/ui/graphics/Shape;Landroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
+  public static final void PickerImmersiveChip(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerGlyph, androidx.compose.ui.Modifier, boolean, boolean, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerGlyph;Landroidx/compose/ui/Modifier;ZZLkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
+  public static final void PickerImmersiveCaption(java.lang.String, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerMapAnchor extends java.lang.Enum<io.seatlayer.android.compose.PickerMapAnchor> {
+  public static final io.seatlayer.android.compose.PickerMapAnchor TopStart;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static final io.seatlayer.android.compose.PickerMapAnchor TopCenter;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static final io.seatlayer.android.compose.PickerMapAnchor TopEnd;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static final io.seatlayer.android.compose.PickerMapAnchor CenterEnd;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static final io.seatlayer.android.compose.PickerMapAnchor BottomStart;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static final io.seatlayer.android.compose.PickerMapAnchor BottomCenter;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static final io.seatlayer.android.compose.PickerMapAnchor BottomEnd;
+    descriptor: Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static io.seatlayer.android.compose.PickerMapAnchor[] values();
+    descriptor: ()[Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static io.seatlayer.android.compose.PickerMapAnchor valueOf(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/compose/PickerMapAnchor;
+  public static kotlin.enums.EnumEntries<io.seatlayer.android.compose.PickerMapAnchor> getEntries();
+    descriptor: ()Lkotlin/enums/EnumEntries;
+}
+public final class io.seatlayer.android.compose.PickerMapChromeDisc {
+  public static final int $stable;
+    descriptor: I
+  public final long getGround-0d7_KjU();
+    descriptor: ()J
+  public final long getLine-0d7_KjU();
+    descriptor: ()J
+  public final long component1-0d7_KjU();
+    descriptor: ()J
+  public final long component2-0d7_KjU();
+    descriptor: ()J
+  public final io.seatlayer.android.compose.PickerMapChromeDisc copy--OWjLjI(long, long);
+    descriptor: (JJ)Lio/seatlayer/android/compose/PickerMapChromeDisc;
+  public static io.seatlayer.android.compose.PickerMapChromeDisc copy--OWjLjI$default(io.seatlayer.android.compose.PickerMapChromeDisc, long, long, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/PickerMapChromeDisc;JJILjava/lang/Object;)Lio/seatlayer/android/compose/PickerMapChromeDisc;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.compose.PickerMapChromeDisc(long, long, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (JJLkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
 public final class io.seatlayer.android.compose.PickerMapControlsKt {
+  public static final void SeatLayerPickerMapControls-1yyLQnY(androidx.compose.ui.Modifier, boolean, float, float, boolean, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;ZFFZLkotlin/jvm/functions/Function2;Landroidx/compose/runtime/Composer;II)V
   public static final void SeatLayerPickerMapControls(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerMapControlsLayout, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerMapControlsLayout;Landroidx/compose/runtime/Composer;II)V
-  public static final void SeatLayerPickerZoomControls(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerMapControlsLayout, androidx.compose.runtime.Composer, int, int);
-    descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerMapControlsLayout;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerShowWholeVenueButton(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerOverviewButton(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerZoomInButton(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerZoomOutButton(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final boolean getCanStepBack(io.seatlayer.android.SeatLayerPickerMapState);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerMapState;)Z
+  public static final void PickerMapControlDisc(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerGlyph, androidx.compose.ui.Modifier, boolean, boolean, kotlin.jvm.functions.Function0<kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerGlyph;Landroidx/compose/ui/Modifier;ZZLkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;II)V
+  public static final io.seatlayer.android.compose.PickerMapChromeDisc pickerMapChromeDisc(io.seatlayer.android.compose.SeatLayerPickerTheme, boolean);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerTheme;Z)Lio/seatlayer/android/compose/PickerMapChromeDisc;
 }
 public final class io.seatlayer.android.compose.PickerMapKt {
   public static final void SeatLayerPickerMap(androidx.compose.ui.Modifier, java.lang.Object, androidx.compose.runtime.Composer, int, int);
@@ -277,12 +899,52 @@ public final class io.seatlayer.android.compose.PickerMapKt {
 public final class io.seatlayer.android.compose.PickerPriceRailKt {
   public static final void SeatLayerPriceLegend(androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerPartStyle, boolean, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Lio/seatlayer/android/compose/SeatLayerPickerPartStyle;ZLandroidx/compose/runtime/Composer;II)V
+  public static final java.lang.String pickerCategoryAmount(io.seatlayer.android.SeatLayerPickerCategory, java.lang.String, io.seatlayer.android.compose.SeatLayerMoneyFormatter);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCategory;Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerMoneyFormatter;)Ljava/lang/String;
 }
 public final class io.seatlayer.android.compose.PickerPromptsKt {
   public static final void SeatLayerPickerGeneralAdmissionPrompt(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
   public static final void SeatLayerPickerTablePrompt(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerSeatIconsKt {
+  public static final float SEATLAYER_SEAT_ICON_VIEW_BOX = 20.0f;
+    descriptor: F
+  public static final float SEATLAYER_SEAT_ICON_STROKE_WIDTH = 1.45f;
+    descriptor: F
+  public static final java.util.Map<java.lang.String, io.seatlayer.android.compose.SeatLayerSeatGlyph> getSeatLayerSeatGlyphs();
+    descriptor: ()Ljava/util/Map;
+  public static final androidx.compose.ui.graphics.Path seatLayerSeatIconPath(java.lang.String);
+    descriptor: (Ljava/lang/String;)Landroidx/compose/ui/graphics/Path;
+  public static final androidx.compose.ui.graphics.Path seatLayerSeatIconFillPath(java.lang.String);
+    descriptor: (Ljava/lang/String;)Landroidx/compose/ui/graphics/Path;
+  public static final void SeatLayerSeatIcon-3IgeMak(java.lang.String, long, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/lang/String;JLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+}
+public final class io.seatlayer.android.compose.PickerSeatLiftKt {
+  public static final double SEATLAYER_SHEET_LIFT_FRACTION = 0.48d;
+    descriptor: D
+  public static final double SEATLAYER_SHEET_RESTORE_FRACTION = 0.5d;
+    descriptor: D
+  public static final void SeatLayerConfirmCardLayer-EUb7tLY(androidx.compose.foundation.layout.BoxScope, float, androidx.compose.ui.Modifier, boolean, kotlin.jvm.functions.Function6<? super io.seatlayer.android.SeatLayerPickerSelectedSeat, ? super io.seatlayer.android.SeatLayerPickerCardIntent, ? super java.lang.Boolean, ? super kotlin.jvm.functions.Function1<? super io.seatlayer.android.SeatLayerPickerSelectedSeat, kotlin.Unit>, ? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/foundation/layout/BoxScope;FLandroidx/compose/ui/Modifier;ZLkotlin/jvm/functions/Function6;Landroidx/compose/runtime/Composer;II)V
+  public static final java.lang.Double seatLayerSheetLiftFraction(double, double, double, double, double);
+    descriptor: (DDDDD)Ljava/lang/Double;
+  public static final androidx.compose.ui.Modifier pickerFadeUnderCard(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;I)Landroidx/compose/ui/Modifier;
+}
+public final class io.seatlayer.android.compose.PickerSeatNotesKt$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+    descriptor: [I
+}
+public final class io.seatlayer.android.compose.PickerSeatNotesKt {
+  public static final io.seatlayer.android.compose.SeatLayerSeatNoteColors seatLayerSeatNoteColors(io.seatlayer.android.SeatLayerPickerSeatNoteTone, io.seatlayer.android.compose.SeatLayerPickerTheme);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSeatNoteTone;Lio/seatlayer/android/compose/SeatLayerPickerTheme;)Lio/seatlayer/android/compose/SeatLayerSeatNoteColors;
+  public static final java.lang.String seatLayerSeatNoteTitle(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerStrings);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerStrings;)Ljava/lang/String;
+  public static final void SeatLayerSeatNotes(java.util.List<io.seatlayer.android.SeatLayerPickerSeatNote>, androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Ljava/util/List;Landroidx/compose/ui/Modifier;ZLandroidx/compose/runtime/Composer;II)V
 }
 public final class io.seatlayer.android.compose.PickerSeatViewChromeKt {
   public static final void SeatLayerSeatViewChrome(androidx.compose.ui.Modifier, boolean, androidx.compose.runtime.Composer, int, int);
@@ -292,9 +954,119 @@ public final class io.seatlayer.android.compose.PickerSectionNavigatorKt {
   public static final void SeatLayerPickerSectionNavigator(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
+public final class io.seatlayer.android.compose.PickerSheetDetents$Companion {
+  public io.seatlayer.android.compose.PickerSheetDetents$Companion(kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+public final class io.seatlayer.android.compose.PickerSheetDetents$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+    descriptor: [I
+}
+public final class io.seatlayer.android.compose.PickerSheetDetents {
+  public static final io.seatlayer.android.compose.PickerSheetDetents$Companion Companion;
+    descriptor: Lio/seatlayer/android/compose/PickerSheetDetents$Companion;
+  public static final int $stable;
+    descriptor: I
+  public static final float EPSILON = 0.5f;
+    descriptor: F
+  public io.seatlayer.android.compose.PickerSheetDetents(float, float);
+    descriptor: (FF)V
+  public final float getContent();
+    descriptor: ()F
+  public final float getFull();
+    descriptor: ()F
+  public final float getPeek();
+    descriptor: ()F
+  public final float getResolvedFull();
+    descriptor: ()F
+  public final boolean getOffersFull();
+    descriptor: ()Z
+  public final float getTop();
+    descriptor: ()F
+  public final java.util.List<io.seatlayer.android.compose.PickerSheetRest> getPositions();
+    descriptor: ()Ljava/util/List;
+  public final float heightOf(io.seatlayer.android.compose.PickerSheetRest);
+    descriptor: (Lio/seatlayer/android/compose/PickerSheetRest;)F
+  public final io.seatlayer.android.compose.PickerSheetRest nearest(float);
+    descriptor: (F)Lio/seatlayer/android/compose/PickerSheetRest;
+  public final io.seatlayer.android.compose.PickerSheetRest settle(float, float);
+    descriptor: (FF)Lio/seatlayer/android/compose/PickerSheetRest;
+  public final io.seatlayer.android.compose.PickerSheetRest step(io.seatlayer.android.compose.PickerSheetRest, int);
+    descriptor: (Lio/seatlayer/android/compose/PickerSheetRest;I)Lio/seatlayer/android/compose/PickerSheetRest;
+  public final float component1();
+    descriptor: ()F
+  public final float component2();
+    descriptor: ()F
+  public final io.seatlayer.android.compose.PickerSheetDetents copy(float, float);
+    descriptor: (FF)Lio/seatlayer/android/compose/PickerSheetDetents;
+  public static io.seatlayer.android.compose.PickerSheetDetents copy$default(io.seatlayer.android.compose.PickerSheetDetents, float, float, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/PickerSheetDetents;FFILjava/lang/Object;)Lio/seatlayer/android/compose/PickerSheetDetents;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.compose.PickerSheetDragKt {
+  public static final float PICKER_SHEET_DRAG_THRESHOLD = 18.0f;
+    descriptor: F
+  public static final io.seatlayer.android.compose.PickerSheetRest settleWithFloor(io.seatlayer.android.compose.PickerSheetDetents, float, float, io.seatlayer.android.compose.PickerSheetRest, float);
+    descriptor: (Lio/seatlayer/android/compose/PickerSheetDetents;FFLio/seatlayer/android/compose/PickerSheetRest;F)Lio/seatlayer/android/compose/PickerSheetRest;
+  public static final float pickerRubberBand(float, float, float);
+    descriptor: (FFF)F
+  public static final float pickerSheetDampingRatio();
+    descriptor: ()F
+  public static final androidx.compose.animation.core.SpringSpec<java.lang.Float> pickerSheetSpring();
+    descriptor: ()Landroidx/compose/animation/core/SpringSpec;
+  public static final androidx.compose.animation.core.AnimationSpec<java.lang.Float> pickerSheetSettleSpec(boolean);
+    descriptor: (Z)Landroidx/compose/animation/core/AnimationSpec;
+  public static final boolean pickerReducedMotion(androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/runtime/Composer;I)Z
+}
+public final class io.seatlayer.android.compose.PickerSheetRest extends java.lang.Enum<io.seatlayer.android.compose.PickerSheetRest> {
+  public static final io.seatlayer.android.compose.PickerSheetRest Peek;
+    descriptor: Lio/seatlayer/android/compose/PickerSheetRest;
+  public static final io.seatlayer.android.compose.PickerSheetRest Content;
+    descriptor: Lio/seatlayer/android/compose/PickerSheetRest;
+  public static final io.seatlayer.android.compose.PickerSheetRest Full;
+    descriptor: Lio/seatlayer/android/compose/PickerSheetRest;
+  public static io.seatlayer.android.compose.PickerSheetRest[] values();
+    descriptor: ()[Lio/seatlayer/android/compose/PickerSheetRest;
+  public static io.seatlayer.android.compose.PickerSheetRest valueOf(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/compose/PickerSheetRest;
+  public static kotlin.enums.EnumEntries<io.seatlayer.android.compose.PickerSheetRest> getEntries();
+    descriptor: ()Lkotlin/enums/EnumEntries;
+}
+public final class io.seatlayer.android.compose.PickerSpotlightKt {
+  public static final void SeatLayerSpotlightGlass(io.seatlayer.android.SeatLayerPickerSelectedSeat, float, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;FLandroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final boolean seatLayerReducedTransparency(androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/runtime/Composer;I)Z
+}
+public final class io.seatlayer.android.compose.PickerStatesKt {
+  public static final boolean seatLayerPickerIsSoldOut(io.seatlayer.android.SeatLayerPickerState);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerState;)Z
+  public static final void SeatLayerPickerSoldOutOverlay(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerSalesClosedStatement(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final io.seatlayer.android.compose.SeatLayerPickerAccessTelling seatLayerPickerAccessTelling(io.seatlayer.android.compose.SeatLayerPickerStrings, java.lang.String);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Ljava/lang/String;)Lio/seatlayer/android/compose/SeatLayerPickerAccessTelling;
+  public static final boolean pickerAccessUnavailable(io.seatlayer.android.SeatLayerPickerState);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerState;)Z
+  public static final void SeatLayerPickerAccessPanel(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final boolean getHostOwnsAccessRecovery(io.seatlayer.android.compose.SeatLayerPickerScope);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerScope;)Z
+}
 public final class io.seatlayer.android.compose.PickerStatusViewsKt {
+  public static final boolean seatLayerPickerMotionEnabled(androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/runtime/Composer;I)Z
   public static final void SeatLayerHoldLapseNotice(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final java.lang.String seatLayerHoldLapseBody(io.seatlayer.android.compose.SeatLayerPickerStrings, io.seatlayer.android.SeatLayerPickerHoldLapse);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerStrings;Lio/seatlayer/android/SeatLayerPickerHoldLapse;)Ljava/lang/String;
   public static final void SeatLayerPickerActionError(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
     descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
   public static final void SeatLayerPickerLoadingView(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
@@ -316,9 +1088,19 @@ public final class io.seatlayer.android.compose.PickerTicketTiersKt {
   public static final void TierChoices(java.util.List<io.seatlayer.android.SeatLayerPickerCategoryTier>, java.lang.String, java.lang.String, boolean, androidx.compose.ui.Modifier, kotlin.jvm.functions.Function1<? super java.lang.String, kotlin.Unit>, androidx.compose.runtime.Composer, int, int);
     descriptor: (Ljava/util/List;Ljava/lang/String;Ljava/lang/String;ZLandroidx/compose/ui/Modifier;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;II)V
 }
+public final class io.seatlayer.android.compose.PickerToastKt$WhenMappings {
+  public static final int[] $EnumSwitchMapping$0;
+    descriptor: [I
+}
 public final class io.seatlayer.android.compose.PickerToastKt {
-  public static final void SeatLayerPickerUndoNotice(androidx.compose.ui.Modifier, long, androidx.compose.runtime.Composer, int, int);
-    descriptor: (Landroidx/compose/ui/Modifier;JLandroidx/compose/runtime/Composer;II)V
+  public static final io.seatlayer.android.compose.SeatLayerPickerToastQueue rememberSeatLayerPickerToastQueue(androidx.compose.runtime.Composer, int);
+    descriptor: (Landroidx/compose/runtime/Composer;I)Lio/seatlayer/android/compose/SeatLayerPickerToastQueue;
+  public static final void SeatLayerPickerToastLayer-DzVHIIc(androidx.compose.ui.Modifier, float, boolean, io.seatlayer.android.compose.SeatLayerPickerToastQueue, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;FZLio/seatlayer/android/compose/SeatLayerPickerToastQueue;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerToastCard(io.seatlayer.android.compose.SeatLayerPickerToast, androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerToast;Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
+  public static final void SeatLayerPickerUndoNotice(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
+    descriptor: (Landroidx/compose/ui/Modifier;Landroidx/compose/runtime/Composer;II)V
 }
 public final class io.seatlayer.android.compose.PickerVenue3DChromeKt {
   public static final void SeatLayerVenue3D(androidx.compose.ui.Modifier, androidx.compose.runtime.Composer, int, int);
@@ -504,6 +1286,78 @@ public final class io.seatlayer.android.compose.SeatLayerHapticTokens {
   public static final int $stable;
     descriptor: I
 }
+public final class io.seatlayer.android.compose.SeatLayerHoldExtendAnswer {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerHoldExtendAnswer(io.seatlayer.android.compose.SeatLayerHoldExtendOutcome, boolean, java.lang.String);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;ZLjava/lang/String;)V
+  public final io.seatlayer.android.compose.SeatLayerHoldExtendOutcome getOutcome();
+    descriptor: ()Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public final boolean getRetires();
+    descriptor: ()Z
+  public final java.lang.String getAnnouncement();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.compose.SeatLayerHoldExtendOutcome component1();
+    descriptor: ()Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public final boolean component2();
+    descriptor: ()Z
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.compose.SeatLayerHoldExtendAnswer copy(io.seatlayer.android.compose.SeatLayerHoldExtendOutcome, boolean, java.lang.String);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;ZLjava/lang/String;)Lio/seatlayer/android/compose/SeatLayerHoldExtendAnswer;
+  public static io.seatlayer.android.compose.SeatLayerHoldExtendAnswer copy$default(io.seatlayer.android.compose.SeatLayerHoldExtendAnswer, io.seatlayer.android.compose.SeatLayerHoldExtendOutcome, boolean, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerHoldExtendAnswer;Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;ZLjava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerHoldExtendAnswer;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.compose.SeatLayerHoldExtendOutcome extends java.lang.Enum<io.seatlayer.android.compose.SeatLayerHoldExtendOutcome> {
+  public static final io.seatlayer.android.compose.SeatLayerHoldExtendOutcome Granted;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public static final io.seatlayer.android.compose.SeatLayerHoldExtendOutcome Refused;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public static final io.seatlayer.android.compose.SeatLayerHoldExtendOutcome TransportFailure;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public static io.seatlayer.android.compose.SeatLayerHoldExtendOutcome[] values();
+    descriptor: ()[Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public static io.seatlayer.android.compose.SeatLayerHoldExtendOutcome valueOf(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/compose/SeatLayerHoldExtendOutcome;
+  public static kotlin.enums.EnumEntries<io.seatlayer.android.compose.SeatLayerHoldExtendOutcome> getEntries();
+    descriptor: ()Lkotlin/enums/EnumEntries;
+}
+public final class io.seatlayer.android.compose.SeatLayerIdentityCell {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerIdentityCell(java.lang.String, java.lang.String, boolean);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Z)V
+  public io.seatlayer.android.compose.SeatLayerIdentityCell(java.lang.String, java.lang.String, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;ZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final java.lang.String getEyebrow();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getValue();
+    descriptor: ()Ljava/lang/String;
+  public final boolean getLongSection();
+    descriptor: ()Z
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final boolean component3();
+    descriptor: ()Z
+  public final io.seatlayer.android.compose.SeatLayerIdentityCell copy(java.lang.String, java.lang.String, boolean);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Z)Lio/seatlayer/android/compose/SeatLayerIdentityCell;
+  public static io.seatlayer.android.compose.SeatLayerIdentityCell copy$default(io.seatlayer.android.compose.SeatLayerIdentityCell, java.lang.String, java.lang.String, boolean, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerIdentityCell;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerIdentityCell;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
 public final class io.seatlayer.android.compose.SeatLayerLightTokens {
   public static final io.seatlayer.android.compose.SeatLayerLightTokens INSTANCE;
     descriptor: Lio/seatlayer/android/compose/SeatLayerLightTokens;
@@ -663,6 +1517,34 @@ public final class io.seatlayer.android.compose.SeatLayerPhysicsTokens {
     descriptor: F
   public static final int $stable;
     descriptor: I
+}
+public final class io.seatlayer.android.compose.SeatLayerPickerAccessTelling {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerPickerAccessTelling(java.lang.String, java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+  public final java.lang.String getTitle();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getBody();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String getAction();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component2();
+    descriptor: ()Ljava/lang/String;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.compose.SeatLayerPickerAccessTelling copy(java.lang.String, java.lang.String, java.lang.String);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Lio/seatlayer/android/compose/SeatLayerPickerAccessTelling;
+  public static io.seatlayer.android.compose.SeatLayerPickerAccessTelling copy$default(io.seatlayer.android.compose.SeatLayerPickerAccessTelling, java.lang.String, java.lang.String, java.lang.String, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerAccessTelling;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;ILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerAccessTelling;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
 }
 public final class io.seatlayer.android.compose.SeatLayerPickerActionsKt {
   public static final java.lang.Object performAction(io.seatlayer.android.compose.SeatLayerPickerScope, kotlin.jvm.functions.Function1<? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object>, kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -900,13 +1782,63 @@ public final class io.seatlayer.android.compose.SeatLayerPickerCallbacks {
   public io.seatlayer.android.compose.SeatLayerPickerCallbacks();
     descriptor: ()V
 }
+public final class io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy extends java.lang.Enum<io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy> {
+  public static final io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy None;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerCheckoutBusy;
+  public static final io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy SecuringSeats;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerCheckoutBusy;
+  public static final io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy OpeningCheckout;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerCheckoutBusy;
+  public static io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy[] values();
+    descriptor: ()[Lio/seatlayer/android/compose/SeatLayerPickerCheckoutBusy;
+  public static io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy valueOf(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/compose/SeatLayerPickerCheckoutBusy;
+  public static kotlin.enums.EnumEntries<io.seatlayer.android.compose.SeatLayerPickerCheckoutBusy> getEntries();
+    descriptor: ()Lkotlin/enums/EnumEntries;
+}
+public final class io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState(java.lang.String, boolean, boolean, boolean, boolean);
+    descriptor: (Ljava/lang/String;ZZZZ)V
+  public final java.lang.String getLabel();
+    descriptor: ()Ljava/lang/String;
+  public final boolean getEnabled();
+    descriptor: ()Z
+  public final boolean getBusy();
+    descriptor: ()Z
+  public final boolean getStatesReason();
+    descriptor: ()Z
+  public final boolean getFindsBestSeats();
+    descriptor: ()Z
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final boolean component2();
+    descriptor: ()Z
+  public final boolean component3();
+    descriptor: ()Z
+  public final boolean component4();
+    descriptor: ()Z
+  public final boolean component5();
+    descriptor: ()Z
+  public final io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState copy(java.lang.String, boolean, boolean, boolean, boolean);
+    descriptor: (Ljava/lang/String;ZZZZ)Lio/seatlayer/android/compose/SeatLayerPickerCheckoutCtaState;
+  public static io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState copy$default(io.seatlayer.android.compose.SeatLayerPickerCheckoutCtaState, java.lang.String, boolean, boolean, boolean, boolean, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerCheckoutCtaState;Ljava/lang/String;ZZZZILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerCheckoutCtaState;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
 public final class io.seatlayer.android.compose.SeatLayerPickerChromeOptions {
   public static final int $stable;
     descriptor: I
-  public io.seatlayer.android.compose.SeatLayerPickerChromeOptions(boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean);
-    descriptor: (ZZZZZZZZZZZZZZZZ)V
-  public io.seatlayer.android.compose.SeatLayerPickerChromeOptions(boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker);
-    descriptor: (ZZZZZZZZZZZZZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public io.seatlayer.android.compose.SeatLayerPickerChromeOptions(boolean, boolean, boolean, boolean, boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean);
+    descriptor: (ZZZZZLjava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;ZZZZZZZZ)V
+  public io.seatlayer.android.compose.SeatLayerPickerChromeOptions(boolean, boolean, boolean, boolean, boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (ZZZZZLjava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;ZZZZZZZZILkotlin/jvm/internal/DefaultConstructorMarker;)V
   public final boolean getShowHeader();
     descriptor: ()Z
   public final boolean getShowPriceRail();
@@ -917,12 +1849,14 @@ public final class io.seatlayer.android.compose.SeatLayerPickerChromeOptions {
     descriptor: ()Z
   public final boolean getShowMapControls();
     descriptor: ()Z
-  public final boolean getShowOverviewControl();
-    descriptor: ()Z
-  public final boolean getShowZoomControls();
-    descriptor: ()Z
-  public final boolean getShowColorblindControl();
-    descriptor: ()Z
+  public final java.lang.Boolean getShowOverviewControl();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.Boolean getShowZoomControls();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.Boolean getShowZoomToFitControl();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.Boolean getShowColorblindControl();
+    descriptor: ()Ljava/lang/Boolean;
   public final boolean getShowViewModeControl();
     descriptor: ()Z
   public final boolean getShowAccessibilityControl();
@@ -995,6 +1929,14 @@ public final class io.seatlayer.android.compose.SeatLayerPickerChromeOptions {
     descriptor: ()Z
   public static void getAttribution$annotations();
     descriptor: ()V
+  public final boolean zoomControlsFor(boolean);
+    descriptor: (Z)Z
+  public final boolean zoomToFitControlFor(boolean);
+    descriptor: (Z)Z
+  public final boolean overviewControlFor(boolean);
+    descriptor: (Z)Z
+  public final boolean colorblindControlFor(boolean);
+    descriptor: (Z)Z
   public final boolean getDock();
     descriptor: ()Z
   public static void getDock$annotations();
@@ -1013,14 +1955,14 @@ public final class io.seatlayer.android.compose.SeatLayerPickerChromeOptions {
     descriptor: ()Z
   public final boolean component5();
     descriptor: ()Z
-  public final boolean component6();
-    descriptor: ()Z
-  public final boolean component7();
-    descriptor: ()Z
-  public final boolean component8();
-    descriptor: ()Z
-  public final boolean component9();
-    descriptor: ()Z
+  public final java.lang.Boolean component6();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.Boolean component7();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.Boolean component8();
+    descriptor: ()Ljava/lang/Boolean;
+  public final java.lang.Boolean component9();
+    descriptor: ()Ljava/lang/Boolean;
   public final boolean component10();
     descriptor: ()Z
   public final boolean component11();
@@ -1035,10 +1977,12 @@ public final class io.seatlayer.android.compose.SeatLayerPickerChromeOptions {
     descriptor: ()Z
   public final boolean component16();
     descriptor: ()Z
-  public final io.seatlayer.android.compose.SeatLayerPickerChromeOptions copy(boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean);
-    descriptor: (ZZZZZZZZZZZZZZZZ)Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;
-  public static io.seatlayer.android.compose.SeatLayerPickerChromeOptions copy$default(io.seatlayer.android.compose.SeatLayerPickerChromeOptions, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, java.lang.Object);
-    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;ZZZZZZZZZZZZZZZZILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;
+  public final boolean component17();
+    descriptor: ()Z
+  public final io.seatlayer.android.compose.SeatLayerPickerChromeOptions copy(boolean, boolean, boolean, boolean, boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean);
+    descriptor: (ZZZZZLjava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;ZZZZZZZZ)Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;
+  public static io.seatlayer.android.compose.SeatLayerPickerChromeOptions copy$default(io.seatlayer.android.compose.SeatLayerPickerChromeOptions, boolean, boolean, boolean, boolean, boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, java.lang.Boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, boolean, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;ZZZZZLjava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;Ljava/lang/Boolean;ZZZZZZZZILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerChromeOptions;
   public java.lang.String toString();
     descriptor: ()Ljava/lang/String;
   public int hashCode();
@@ -1107,6 +2051,8 @@ public final class io.seatlayer.android.compose.SeatLayerPickerKt$WhenMappings {
     descriptor: [I
 }
 public final class io.seatlayer.android.compose.SeatLayerPickerKt {
+  public static final long PICKER_MAP_FRAMING_GRACE_MS = 700l;
+    descriptor: J
   public static final void SeatLayerPicker-zNN5b9Y(io.seatlayer.android.SeatLayerConfiguration, androidx.compose.ui.Modifier, java.lang.String, io.seatlayer.android.compose.SeatLayerPickerTheme, io.seatlayer.android.compose.SeatLayerPickerStrings, io.seatlayer.android.compose.SeatLayerPickerOptions, io.seatlayer.android.compose.SeatLayerPickerStyles, io.seatlayer.android.compose.SeatLayerMoneyFormatter, io.seatlayer.android.compose.SeatLayerPickerBuilders, io.seatlayer.android.SeatLayerPickerStateHolder, kotlin.jvm.functions.Function2<? super io.seatlayer.android.SeatLayerPickerCheckoutHandoff, ? super kotlin.coroutines.Continuation<? super kotlin.Unit>, ? extends java.lang.Object>, kotlin.jvm.functions.Function1<? super io.seatlayer.android.SeatLayerException, kotlin.Unit>, kotlin.jvm.functions.Function1<? super io.seatlayer.android.ReadyInfo, kotlin.Unit>, kotlin.jvm.functions.Function1<? super io.seatlayer.android.SeatLayerPickerSnapshot, kotlin.Unit>, kotlin.jvm.functions.Function1<? super java.util.List<io.seatlayer.android.SeatLayerPickerSelectedSeat>, kotlin.Unit>, kotlin.jvm.functions.Function1<? super io.seatlayer.android.SeatLayerPickerHold, kotlin.Unit>, kotlin.jvm.functions.Function0<kotlin.Unit>, kotlin.jvm.functions.Function1<? super io.seatlayer.android.SeatLayerChartLoad, kotlin.Unit>, androidx.compose.runtime.Composer, int, int, int);
     descriptor: (Lio/seatlayer/android/SeatLayerConfiguration;Landroidx/compose/ui/Modifier;Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerTheme;Lio/seatlayer/android/compose/SeatLayerPickerStrings;Lio/seatlayer/android/compose/SeatLayerPickerOptions;Lio/seatlayer/android/compose/SeatLayerPickerStyles;Lio/seatlayer/android/compose/SeatLayerMoneyFormatter;Lio/seatlayer/android/compose/SeatLayerPickerBuilders;Lio/seatlayer/android/SeatLayerPickerStateHolder;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;III)V
   public static final void SeatLayerReadyMadePicker(io.seatlayer.android.compose.SeatLayerPickerScope, androidx.compose.ui.Modifier, io.seatlayer.android.compose.SeatLayerPickerBuilders, androidx.compose.runtime.Composer, int);
@@ -1131,6 +2077,8 @@ public final class io.seatlayer.android.compose.SeatLayerPickerLayoutMode extend
 public final class io.seatlayer.android.compose.SeatLayerPickerLifecycleKt$WhenMappings {
   public static final int[] $EnumSwitchMapping$0;
     descriptor: [I
+  public static final int[] $EnumSwitchMapping$1;
+    descriptor: [I
 }
 public final class io.seatlayer.android.compose.SeatLayerPickerLifecycleKt {
   public static final void SeatLayerPickerLifecycle(androidx.compose.runtime.Composer, int);
@@ -1139,6 +2087,8 @@ public final class io.seatlayer.android.compose.SeatLayerPickerLifecycleKt {
     descriptor: (ZLandroidx/compose/runtime/Composer;II)V
   public static final void SeatLayerPickerHapticEffects(androidx.compose.runtime.Composer, int);
     descriptor: (Landroidx/compose/runtime/Composer;I)V
+  public static final int seatLayerHapticFeedback(io.seatlayer.android.SeatLayerPickerHapticCue);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerHapticCue;)I
 }
 public final class io.seatlayer.android.compose.SeatLayerPickerLocaleData {
   public static final io.seatlayer.android.compose.SeatLayerPickerLocaleData INSTANCE;
@@ -2768,6 +3718,70 @@ public final class io.seatlayer.android.compose.SeatLayerPickerThemeKt {
   public static final androidx.compose.ui.graphics.Color parseColor(java.lang.String);
     descriptor: (Ljava/lang/String;)Landroidx/compose/ui/graphics/Color;
 }
+public final class io.seatlayer.android.compose.SeatLayerPickerToast {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerPickerToast(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerToastTone, java.lang.String, kotlin.jvm.functions.Function0<kotlin.Unit>);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerToastTone;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)V
+  public io.seatlayer.android.compose.SeatLayerPickerToast(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerToastTone, java.lang.String, kotlin.jvm.functions.Function0, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerToastTone;Ljava/lang/String;Lkotlin/jvm/functions/Function0;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final java.lang.String getMessage();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.compose.SeatLayerPickerToastTone getTone();
+    descriptor: ()Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public final java.lang.String getActionLabel();
+    descriptor: ()Ljava/lang/String;
+  public final kotlin.jvm.functions.Function0<kotlin.Unit> getOnAction();
+    descriptor: ()Lkotlin/jvm/functions/Function0;
+  public final java.lang.String component1();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.compose.SeatLayerPickerToastTone component2();
+    descriptor: ()Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public final java.lang.String component3();
+    descriptor: ()Ljava/lang/String;
+  public final kotlin.jvm.functions.Function0<kotlin.Unit> component4();
+    descriptor: ()Lkotlin/jvm/functions/Function0;
+  public final io.seatlayer.android.compose.SeatLayerPickerToast copy(java.lang.String, io.seatlayer.android.compose.SeatLayerPickerToastTone, java.lang.String, kotlin.jvm.functions.Function0<kotlin.Unit>);
+    descriptor: (Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerToastTone;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Lio/seatlayer/android/compose/SeatLayerPickerToast;
+  public static io.seatlayer.android.compose.SeatLayerPickerToast copy$default(io.seatlayer.android.compose.SeatLayerPickerToast, java.lang.String, io.seatlayer.android.compose.SeatLayerPickerToastTone, java.lang.String, kotlin.jvm.functions.Function0, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerToast;Ljava/lang/String;Lio/seatlayer/android/compose/SeatLayerPickerToastTone;Ljava/lang/String;Lkotlin/jvm/functions/Function0;ILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerToast;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.compose.SeatLayerPickerToastQueue {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerPickerToastQueue();
+    descriptor: ()V
+  public final io.seatlayer.android.compose.SeatLayerPickerToast getCurrent();
+    descriptor: ()Lio/seatlayer/android/compose/SeatLayerPickerToast;
+  public final int getGeneration();
+    descriptor: ()I
+  public final void show(io.seatlayer.android.compose.SeatLayerPickerToast);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerToast;)V
+  public final void dismiss();
+    descriptor: ()V
+}
+public final class io.seatlayer.android.compose.SeatLayerPickerToastTone extends java.lang.Enum<io.seatlayer.android.compose.SeatLayerPickerToastTone> {
+  public static final io.seatlayer.android.compose.SeatLayerPickerToastTone Neutral;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public static final io.seatlayer.android.compose.SeatLayerPickerToastTone Error;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public static final io.seatlayer.android.compose.SeatLayerPickerToastTone Warning;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public static final io.seatlayer.android.compose.SeatLayerPickerToastTone Success;
+    descriptor: Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public static io.seatlayer.android.compose.SeatLayerPickerToastTone[] values();
+    descriptor: ()[Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public static io.seatlayer.android.compose.SeatLayerPickerToastTone valueOf(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/compose/SeatLayerPickerToastTone;
+  public static kotlin.enums.EnumEntries<io.seatlayer.android.compose.SeatLayerPickerToastTone> getEntries();
+    descriptor: ()Lkotlin/enums/EnumEntries;
+}
 public final class io.seatlayer.android.compose.SeatLayerPickerView extends android.widget.FrameLayout {
   public static final int $stable;
     descriptor: I
@@ -2819,6 +3833,70 @@ public final class io.seatlayer.android.compose.SeatLayerRadiusTokens {
     descriptor: F
   public static final int $stable;
     descriptor: I
+}
+public final class io.seatlayer.android.compose.SeatLayerSeatGlyph {
+  public static final int $stable;
+    descriptor: I
+  public io.seatlayer.android.compose.SeatLayerSeatGlyph(java.util.List<float[]>, java.util.List<java.lang.String>, java.util.List<java.lang.String>);
+    descriptor: (Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
+  public io.seatlayer.android.compose.SeatLayerSeatGlyph(java.util.List, java.util.List, java.util.List, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/util/List;Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public final java.util.List<float[]> getCircles();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> getPaths();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> getFills();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<float[]> component1();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> component2();
+    descriptor: ()Ljava/util/List;
+  public final java.util.List<java.lang.String> component3();
+    descriptor: ()Ljava/util/List;
+  public final io.seatlayer.android.compose.SeatLayerSeatGlyph copy(java.util.List<float[]>, java.util.List<java.lang.String>, java.util.List<java.lang.String>);
+    descriptor: (Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lio/seatlayer/android/compose/SeatLayerSeatGlyph;
+  public static io.seatlayer.android.compose.SeatLayerSeatGlyph copy$default(io.seatlayer.android.compose.SeatLayerSeatGlyph, java.util.List, java.util.List, java.util.List, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerSeatGlyph;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerSeatGlyph;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.compose.SeatLayerSeatGlyph();
+    descriptor: ()V
+}
+public final class io.seatlayer.android.compose.SeatLayerSeatNoteColors {
+  public static final int $stable;
+    descriptor: I
+  public final long getBand-0d7_KjU();
+    descriptor: ()J
+  public final long getTitle-0d7_KjU();
+    descriptor: ()J
+  public final long getGlyph-0d7_KjU();
+    descriptor: ()J
+  public final long getBody-0d7_KjU();
+    descriptor: ()J
+  public final long component1-0d7_KjU();
+    descriptor: ()J
+  public final long component2-0d7_KjU();
+    descriptor: ()J
+  public final long component3-0d7_KjU();
+    descriptor: ()J
+  public final long component4-0d7_KjU();
+    descriptor: ()J
+  public final io.seatlayer.android.compose.SeatLayerSeatNoteColors copy-jRlVdoo(long, long, long, long);
+    descriptor: (JJJJ)Lio/seatlayer/android/compose/SeatLayerSeatNoteColors;
+  public static io.seatlayer.android.compose.SeatLayerSeatNoteColors copy-jRlVdoo$default(io.seatlayer.android.compose.SeatLayerSeatNoteColors, long, long, long, long, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerSeatNoteColors;JJJJILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerSeatNoteColors;
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+  public int hashCode();
+    descriptor: ()I
+  public boolean equals(java.lang.Object);
+    descriptor: (Ljava/lang/Object;)Z
+  public io.seatlayer.android.compose.SeatLayerSeatNoteColors(long, long, long, long, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (JJJJLkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 public final class io.seatlayer.android.compose.SeatLayerSizeTokens {
   public static final io.seatlayer.android.compose.SeatLayerSizeTokens INSTANCE;
@@ -3723,4 +4801,28 @@ public final class io.seatlayer.android.compose.SeatLayerTypeTokens {
     descriptor: F
   public static final int $stable;
     descriptor: I
+}
+final class io.seatlayer.android.compose.ToastLiterals {
+  public static final io.seatlayer.android.compose.ToastLiterals INSTANCE;
+    descriptor: Lio/seatlayer/android/compose/ToastLiterals;
+  public static final float RADIUS = 16.0f;
+    descriptor: F
+  public static final float MAX_WIDTH = 420.0f;
+    descriptor: F
+  public static final float PAD_X = 14.0f;
+    descriptor: F
+  public static final float PAD_Y = 10.0f;
+    descriptor: F
+  public static final float BAND_PAD_X = 16.0f;
+    descriptor: F
+  public static final float BAND_PAD_BOTTOM = 12.0f;
+    descriptor: F
+  public static final float ACTION_HEIGHT = 30.0f;
+    descriptor: F
+  public static final float ACTION_PAD_X = 12.0f;
+    descriptor: F
+  public static final float ACTION_INSET = 7.0f;
+    descriptor: F
+  public static final float RISE_DISTANCE = 12.0f;
+    descriptor: F
 }

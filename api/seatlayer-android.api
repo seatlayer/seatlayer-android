@@ -892,6 +892,12 @@ public final class io.seatlayer.android.PickerControllerSelectionKt {
   public static final java.lang.Object performSetCategoryFilter(io.seatlayer.android.SeatLayerPickerController, java.util.List<java.lang.String>, boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
 }
+public final class io.seatlayer.android.PickerSeatAnswersKt {
+  public static final boolean seatLayerPickerMayAskAboutSeat(java.lang.String, boolean);
+    descriptor: (Ljava/lang/String;Z)Z
+  public static final boolean mayBeAskedAbout(io.seatlayer.android.SeatLayerPickerSelectedSeat, boolean);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Z)Z
+}
 public final class io.seatlayer.android.PickerSeatNotesKt {
   public static final java.util.List<io.seatlayer.android.SeatLayerPickerSeatNote> seatLayerPickerSeatNotes(java.util.List<java.lang.String>, java.lang.String, io.seatlayer.android.SeatLayerPickerSeatCommercial);
     descriptor: (Ljava/util/List;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;)Ljava/util/List;
@@ -3989,10 +3995,10 @@ public final class io.seatlayer.android.SeatLayerPickerSectionSummary {
     descriptor: (Ljava/lang/Object;)Z
 }
 public final class io.seatlayer.android.SeatLayerPickerSelectedSeat {
-  public io.seatlayer.android.SeatLayerPickerSelectedSeat(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List<io.seatlayer.android.SeatLayerPickerCategoryTier>, java.lang.String, java.util.List<java.lang.String>, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence);
-    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;)V
-  public io.seatlayer.android.SeatLayerPickerSelectedSeat(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List, java.lang.String, java.util.List, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence, int, kotlin.jvm.internal.DefaultConstructorMarker);
-    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public io.seatlayer.android.SeatLayerPickerSelectedSeat(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List<io.seatlayer.android.SeatLayerPickerCategoryTier>, java.lang.String, java.util.List<java.lang.String>, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, java.lang.String, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;)V
+  public io.seatlayer.android.SeatLayerPickerSelectedSeat(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List, java.lang.String, java.util.List, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, java.lang.String, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
   public final java.lang.String getId();
     descriptor: ()Ljava/lang/String;
   public final java.lang.String getLabel();
@@ -4037,6 +4043,8 @@ public final class io.seatlayer.android.SeatLayerPickerSelectedSeat {
     descriptor: ()Ljava/lang/Integer;
   public final io.seatlayer.android.SeatLayerPickerScreenPoint getScreenPoint();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerScreenPoint;
+  public final java.lang.String getStatus();
+    descriptor: ()Ljava/lang/String;
   public final io.seatlayer.android.SeatLayerPickerSeatCommercial getCommercial();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerSeatCommercial;
   public final io.seatlayer.android.SeatLayerPickerSeatViewThumbnail getSeatViewThumbnail();
@@ -4093,18 +4101,20 @@ public final class io.seatlayer.android.SeatLayerPickerSelectedSeat {
     descriptor: ()Ljava/lang/Integer;
   public final io.seatlayer.android.SeatLayerPickerScreenPoint component22();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerScreenPoint;
-  public final io.seatlayer.android.SeatLayerPickerSeatCommercial component23();
+  public final java.lang.String component23();
+    descriptor: ()Ljava/lang/String;
+  public final io.seatlayer.android.SeatLayerPickerSeatCommercial component24();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerSeatCommercial;
-  public final io.seatlayer.android.SeatLayerPickerSeatViewThumbnail component24();
+  public final io.seatlayer.android.SeatLayerPickerSeatViewThumbnail component25();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;
-  public final java.lang.Double component25();
+  public final java.lang.Double component26();
     descriptor: ()Ljava/lang/Double;
-  public final io.seatlayer.android.SeatLayerPickerSeatConfidence component26();
+  public final io.seatlayer.android.SeatLayerPickerSeatConfidence component27();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerSeatConfidence;
-  public final io.seatlayer.android.SeatLayerPickerSelectedSeat copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List<io.seatlayer.android.SeatLayerPickerCategoryTier>, java.lang.String, java.util.List<java.lang.String>, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence);
-    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;)Lio/seatlayer/android/SeatLayerPickerSelectedSeat;
-  public static io.seatlayer.android.SeatLayerPickerSelectedSeat copy$default(io.seatlayer.android.SeatLayerPickerSelectedSeat, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List, java.lang.String, java.util.List, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence, int, java.lang.Object);
-    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerPickerSelectedSeat;
+  public final io.seatlayer.android.SeatLayerPickerSelectedSeat copy(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List<io.seatlayer.android.SeatLayerPickerCategoryTier>, java.lang.String, java.util.List<java.lang.String>, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, java.lang.String, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence);
+    descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;)Lio/seatlayer/android/SeatLayerPickerSelectedSeat;
+  public static io.seatlayer.android.SeatLayerPickerSelectedSeat copy$default(io.seatlayer.android.SeatLayerPickerSelectedSeat, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, double, java.lang.String, java.util.List, java.lang.String, java.util.List, java.lang.String, java.lang.Integer, java.lang.Integer, java.lang.Integer, java.lang.Integer, io.seatlayer.android.SeatLayerPickerScreenPoint, java.lang.String, io.seatlayer.android.SeatLayerPickerSeatCommercial, io.seatlayer.android.SeatLayerPickerSeatViewThumbnail, java.lang.Double, io.seatlayer.android.SeatLayerPickerSeatConfidence, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;DLjava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Ljava/lang/Integer;Lio/seatlayer/android/SeatLayerPickerScreenPoint;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerSeatCommercial;Lio/seatlayer/android/SeatLayerPickerSeatViewThumbnail;Ljava/lang/Double;Lio/seatlayer/android/SeatLayerPickerSeatConfidence;ILjava/lang/Object;)Lio/seatlayer/android/SeatLayerPickerSelectedSeat;
   public java.lang.String toString();
     descriptor: ()Ljava/lang/String;
   public int hashCode();
@@ -4335,6 +4345,10 @@ public final class io.seatlayer.android.SeatLayerPickerStateHolder {
     descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
   public final kotlinx.coroutines.flow.SharedFlow<kotlin.Unit> getReloadRequests();
     descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
+  public final kotlinx.coroutines.flow.SharedFlow<kotlin.Unit> getHoldExpiries();
+    descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
+  public final kotlinx.coroutines.flow.SharedFlow<java.util.List<java.lang.String>> getUnavailableSelections();
+    descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
   public final io.seatlayer.android.SeatLayerPickerController getController();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerController;
   public final java.lang.Object close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -4361,6 +4375,8 @@ public final class io.seatlayer.android.SeatLayerPickerStateHolder {
     descriptor: (Lkotlinx/serialization/json/JsonElement;)V
   public final void acceptHoldExpired$seatlayer();
     descriptor: ()V
+  public final void acceptSelectedObjectsUnavailable$seatlayer(kotlinx.serialization.json.JsonElement);
+    descriptor: (Lkotlinx/serialization/json/JsonElement;)V
   public final void acceptSeatView$seatlayer(kotlinx.serialization.json.JsonElement);
     descriptor: (Lkotlinx/serialization/json/JsonElement;)V
   public final void acceptGeneralAdmissionCandidate$seatlayer(kotlinx.serialization.json.JsonElement);
