@@ -3,7 +3,7 @@ package io.seatlayer.android
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
-public const val SEATLAYER_ANDROID_VERSION: String = "0.3.5"
+public const val SEATLAYER_ANDROID_VERSION: String = "0.4.0"
 public const val SEATLAYER_HOSTED_WEB_VERSION: String = "0.84.1"
 
 /**
