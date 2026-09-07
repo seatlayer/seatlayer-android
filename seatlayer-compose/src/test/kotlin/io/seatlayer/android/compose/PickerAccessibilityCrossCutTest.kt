@@ -21,6 +21,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.createFontFamilyResolver
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -455,6 +456,41 @@ public class PickerAccessibilityCrossCutTest {
         described(scope.strings.emptyTrayHint)
     }
 
+    @Test
+    public fun theSeatCardIsADialogThatNamesItselfAndCarriesBothAnswers() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Confirmation, LIGHT)
+        // The card ARRIVES, as it does for a buyer: raised on a later frame
+        // over a picker that is already up.
+        val asking = scope.state
+        liveState.value = asking.copy(
+            presentation = asking.presentation.copy(candidateSeat = null),
+        )
+        render(scope)
+        liveState.value = asking
+        composeRule.waitForIdle()
+        composeRule.mainClock.advanceTimeBy(SETTLE_MILLIS)
+        composeRule.waitForIdle()
+        val card = nodeWith(SemanticsProperties.PaneTitle)
+        assertTrue(
+            "a decision surface that owns the screen says so",
+            card.config.contains(SemanticsProperties.IsDialog),
+        )
+        assertTrue(
+            "it names itself with the identity sentence",
+            card.config[SemanticsProperties.PaneTitle].contains(FIXTURE_SECTION),
+        )
+        val actions = card.config[SemanticsActions.CustomActions].map { it.label }
+        assertEquals(
+            "both answers are reachable without hunting for the buttons",
+            listOf(scope.strings.addSeat, scope.strings.cancel),
+            actions,
+        )
+        assertTrue(
+            "the first focusable is the answer, not the way out",
+            isFocused(node(text = scope.strings.addSeat)),
+        )
+    }
+
     /** Every pressable node in the rendered picker with nothing to call it. */
     private fun unnamedControls(where: String, seen: MutableList<String>): List<String> {
         val bare = mutableListOf<String>()
@@ -560,6 +596,30 @@ public class PickerAccessibilityCrossCutTest {
             .onNodeWithContentDescription(description, useUnmergedTree = true)
             .fetchSemanticsNode()
 
+    /** The one node in the rendered picker carrying [key]. */
+    private fun <T> nodeWith(key: SemanticsPropertyKey<T>): SemanticsNode {
+        val found = mutableListOf<SemanticsNode>()
+        fun walk(node: SemanticsNode) {
+            if (node.config.contains(key)) found += node
+            node.children.forEach(::walk)
+        }
+        walk(composeRule.onRoot(useUnmergedTree = true).fetchSemanticsNode())
+        assertEquals("exactly one node carries $key", 1, found.size)
+        return found.single()
+    }
+
+    /** Whether [node] or anything above it holds focus. */
+    private fun isFocused(node: SemanticsNode): Boolean {
+        var walk: SemanticsNode? = node
+        while (walk != null) {
+            if (walk.config.getOrElseNullable(SemanticsProperties.Focused) { null } == true) {
+                return true
+            }
+            walk = walk.parent
+        }
+        return false
+    }
+
     /** Whether [node] or anything above it has been marked inert. */
     private fun hiddenFromAccessibility(node: SemanticsNode): Boolean {
         var walk: SemanticsNode? = node
@@ -661,6 +721,9 @@ public class PickerAccessibilityCrossCutTest {
 
         /** What Android's own `bold text` setting adds to every weight. */
         const val BOLD_TEXT_ADJUSTMENT = 300
+
+        /** The section the fixture's candidate seat sits in. */
+        const val FIXTURE_SECTION = "Section 102"
 
         /** Below this a name sweep has not walked a real screen. */
         const val CONTROLS_PER_SCREEN = 4

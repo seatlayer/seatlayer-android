@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.foundation.focusable
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.draw.drawBehind
@@ -218,7 +219,10 @@ private fun SeatLayerPrimaryAnswerButton(
                 .fillMaxSize()
                 .then(
                     focusRequester?.let {
-                        Modifier.focusRequester(it)
+                        // A focus target of its own: the card asks for this
+                        // button on arrival, and a requester with nothing to
+                        // land on asks for nothing.
+                        Modifier.focusRequester(it).focusable()
                     } ?: Modifier,
                 ),
             shape = RoundedCornerShape(SeatLayerRadiusTokens.BUTTON.dp),

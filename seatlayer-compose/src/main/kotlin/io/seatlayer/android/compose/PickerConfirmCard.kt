@@ -22,6 +22,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.dialog
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
@@ -237,6 +238,7 @@ internal fun SeatLayerConfirmCardBody(
                 // answers are also actions a rotor can reach without hunting
                 // for the buttons.
                 .semantics {
+                    dialog()
                     isTraversalGroup = true
                     traversalIndex = -1f
                     paneTitle = spokenName
@@ -371,7 +373,12 @@ internal fun SeatLayerConfirmCardBody(
                         // primary paints its sweep behind the label; it grows
                         // with the buyer's type setting up to the card's clamp
                         // rather than clipping the word it exists to offer.
-                        .height(SeatLayerSizeTokens.CONFIRM_ACTION_HEIGHT.dp),
+                        .height(
+                            pickerScaledExtent(
+                                SeatLayerSizeTokens.CONFIRM_ACTION_HEIGHT,
+                                SeatLayerTypeTokens.SCALE_CLAMP_CARD,
+                            ),
+                        ),
                 ) {
                     SeatLayerConfirmActions(
                         primaryLabel = primaryLabel,
