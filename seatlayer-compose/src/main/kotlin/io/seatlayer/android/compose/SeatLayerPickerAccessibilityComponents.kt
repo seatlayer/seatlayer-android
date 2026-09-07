@@ -148,7 +148,7 @@ private fun SeatLayerPickerAccessibilityFiltersContent(
         onDismissRequest = { if (!applying) expanded = false },
         sheetState = sheetState,
         containerColor = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         shape = RoundedCornerShape(
             topStart = scope.styles.sheetRadius,
             topEnd = scope.styles.sheetRadius,
@@ -198,7 +198,7 @@ private fun SeatLayerPickerAccessibilityFiltersContent(
                         label = scope.strings.hideLimitedView,
                         selected = draft.limitedView,
                         enabled = !applying,
-                    ) { applyNow { controller.setLimitedViewFilter(!draft.limitedView) } }
+                    ) { applyNow { controller.setLimitedViewHidden(!draft.limitedView) } }
                 }
                 if (colorblindAvailable) {
                     AccessibilityToggleOption(
@@ -239,7 +239,7 @@ private fun AccessibilityLauncher(
             },
         shape = if (compact) CircleShape else RoundedCornerShape(scope.styles.buttonRadius),
         color = if (compact) Color.Transparent else scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         border = if (compact) null else BorderStroke(1.dp, scope.theme.divider),
     ) {
         Row(
@@ -249,7 +249,7 @@ private fun AccessibilityLauncher(
         ) {
             SeatLayerPickerIcon(
                 SeatLayerPickerGlyph.Accessibility,
-                if (activeCount > 0) scope.theme.accent else scope.theme.onSurface,
+                if (activeCount > 0) scope.theme.accent else scope.theme.text,
                 Modifier.size(21.dp).clearAndSetSemantics { },
             )
             if (!compact) {
@@ -293,7 +293,7 @@ private fun AccessibilityNeedChip(
                 toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
             },
         color = if (selected) scope.theme.accent.copy(alpha = 0.12f) else Color.Transparent,
-        contentColor = if (selected) scope.theme.accent else scope.theme.onSurface,
+        contentColor = if (selected) scope.theme.accent else scope.theme.text,
         border = BorderStroke(
             if (selected) 1.5.dp else 1.dp,
             if (selected) scope.theme.accent else scope.theme.divider,
@@ -315,9 +315,9 @@ private fun AccessibilityNeedChip(
             Text(
                 needLabel(need),
                 color = if (enabled) {
-                    if (selected) scope.theme.accent else scope.theme.onSurface
+                    if (selected) scope.theme.accent else scope.theme.text
                 } else {
-                    scope.theme.muted.copy(alpha = 0.6f)
+                    scope.theme.mutedText.copy(alpha = 0.6f)
                 },
                 fontWeight = FontWeight.SemiBold,
             )
@@ -344,7 +344,7 @@ private fun AccessibilityToggleOption(
                 toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
             },
         color = Color.Transparent,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 4.dp),
@@ -353,7 +353,7 @@ private fun AccessibilityToggleOption(
             Text(
                 label,
                 modifier = Modifier.weight(1f),
-                color = if (enabled) scope.theme.onSurface else scope.theme.muted,
+                color = if (enabled) scope.theme.text else scope.theme.mutedText,
                 fontWeight = FontWeight.Medium,
             )
             Switch(

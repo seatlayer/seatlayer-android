@@ -423,7 +423,7 @@ public data class SeatLayerPickerBehavior(
     val readOnly: Boolean = false,
     val confirmSelection: Boolean = true,
     val enableBestAvailable: Boolean = true,
-    val enableVenue3D: Boolean = true,
+    val enable3D: Boolean = true,
     val enableSeatView: Boolean = true,
     val holdTtlMillis: Int? = null,
     val initialHoldId: String? = null,
@@ -434,6 +434,9 @@ public data class SeatLayerPickerBehavior(
     val announceHoldLapse: Boolean = true,
     val languages: List<String> = emptyList(),
 ) {
+    @Deprecated("Renamed to enable3D.", ReplaceWith("enable3D"))
+    val enableVenue3D: Boolean get() = enable3D
+
     init {
         require(holdTtlMillis == null || holdTtlMillis > 0) {
             "holdTtlMillis must be positive"

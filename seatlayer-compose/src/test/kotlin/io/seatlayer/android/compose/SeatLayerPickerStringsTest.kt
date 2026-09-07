@@ -36,7 +36,7 @@ class SeatLayerPickerStringsTest {
 
     @Test
     fun `unknown currency never masquerades as the locale currency`() {
-        val formatted = SeatLayerPickerMoneyFormatter.localized(Locale.US)
+        val formatted = SeatLayerMoneyFormatter.localized(Locale.US)
             .format(12.0, "ZZZ")
 
         assertEquals("12 ZZZ", formatted)

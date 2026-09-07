@@ -40,17 +40,19 @@ class SeatLayerPickerCustomizationTest {
 
     @Test
     fun compactMapControlsAccountForEveryVisibleButton() {
-        assertEquals(5, compactMapControlCount(SeatLayerPickerChromeOptions()))
-        assertEquals(272.dp, compactMapControlsRequiredHeight(5))
+        // Two zoom discs, the whole-venue control and the colourblind control.
+        // The zoom-to-fit disc is gone: the whole-venue control reaches the
+        // same framing without going stale under a pinch.
+        assertEquals(4, compactMapControlCount(SeatLayerPickerChromeOptions()))
+        assertEquals(216.dp, compactMapControlsRequiredHeight(4))
         assertEquals(
             48.dp,
             compactMapControlsRequiredHeight(
                 compactMapControlCount(
                     SeatLayerPickerChromeOptions(
-                        zoom = false,
-                        fit = false,
-                        overview = true,
-                        colorblind = false,
+                        showZoomControls = false,
+                        showOverviewControl = true,
+                        showColorblindControl = false,
                     ),
                 ),
             ),

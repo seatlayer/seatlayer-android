@@ -69,7 +69,7 @@ public class SeatLayerPickerController internal constructor(
         get() = supportsCapabilityAndCommand("viewport-insets-v1", "picker.setViewportInsets")
 
     public val supportsVenue3D: Boolean
-        get() = stateHolder.behavior.enableVenue3D &&
+        get() = stateHolder.behavior.enable3D &&
             supportsCapabilityAndCommand("venue-3d-v1", "picker.setBuyerView")
 
     public val supportsSeatView: Boolean
@@ -146,8 +146,13 @@ public class SeatLayerPickerController internal constructor(
         tierId: String?,
     ): SeatLayerPickerSnapshot? = performSetSeatTier(seatId, tierId)
 
-    public suspend fun removeCartLine(label: String): SeatLayerPickerSnapshot? =
+    /** Gives one cart line back, by the label the runtime knows it as. */
+    public suspend fun removeObject(label: String): SeatLayerPickerSnapshot? =
         performRemoveObject(label)
+
+    @Deprecated("Renamed to removeObject.", ReplaceWith("removeObject(label)"))
+    public suspend fun removeCartLine(label: String): SeatLayerPickerSnapshot? =
+        removeObject(label)
 
     public suspend fun setTableQuantity(
         label: String,
@@ -171,8 +176,16 @@ public class SeatLayerPickerController internal constructor(
         types: List<String>,
     ): SeatLayerPickerSnapshot? = performSetAccessibilityFilter(types)
 
+    /** Hides seats the chart marks as limited-view. */
+    public suspend fun setLimitedViewHidden(hidden: Boolean): SeatLayerPickerSnapshot? =
+        performSetLimitedViewHidden(hidden)
+
+    @Deprecated(
+        "Renamed to setLimitedViewHidden.",
+        ReplaceWith("setLimitedViewHidden(enabled)"),
+    )
     public suspend fun setLimitedViewFilter(enabled: Boolean): SeatLayerPickerSnapshot? =
-        performSetLimitedViewHidden(enabled)
+        setLimitedViewHidden(enabled)
 
     /**
      * Flies the map to the spaces the accommodation filter matches.
@@ -248,6 +261,10 @@ public class SeatLayerPickerController internal constructor(
         resetView: Boolean = false,
     ): SeatLayerPickerSnapshot? = performSetBuyerView(view, flyToSeatId, resetView)
 
+    /** Opens the 3D scene looking from one seat. */
+    public suspend fun showSeatIn3D(seatId: String): SeatLayerPickerSnapshot? =
+        setBuyerView(view = "venue3d", flyToSeatId = seatId)
+
     /** Plans and dispatches one exact 3D action; unavailable boundaries are no-ops. */
     public suspend fun venue3D(
         action: SeatLayerPickerVenue3DAction,
@@ -276,8 +293,15 @@ public class SeatLayerPickerController internal constructor(
         return true
     }
 
-    public suspend fun setVenue3DNavigationMode(mode: String): SeatLayerPickerSnapshot? =
+    public suspend fun set3DNavigationMode(mode: String): SeatLayerPickerSnapshot? =
         performSet3DNavigationMode(mode)
+
+    @Deprecated(
+        "Renamed to set3DNavigationMode.",
+        ReplaceWith("set3DNavigationMode(mode)"),
+    )
+    public suspend fun setVenue3DNavigationMode(mode: String): SeatLayerPickerSnapshot? =
+        set3DNavigationMode(mode)
 
     public suspend fun zoomIn() {
         mutation("picker.zoomIn")
@@ -296,23 +320,48 @@ public class SeatLayerPickerController internal constructor(
         mapTheme: SeatLayerPickerMapTheme? = null,
     ): Unit = performSetThemeMode(mode, mapTheme)
 
-    public suspend fun setInteractionEnabled(enabled: Boolean) {
+    /**
+     * Turns the whole map's gestures on or off.
+     *
+     * For chrome drawn over the map, prefer [setBlockedRegions]: this stops the
+     * map, where those stop the rectangles.
+     */
+    public suspend fun setMapInteractionEnabled(enabled: Boolean) {
         presentation(
             "picker.setInteractionEnabled",
             jsonObject("enabled" to kotlinx.serialization.json.JsonPrimitive(enabled)),
         )
     }
 
+    @Deprecated(
+        "Renamed to setMapInteractionEnabled.",
+        ReplaceWith("setMapInteractionEnabled(enabled)"),
+    )
+    public suspend fun setInteractionEnabled(enabled: Boolean): Unit =
+        setMapInteractionEnabled(enabled)
+
     public suspend fun setViewportInsets(insets: SeatLayerPickerViewportInsets?): Unit =
         performSetViewportInsets(insets)
 
-    public suspend fun holdGeneralAdmission(
+    public suspend fun setGeneralAdmissionQuantity(
         areaId: String,
         quantity: Int,
         tierId: String? = null,
         ttlMillis: Int? = null,
     ): SeatLayerPickerSnapshot? =
         performSetGeneralAdmissionQuantity(areaId, quantity, tierId, ttlMillis)
+
+    @Deprecated(
+        "Renamed to setGeneralAdmissionQuantity.",
+        ReplaceWith("setGeneralAdmissionQuantity(areaId, quantity, tierId, ttlMillis)"),
+    )
+    public suspend fun holdGeneralAdmission(
+        areaId: String,
+        quantity: Int,
+        tierId: String? = null,
+        ttlMillis: Int? = null,
+    ): SeatLayerPickerSnapshot? =
+        setGeneralAdmissionQuantity(areaId, quantity, tierId, ttlMillis)
 
     public suspend fun holdSelection(ttlMillis: Int? = null): SeatLayerPickerSnapshot? =
         performHoldSelection(ttlMillis)
@@ -334,6 +383,15 @@ public class SeatLayerPickerController internal constructor(
 
     public suspend fun abort(): SeatLayerPickerSnapshot? = mutation("picker.abort")
 
+    /** Hands a checkout back to the picker, by the handoff the host was given. */
+    public suspend fun rejectCheckoutHandoff(
+        handoff: SeatLayerPickerCheckoutHandoff,
+    ): SeatLayerPickerSnapshot? = performRejectHandoff(handoff.holdId)
+
+    @Deprecated(
+        "Take the handoff itself: rejectCheckoutHandoff(handoff).",
+        ReplaceWith("rejectCheckoutHandoff(handoff)"),
+    )
     public suspend fun rejectHandoff(holdId: String): SeatLayerPickerSnapshot? =
         performRejectHandoff(holdId)
 
@@ -379,12 +437,18 @@ public class SeatLayerPickerController internal constructor(
 
     public fun confirmPendingTable(): Unit = presentationCoordinator.confirmPendingTable()
 
-    public fun setCartExpanded(expanded: Boolean): Unit =
-        presentationCoordinator.setCartExpanded(expanded)
+    public fun setCartSheetExpanded(expanded: Boolean): Unit =
+        presentationCoordinator.setCartSheetExpanded(expanded)
+
+    @Deprecated(
+        "Renamed to setCartSheetExpanded.",
+        ReplaceWith("setCartSheetExpanded(expanded)"),
+    )
+    public fun setCartExpanded(expanded: Boolean): Unit = setCartSheetExpanded(expanded)
 
     /** Opens the sheet to a named detent rather than to a boolean. */
     public fun setCartSheetDetent(detent: SeatLayerPickerSheetDetent): Unit =
-        setCartExpanded(detent == SeatLayerPickerSheetDetent.Open)
+        setCartSheetExpanded(detent == SeatLayerPickerSheetDetent.Open)
 
     /**
      * Advances the arrival of a seat in the cart.
@@ -434,7 +498,28 @@ public class SeatLayerPickerController internal constructor(
     public fun setResumeAfterCheckout(resume: Boolean): Unit =
         stateHolder.setResumeAfterCheckout(resume)
 
-    public fun dismissActionError(): Unit = presentationCoordinator.dismissActionError()
+    /**
+     * Gives back inventory this picker is holding on the buyer's behalf.
+     *
+     * A hold the host owns is left alone: it was not this picker's to release.
+     */
+    public suspend fun releasePickerOwnedHold(): Boolean {
+        val hold = snapshot?.hold ?: return false
+        if (!hold.active || hold.owner == "host") return false
+        abort()
+        return true
+    }
+
+    /** Asks the chrome to play one cue. */
+    public fun emitHaptic(cue: SeatLayerPickerHapticCue): Unit = stateHolder.emitHaptic(cue)
+
+    /** Asks the chrome to load the map again after a failure. */
+    public fun retry(): Unit = stateHolder.requestReload()
+
+    public fun dismissError(): Unit = presentationCoordinator.dismissError()
+
+    @Deprecated("Renamed to dismissError.", ReplaceWith("dismissError()"))
+    public fun dismissActionError(): Unit = dismissError()
 
     /** Removes one authoritative cart line and opens a session-scoped undo window. */
     public suspend fun removeWithUndo(line: SeatLayerPickerCartLine): Boolean =
@@ -463,7 +548,11 @@ public class SeatLayerPickerController internal constructor(
     public suspend fun setLifecycle(state: String): SeatLayerPickerSnapshot? =
         lifecycle(state)?.snapshot ?: snapshot
 
-    public suspend fun refreshAvailability(): SeatLayerPickerLifecycleResult? {
+    @Deprecated("Renamed to refreshAccess.", ReplaceWith("refreshAccess()"))
+    public suspend fun refreshAvailability(): SeatLayerPickerLifecycleResult? = refreshAccess()
+
+    /** Asks the runtime what is still free, and what the hold still covers. */
+    public suspend fun refreshAccess(): SeatLayerPickerLifecycleResult? {
         if (!supportsAvailabilityRefresh) return null
         val (flight, leader) = synchronized(availabilityLock) {
             availabilityFlight?.let { it to false }

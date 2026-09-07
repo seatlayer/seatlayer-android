@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.seatlayer.android.SeatLayerConfiguration
 import io.seatlayer.android.SeatLayerPickerController
@@ -23,7 +24,7 @@ public interface SeatLayerPickerScope {
     public val strings: SeatLayerPickerStrings
     public val options: SeatLayerPickerOptions
     public val styles: SeatLayerPickerStyles
-    public val moneyFormatter: SeatLayerPickerMoneyFormatter
+    public val moneyFormatter: SeatLayerMoneyFormatter
     public val callbacks: SeatLayerPickerCallbacks
 }
 
@@ -35,7 +36,7 @@ private data class DefaultSeatLayerPickerScope(
     override val strings: SeatLayerPickerStrings,
     override val options: SeatLayerPickerOptions,
     override val styles: SeatLayerPickerStyles,
-    override val moneyFormatter: SeatLayerPickerMoneyFormatter,
+    override val moneyFormatter: SeatLayerMoneyFormatter,
     override val callbacks: SeatLayerPickerCallbacks,
 ) : SeatLayerPickerScope {
     override val controller: SeatLayerPickerController = stateHolder.controller
@@ -72,7 +73,7 @@ public fun SeatLayerPickerScope(
     theme: SeatLayerPickerTheme? = null,
     strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized(),
     styles: SeatLayerPickerStyles = SeatLayerPickerStyles(),
-    moneyFormatter: SeatLayerPickerMoneyFormatter = SeatLayerPickerMoneyFormatter.localized(),
+    moneyFormatter: SeatLayerMoneyFormatter = SeatLayerMoneyFormatter.localized(),
     callbacks: SeatLayerPickerCallbacks = SeatLayerPickerCallbacks(),
     content: @Composable SeatLayerPickerScope.() -> Unit,
 ) {
@@ -175,3 +176,14 @@ internal fun SeatLayerPickerPart(
         )
     }
 }
+
+/**
+ * The wash drawn over the map while a card is up.
+ *
+ * A host's own [SeatLayerPickerStyles.scrimColor] wins outright; otherwise the
+ * theme's background carries the design source's confirm scrim, so a rebranded
+ * picker dims to its own ground rather than to somebody else's grey.
+ */
+internal fun SeatLayerPickerScope.confirmScrim(): Color =
+    styles.scrimColor
+        ?: theme.background.copy(alpha = SeatLayerOpacityTokens.CONFIRM_SCRIM)

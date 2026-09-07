@@ -56,8 +56,8 @@ public class SeatLayerPickerView @JvmOverloads constructor(
         strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized(),
         options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
         styles: SeatLayerPickerStyles = SeatLayerPickerStyles(),
-        moneyFormatter: SeatLayerPickerMoneyFormatter =
-            SeatLayerPickerMoneyFormatter.localized(),
+        moneyFormatter: SeatLayerMoneyFormatter =
+            SeatLayerMoneyFormatter.localized(),
         builders: SeatLayerPickerBuilders = SeatLayerPickerBuilders(),
         onCheckout: suspend (SeatLayerPickerCheckoutHandoff) -> Unit = {},
         onError: (io.seatlayer.android.SeatLayerException) -> Unit = {},

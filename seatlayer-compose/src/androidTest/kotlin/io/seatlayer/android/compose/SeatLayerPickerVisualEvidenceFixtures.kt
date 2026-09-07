@@ -267,8 +267,8 @@ private class EvidenceScope(
     }
     override val strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized("en-US")
     override val styles: SeatLayerPickerStyles = SeatLayerPickerStyles()
-    override val moneyFormatter: SeatLayerPickerMoneyFormatter =
-        SeatLayerPickerMoneyFormatter { amount, currency ->
+    override val moneyFormatter: SeatLayerMoneyFormatter =
+        SeatLayerMoneyFormatter { amount, currency ->
             "$currency ${"%.2f".format(java.util.Locale.US, amount)}"
         }
     override val callbacks: SeatLayerPickerCallbacks = SeatLayerPickerCallbacks()
@@ -303,7 +303,7 @@ internal fun PickerEvidenceRenderer(scenario: PickerEvidenceScenario) {
             modifier = Modifier.align(Alignment.Center).padding(bottom = 78.dp),
             shape = RoundedCornerShape(999.dp),
             color = scope.theme.surface.copy(alpha = 0.9f),
-            contentColor = scope.theme.muted,
+            contentColor = scope.theme.mutedText,
         ) {
             Text(
                 "Renderer-owned test canvas",

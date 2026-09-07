@@ -19,8 +19,10 @@ import io.seatlayer.android.SeatLayerPickerThemeMode
 public data class SeatLayerPickerTheme(
     val background: Color,
     val surface: Color,
-    val onSurface: Color,
-    val muted: Color,
+    /** Body ink on [surface]. */
+    val text: Color,
+    /** Secondary ink: eyebrows, captions, the words under a total. */
+    val mutedText: Color,
     val accent: Color,
     val onAccent: Color,
     val divider: Color,
@@ -30,14 +32,32 @@ public data class SeatLayerPickerTheme(
     val success: Color,
     val scrim: Color,
     val mapTheme: SeatLayerPickerMapTheme,
-    val cornerRadius: Dp = SeatLayerRadiusTokens.BASE.dp,
+    val radius: Dp = SeatLayerRadiusTokens.BASE.dp,
+    /** Ink for a caution note, on the surface's own ground. */
+    val warnText: Color = Color(SeatLayerLightTokens.WARN_TEXT),
+    val premium: Color = Color(SeatLayerLightTokens.PREMIUM),
+    val premiumText: Color = Color(SeatLayerLightTokens.PREMIUM_TEXT),
+    /** The typeface the chrome uses; null keeps the platform's own. */
+    val fontFamily: androidx.compose.ui.text.font.FontFamily? = null,
+    val buttonRadius: Dp = SeatLayerRadiusTokens.BUTTON.dp,
+    /** The brand mark drawn in the header, when a host supplies one. */
+    val logo: Any? = null,
 ) {
+    @Deprecated("Renamed to text.", ReplaceWith("text"))
+    val onSurface: Color get() = text
+
+    @Deprecated("Renamed to mutedText.", ReplaceWith("mutedText"))
+    val muted: Color get() = mutedText
+
+    @Deprecated("Renamed to radius.", ReplaceWith("radius"))
+    val cornerRadius: Dp get() = radius
+
     public companion object {
         public fun light(): SeatLayerPickerTheme = SeatLayerPickerTheme(
             background = Color(SeatLayerLightTokens.BACKGROUND),
             surface = Color(SeatLayerLightTokens.SURFACE),
-            onSurface = Color(SeatLayerLightTokens.TEXT),
-            muted = Color(SeatLayerLightTokens.MUTED_TEXT),
+            text = Color(SeatLayerLightTokens.TEXT),
+            mutedText = Color(SeatLayerLightTokens.MUTED_TEXT),
             accent = Color(SeatLayerLightTokens.ACCENT),
             onAccent = Color(SeatLayerLightTokens.ON_ACCENT),
             divider = Color(SeatLayerLightTokens.DIVIDER),
@@ -45,7 +65,7 @@ public data class SeatLayerPickerTheme(
             onWarning = Color(0xFF332600),
             error = Color(SeatLayerLightTokens.ERROR),
             success = Color(0xFF168A5B),
-            scrim = Color.Black.copy(alpha = 0.42f),
+            scrim = Color.Black.copy(alpha = SeatLayerOpacityTokens.CONFIRM_SCRIM),
             mapTheme = SeatLayerPickerMapTheme(
                 background = SeatLayerLightTokens.MAP_BACKGROUND.pickerHex(),
                 rowLabel = SeatLayerLightTokens.MAP_ROW_LABEL.pickerHex(),
@@ -57,8 +77,11 @@ public data class SeatLayerPickerTheme(
         public fun dark(): SeatLayerPickerTheme = SeatLayerPickerTheme(
             background = Color(SeatLayerDarkTokens.BACKGROUND),
             surface = Color(SeatLayerDarkTokens.SURFACE),
-            onSurface = Color(SeatLayerDarkTokens.TEXT),
-            muted = Color(SeatLayerDarkTokens.MUTED_TEXT),
+            text = Color(SeatLayerDarkTokens.TEXT),
+            mutedText = Color(SeatLayerDarkTokens.MUTED_TEXT),
+            warnText = Color(SeatLayerDarkTokens.WARN_TEXT),
+            premium = Color(SeatLayerDarkTokens.PREMIUM),
+            premiumText = Color(SeatLayerDarkTokens.PREMIUM_TEXT),
             accent = Color(SeatLayerDarkTokens.ACCENT),
             onAccent = Color(SeatLayerDarkTokens.ON_ACCENT),
             divider = Color(SeatLayerDarkTokens.DIVIDER),
@@ -66,7 +89,7 @@ public data class SeatLayerPickerTheme(
             onWarning = Color(0xFF332600),
             error = Color(SeatLayerDarkTokens.ERROR),
             success = Color(0xFF76D6A8),
-            scrim = Color.Black.copy(alpha = 0.62f),
+            scrim = Color.Black.copy(alpha = SeatLayerOpacityTokens.CONFIRM_SCRIM_FLAT),
             mapTheme = SeatLayerPickerMapTheme(
                 background = SeatLayerDarkTokens.MAP_BACKGROUND.pickerHex(),
                 rowLabel = SeatLayerDarkTokens.MAP_ROW_LABEL.pickerHex(),
@@ -104,8 +127,8 @@ internal fun SeatLayerPickerThemeProvider(
             onAccent = parseColor(branding?.accentInk) ?: base.onAccent,
             background = parseColor(branding?.background) ?: base.background,
             surface = parseColor(branding?.surface) ?: base.surface,
-            onSurface = parseColor(branding?.text) ?: base.onSurface,
-            muted = parseColor(branding?.muted) ?: base.muted,
+            text = parseColor(branding?.text) ?: base.text,
+            mutedText = parseColor(branding?.muted) ?: base.mutedText,
             divider = parseColor(branding?.line) ?: base.divider,
             mapTheme = base.mapTheme.copy(
                 background = branding?.background ?: base.mapTheme.background,
@@ -113,9 +136,9 @@ internal fun SeatLayerPickerThemeProvider(
                 text = branding?.text ?: base.mapTheme.text,
                 selection = branding?.accent ?: base.mapTheme.selection,
             ),
-            cornerRadius = branding?.radius
+            radius = branding?.radius
                 ?.takeIf { it.isFinite() && it >= 0 }
-                ?.dp ?: base.cornerRadius,
+                ?.dp ?: base.radius,
         )
     } else {
         base
@@ -125,9 +148,9 @@ internal fun SeatLayerPickerThemeProvider(
             primary = resolved.accent,
             onPrimary = resolved.onAccent,
             surface = resolved.surface,
-            onSurface = resolved.onSurface,
+            onSurface = resolved.text,
             background = resolved.background,
-            onBackground = resolved.onSurface,
+            onBackground = resolved.text,
             error = resolved.error,
         )
     } else {
@@ -135,9 +158,9 @@ internal fun SeatLayerPickerThemeProvider(
             primary = resolved.accent,
             onPrimary = resolved.onAccent,
             surface = resolved.surface,
-            onSurface = resolved.onSurface,
+            onSurface = resolved.text,
             background = resolved.background,
-            onBackground = resolved.onSurface,
+            onBackground = resolved.text,
             error = resolved.error,
         )
     }

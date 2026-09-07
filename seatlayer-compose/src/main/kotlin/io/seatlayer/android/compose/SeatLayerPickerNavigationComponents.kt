@@ -16,16 +16,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,17 +38,13 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import io.seatlayer.android.SEATLAYER_ALL_FLOORS
-import io.seatlayer.android.SeatLayerPickerAccessNeed
 import io.seatlayer.android.SeatLayerPickerFloorInfo
 import io.seatlayer.android.SeatLayerPickerSectionSummary
 import kotlinx.coroutines.launch
@@ -140,7 +135,7 @@ public fun SeatLayerFloorStrip(
                     },
                 shape = RoundedCornerShape(999.dp),
                 color = if (selected) scope.theme.accent else scope.theme.surface,
-                contentColor = if (selected) scope.theme.onAccent else scope.theme.onSurface,
+                contentColor = if (selected) scope.theme.onAccent else scope.theme.text,
                 border = BorderStroke(
                     1.dp,
                     if (selected) scope.theme.accent else scope.theme.divider,
@@ -197,7 +192,7 @@ private fun SectionRow(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
@@ -209,7 +204,7 @@ private fun SectionRow(
                     Text(
                         it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = scope.theme.muted,
+                        color = scope.theme.mutedText,
                     )
                 }
             }
@@ -217,7 +212,7 @@ private fun SectionRow(
                 Text(
                     scope.strings.seatsLeft(it),
                     style = MaterialTheme.typography.labelMedium,
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                 )
             }
         }
@@ -246,7 +241,7 @@ public fun SeatLayerDockBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         shadowElevation = resolvedStyle.elevation ?: 4.dp,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(
             resolvedStyle.cornerRadius ?: 0.dp,
@@ -274,7 +269,7 @@ public fun SeatLayerDockBar(
             focused.seatsLeft?.let { count ->
                 Text(
                     " ·  ${scope.strings.seatsLeft(count)}",
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -317,7 +312,7 @@ public fun SeatLayerDockBar(
                         contentDescription = scope.strings.overview
                     },
                 color = Color.Transparent,
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 5.dp),
@@ -325,7 +320,7 @@ public fun SeatLayerDockBar(
                 ) {
                     SeatLayerPickerIcon(
                         SeatLayerPickerGlyph.Back,
-                        scope.theme.onSurface,
+                        scope.theme.text,
                         Modifier.size(16.dp).clearAndSetSemantics { },
                     )
                     Spacer(Modifier.width(3.dp))
@@ -358,211 +353,14 @@ private fun DockIconButton(
                 contentDescription = label
             },
         color = Color.Transparent,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Box(contentAlignment = Alignment.Center) {
             SeatLayerPickerIcon(
                 glyph,
-                if (enabled) scope.theme.onSurface else scope.theme.muted.copy(alpha = 0.45f),
+                if (enabled) scope.theme.text else scope.theme.mutedText.copy(alpha = 0.45f),
                 Modifier.size(18.dp).clearAndSetSemantics { },
             )
-        }
-    }
-}
-
-@Composable
-private fun LegacySeatLayerPickerAccessibilityFilters(
-    modifier: Modifier = Modifier,
-    compact: Boolean = false,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    val needs = scope.state.snapshot?.map?.accessNeeds.orEmpty()
-    val active = scope.state.snapshot?.map?.accessibilityFilter.orEmpty().toSet()
-    val coroutineScope = rememberCoroutineScope()
-    if (compact) {
-        var expanded by remember { mutableStateOf(false) }
-        Surface(
-            onClick = { expanded = true },
-            modifier = modifier
-                .size(48.dp)
-                .semantics {
-                    role = Role.Button
-                    contentDescription = scope.strings.accessibilityTitle
-                },
-            shape = CircleShape,
-            color = Color.Transparent,
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Surface(
-                    modifier = Modifier.size(40.dp),
-                    shape = CircleShape,
-                    color = scope.theme.surface.copy(alpha = 0.94f),
-                    contentColor = scope.theme.onSurface,
-                    border = BorderStroke(1.dp, scope.theme.divider),
-                    shadowElevation = 3.dp,
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        SeatLayerPickerIcon(
-                            SeatLayerPickerGlyph.Accessibility,
-                            scope.theme.onSurface,
-                            Modifier.size(21.dp).clearAndSetSemantics { },
-                        )
-                    }
-                }
-            }
-        }
-        if (expanded) {
-            Dialog(onDismissRequest = { expanded = false }) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth(),
-                    color = scope.theme.surface,
-                    contentColor = scope.theme.onSurface,
-                    shape = RoundedCornerShape(scope.styles.cardRadius),
-                    shadowElevation = 12.dp,
-                ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(
-                            scope.strings.accessibilityTitle,
-                            fontWeight = FontWeight.ExtraBold,
-                            fontSize = 17.sp,
-                        )
-                        Spacer(Modifier.height(8.dp))
-                        needs.forEach { need ->
-                            AccessibilityOption(
-                                label = "${need.key} · ${need.count}",
-                                selected = need.key in active,
-                            ) {
-                                val next = if (need.key in active) active - need.key else active + need.key
-                                coroutineScope.launch {
-                                    scope.performAction {
-                                        scope.controller.setAccessibilityFilter(next.toList())
-                                    }
-                                }
-                            }
-                        }
-                        AccessibilityOption(
-                            label = scope.strings.hideLimitedView,
-                            selected = scope.state.snapshot?.map?.hideLimitedView == true,
-                        ) {
-                            coroutineScope.launch {
-                                scope.performAction {
-                                    scope.controller.setLimitedViewFilter(
-                                        scope.state.snapshot?.map?.hideLimitedView != true,
-                                    )
-                                }
-                            }
-                        }
-                        if (scope.options.chrome.colorblind) {
-                            AccessibilityOption(
-                                label = scope.strings.colorblindSafe,
-                                selected = scope.state.snapshot?.map?.colorblindSafe == true,
-                            ) {
-                                coroutineScope.launch {
-                                    scope.performAction {
-                                        scope.controller.setColorblindSafe(
-                                            scope.state.snapshot?.map?.colorblindSafe != true,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                        TextButton(
-                            onClick = { expanded = false },
-                            modifier = Modifier.align(Alignment.End).heightIn(min = 48.dp),
-                        ) { Text(scope.strings.dismiss) }
-                    }
-                }
-            }
-        }
-        return
-    }
-    if (needs.isEmpty()) return
-    LazyRow(
-        modifier = modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(needs, key = SeatLayerPickerAccessNeed::key) { need ->
-            val selected = need.key in active
-            Surface(
-                onClick = {
-                    val next = if (selected) active - need.key else active + need.key
-                    coroutineScope.launch {
-                        scope.performAction {
-                            scope.controller.setAccessibilityFilter(next.toList())
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .heightIn(min = 48.dp)
-                    .semantics {
-                        role = Role.Checkbox
-                        toggleableState = if (selected) {
-                            ToggleableState.On
-                        } else {
-                            ToggleableState.Off
-                        }
-                    },
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
-                color = if (selected) {
-                    scope.theme.accent.copy(alpha = 0.14f)
-                } else {
-                    scope.theme.surface
-                },
-                border = BorderStroke(
-                    1.dp,
-                    if (selected) scope.theme.accent else scope.theme.divider,
-                ),
-            ) {
-                Text(
-                    "${need.key} · ${need.count}",
-                    modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
-                    style = MaterialTheme.typography.labelLarge,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun AccessibilityOption(
-    label: String,
-    selected: Boolean,
-    onClick: () -> Unit,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    Surface(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 48.dp)
-            .semantics {
-                role = Role.Checkbox
-                toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
-            },
-        color = Color.Transparent,
-        contentColor = scope.theme.onSurface,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(label, modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
-            Surface(
-                modifier = Modifier.size(24.dp),
-                shape = RoundedCornerShape(7.dp),
-                color = if (selected) scope.theme.accent else Color.Transparent,
-                border = BorderStroke(1.dp, if (selected) scope.theme.accent else scope.theme.divider),
-            ) {
-                if (selected) {
-                    Box(contentAlignment = Alignment.Center) {
-                        SeatLayerPickerIcon(
-                            SeatLayerPickerGlyph.Check,
-                            scope.theme.onAccent,
-                            Modifier.size(14.dp),
-                        )
-                    }
-                }
-            }
         }
     }
 }

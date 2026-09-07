@@ -93,7 +93,7 @@ public fun SeatLayerConfirmCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: scope.styles.cardRadius),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         shadowElevation = resolvedStyle.elevation ?: 8.dp,
     ) {
         Column(
@@ -173,12 +173,12 @@ private fun CompactSeatConfirmation(
         ?.firstOrNull { it.key == seat.categoryKey }
     val dotColor = parseColor(category?.color.orEmpty()) ?: scope.theme.accent
     val hasSeatView = scope.options.enableSeatView && scope.controller.supportsSeatView
-    val hasVenue3D = scope.options.enableVenue3D && scope.controller.supportsVenue3D
+    val hasVenue3D = scope.options.enable3D && scope.controller.supportsVenue3D
     Surface(
         modifier = modifier.fillMaxWidth().widthIn(max = 360.dp),
         shape = RoundedCornerShape(style.cornerRadius ?: 18.dp),
         color = style.containerColor ?: scope.theme.surface,
-        contentColor = style.contentColor ?: scope.theme.onSurface,
+        contentColor = style.contentColor ?: scope.theme.text,
         border = BorderStroke(1.dp, scope.theme.divider),
         shadowElevation = style.elevation ?: 10.dp,
     ) {
@@ -273,7 +273,7 @@ private fun CompactSeatConfirmation(
                     },
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     color = Color.Transparent,
-                    contentColor = scope.theme.onSurface,
+                    contentColor = scope.theme.text,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(
@@ -324,7 +324,7 @@ private fun CompactInspectionButton(
         modifier = Modifier.height(48.dp),
         shape = RoundedCornerShape(9.dp),
         color = scope.theme.surface.copy(alpha = 0.72f),
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp),
@@ -332,7 +332,7 @@ private fun CompactInspectionButton(
         ) {
             SeatLayerPickerIcon(
                 glyph,
-                scope.theme.onSurface,
+                scope.theme.text,
                 Modifier.size(15.dp).clearAndSetSemantics { },
             )
             Spacer(Modifier.size(5.dp))
@@ -460,11 +460,11 @@ private fun GeneralAdmissionDialog(
             onConfirm = {
                 coroutineScope.launch {
                     scope.performAction {
-                        scope.controller.holdGeneralAdmission(
+                        scope.controller.setGeneralAdmissionQuantity(
                             areaId = area.id,
                             quantity = quantity,
                             tierId = tier?.id,
-                            ttlMillis = scope.options.holdTtlMillis,
+                            ttlMillis = scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                         )
                     }
                 }
@@ -543,7 +543,7 @@ private fun TableDialog(
                         scope.controller.setTableQuantity(
                             label = seat.label,
                             quantity = quantity,
-                            ttlMillis = scope.options.holdTtlMillis,
+                            ttlMillis = scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                         )
                         scope.controller.confirmPendingTable()
                     }
@@ -563,7 +563,7 @@ private fun PromptSurface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(scope.styles.cardRadius),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         shadowElevation = 12.dp,
     ) {
         Column(Modifier.padding(20.dp), content = content)
@@ -635,7 +635,7 @@ private fun TierChoices(
                 } else {
                     Color.Transparent
                 },
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
                 border = BorderStroke(
                     if (selected) 1.5.dp else 1.dp,
                     if (selected) scope.theme.accent else scope.theme.divider,
@@ -651,7 +651,7 @@ private fun TierChoices(
                         color = Color.Transparent,
                         border = BorderStroke(
                             if (selected) 6.dp else 1.5.dp,
-                            if (selected) scope.theme.accent else scope.theme.muted,
+                            if (selected) scope.theme.accent else scope.theme.mutedText,
                         ),
                     ) { }
                     Spacer(Modifier.size(10.dp))
@@ -660,7 +660,7 @@ private fun TierChoices(
                         guidance?.let {
                             Text(
                                 it,
-                                color = scope.theme.muted,
+                                color = scope.theme.mutedText,
                                 fontSize = 11.sp,
                                 lineHeight = 14.sp,
                             )
@@ -720,7 +720,7 @@ private fun SeatIdentity(
                 seat.seatNumber?.let { "${scope.strings.seatWord} $it" },
             ).joinToString(" · ")
             if (details.isNotEmpty()) {
-                Text(details, style = MaterialTheme.typography.bodySmall, color = scope.theme.muted)
+                Text(details, style = MaterialTheme.typography.bodySmall, color = scope.theme.mutedText)
             }
         }
         Text(

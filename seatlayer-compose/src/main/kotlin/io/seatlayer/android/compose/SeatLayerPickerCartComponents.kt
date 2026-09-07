@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -49,8 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.seatlayer.android.SeatLayerPickerCartLine
 import io.seatlayer.android.SeatLayerPickerCategory
-import io.seatlayer.android.SeatLayerPickerDenseRun
-import io.seatlayer.android.SeatLayerPickerProjections
 import io.seatlayer.android.SeatLayerPickerZone
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -75,7 +72,7 @@ public fun SeatLayerPickerHoldCountdown(modifier: Modifier = Modifier) {
         modifier = modifier,
         shape = RoundedCornerShape(999.dp),
         color = scope.theme.accent.copy(alpha = 0.12f),
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Text(
             formatCountdown(remainingMillis),
@@ -93,30 +90,21 @@ public fun SeatLayerPickerCartList(
 ) {
     val scope = LocalSeatLayerPickerScope.current
     val confirmed = scope.state.presentation.confirmedCart(scope.state.snapshot)
-    val runs = remember(confirmed.items) { SeatLayerPickerProjections.denseRuns(confirmed.items) }
-    var expandedRun by remember { mutableStateOf<String?>(null) }
-    if (runs.isEmpty()) {
+    if (confirmed.items.isEmpty()) {
         Text(
             scope.strings.emptyTrayHint,
             modifier = modifier.padding(20.dp),
-            color = scope.theme.muted,
+            color = scope.theme.mutedText,
             style = MaterialTheme.typography.bodyMedium,
         )
         return
     }
+    // Every held seat is its own line. The collapsed run this list used to
+    // draw hid the seat a buyer was looking for behind a summary they then had
+    // to open, and a row they cannot act on directly is not a shorter list.
     LazyColumn(modifier = modifier) {
-        items(runs, key = { it.memberLineKeys.joinToString("|") }) { run ->
-            if (run.items.size == 1 || expandedRun == run.memberLineKeys.first()) {
-                run.items.forEach { line -> CartLineRow(line, compact) }
-                if (run.items.size > 1) {
-                    TextButton(
-                        onClick = { expandedRun = null },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
-                    ) { Text(scope.strings.showLess) }
-                }
-            } else {
-                DenseRunRow(run) { expandedRun = run.memberLineKeys.first() }
-            }
+        items(confirmed.items, key = SeatLayerPickerCartLine::lineKey) { line ->
+            CartLineRow(line, compact)
             PickerDivider()
         }
     }
@@ -171,12 +159,12 @@ private fun CartLineRow(
                         contentDescription = scope.strings.removeWord
                     },
                 color = Color.Transparent,
-                contentColor = scope.theme.muted,
+                contentColor = scope.theme.mutedText,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     SeatLayerPickerIcon(
                         SeatLayerPickerGlyph.Close,
-                        scope.theme.muted,
+                        scope.theme.mutedText,
                         Modifier.size(16.dp),
                     )
                 }
@@ -198,7 +186,7 @@ private fun CartLineRow(
             val place = listOfNotNull(line.sectionLabel, line.rowLabel, line.seatNumber)
                 .joinToString(" · ")
             if (place.isNotEmpty()) {
-                Text(place, style = MaterialTheme.typography.bodySmall, color = scope.theme.muted)
+                Text(place, style = MaterialTheme.typography.bodySmall, color = scope.theme.mutedText)
             }
         }
         Text(
@@ -211,42 +199,6 @@ private fun CartLineRow(
             modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
         ) {
             Text(scope.strings.removeWord)
-        }
-    }
-}
-
-@Composable
-private fun DenseRunRow(run: SeatLayerPickerDenseRun, onOpen: () -> Unit) {
-    val scope = LocalSeatLayerPickerScope.current
-    val first = run.items.first()
-    Surface(
-        onClick = onOpen,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
-        color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(
-                    listOfNotNull(first.sectionLabel, first.rowLabel, run.seatsLabel)
-                        .joinToString(" · "),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    "${run.quantity} × ${scope.moneyFormatter.format(first.unitPrice, first.currency)}",
-                    color = scope.theme.muted,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            Text(
-                run.currency?.let { scope.moneyFormatter.format(run.total, it) }
-                    ?: run.total.toString(),
-                fontWeight = FontWeight.SemiBold,
-            )
         }
     }
 }
@@ -289,7 +241,7 @@ public fun SeatLayerBestSeatsForm(modifier: Modifier = Modifier) {
                             quantity = quantity,
                             categoryKey = category?.key,
                             zoneId = zone?.id,
-                            ttlMillis = scope.options.holdTtlMillis,
+                            ttlMillis = scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                         )
                     }
                 }
@@ -316,7 +268,7 @@ public fun SeatLayerPickerCheckoutBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         tonalElevation = resolvedStyle.elevation ?: 2.dp,
         shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: 0.dp),
     ) {
@@ -332,7 +284,7 @@ public fun SeatLayerPickerCheckoutBar(
                 Text(
                     scope.strings.ticketCount(totals.quantity),
                     style = MaterialTheme.typography.labelMedium,
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                 )
                 Text(
                     totals.currency?.let { scope.moneyFormatter.format(totals.total, it) }
@@ -416,12 +368,12 @@ public fun SeatLayerPickerCartSheet(
             topEnd = resolvedStyle.cornerRadius ?: scope.styles.sheetRadius,
         ),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         shadowElevation = resolvedStyle.elevation ?: 10.dp,
     ) {
         Column {
             TextButton(
-                onClick = { scope.controller.setCartExpanded(!presentation.cartExpanded) },
+                onClick = { scope.controller.setCartSheetExpanded(!presentation.cartExpanded) },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
             ) {
                 Text(
@@ -474,12 +426,12 @@ private fun CompactCartSheet(
             topEnd = style.cornerRadius ?: 0.dp,
         ),
         color = style.containerColor ?: scope.theme.surface,
-        contentColor = style.contentColor ?: scope.theme.onSurface,
+        contentColor = style.contentColor ?: scope.theme.text,
         shadowElevation = style.elevation ?: 10.dp,
     ) {
         Column {
             Surface(
-                onClick = { scope.controller.setCartExpanded(!presentation.cartExpanded) },
+                onClick = { scope.controller.setCartSheetExpanded(!presentation.cartExpanded) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
@@ -492,7 +444,7 @@ private fun CompactCartSheet(
                         }
                     },
                 color = Color.Transparent,
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
             ) {
                 Box {
                     Box(
@@ -501,7 +453,7 @@ private fun CompactCartSheet(
                             .padding(top = 4.dp)
                             .width(32.dp)
                             .height(3.dp)
-                            .background(scope.theme.muted.copy(alpha = 0.62f), RoundedCornerShape(99.dp)),
+                            .background(scope.theme.mutedText.copy(alpha = 0.62f), RoundedCornerShape(99.dp)),
                     )
                     Row(
                         modifier = Modifier
@@ -562,7 +514,7 @@ private fun CompactCartSheet(
                             } else {
                                 SeatLayerPickerGlyph.ChevronUp
                             },
-                            color = scope.theme.muted,
+                            color = scope.theme.mutedText,
                             modifier = Modifier
                                 .size(20.dp)
                                 .rotate(if (presentation.cartExpanded) 180f else 0f),
@@ -604,7 +556,7 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         shape = RoundedCornerShape(scope.styles.cardRadius),
         shadowElevation = 8.dp,
     ) {
@@ -613,7 +565,7 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
             if (lapse.lapsedLabels.isNotEmpty()) {
                 Text(
                     lapse.lapsedLabels.joinToString(),
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -624,7 +576,7 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
                             coroutineScope.launch {
                                 scope.performAction {
                                     scope.controller.reselectLapsedSeats(
-                                        scope.options.holdTtlMillis,
+                                        scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                                     )
                                 }
                             }
@@ -662,7 +614,7 @@ public fun SeatLayerPickerActionError(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodySmall,
             )
             TextButton(
-                onClick = scope.controller::dismissActionError,
+                onClick = scope.controller::dismissError,
                 modifier = Modifier.sizeIn(minHeight = 48.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = scope.theme.onAccent,
@@ -687,7 +639,7 @@ public fun SeatLayerPickerUndoNotice(
     }
     Surface(
         modifier = modifier,
-        color = scope.theme.onSurface,
+        color = scope.theme.text,
         contentColor = scope.theme.surface,
         shape = RoundedCornerShape(scope.styles.cardRadius),
         shadowElevation = 8.dp,

@@ -1995,7 +1995,7 @@ public final class io.seatlayer.android.SeatLayerPickerBehavior {
     descriptor: ()Z
   public final boolean getEnableBestAvailable();
     descriptor: ()Z
-  public final boolean getEnableVenue3D();
+  public final boolean getEnable3D();
     descriptor: ()Z
   public final boolean getEnableSeatView();
     descriptor: ()Z
@@ -2015,6 +2015,10 @@ public final class io.seatlayer.android.SeatLayerPickerBehavior {
     descriptor: ()Z
   public final java.util.List<java.lang.String> getLanguages();
     descriptor: ()Ljava/util/List;
+  public final boolean getEnableVenue3D();
+    descriptor: ()Z
+  public static void getEnableVenue3D$annotations();
+    descriptor: ()V
   public final boolean component1();
     descriptor: ()Z
   public final boolean component2();
@@ -2551,6 +2555,8 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object setSeatTier(java.lang.String, java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object removeObject(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object removeCartLine(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object setTableQuantity(java.lang.String, int, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
@@ -2567,6 +2573,8 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/util/List;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
   public final java.lang.Object setAccessibilityFilter(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/util/List;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setLimitedViewHidden(boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object setLimitedViewFilter(boolean, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object focusAccessibilityFilter(java.util.List<java.lang.String>, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
@@ -2605,12 +2613,16 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public static java.lang.Object setBuyerView$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, java.lang.String, boolean, kotlin.coroutines.Continuation, int, java.lang.Object);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Ljava/lang/String;ZLkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object showSeatIn3D(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object venue3D-SxXBNyI(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object openSeatView(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object closeSeatView(kotlin.coroutines.Continuation<? super java.lang.Boolean>);
     descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object set3DNavigationMode(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object setVenue3DNavigationMode(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object zoomIn(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -2623,10 +2635,16 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerMapTheme;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public static java.lang.Object setThemeMode-iOwGEAo$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, io.seatlayer.android.SeatLayerPickerMapTheme, kotlin.coroutines.Continuation, int, java.lang.Object);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;Lio/seatlayer/android/SeatLayerPickerMapTheme;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+  public final java.lang.Object setMapInteractionEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
+    descriptor: (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object setInteractionEnabled(boolean, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     descriptor: (ZLkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object setViewportInsets(io.seatlayer.android.SeatLayerPickerViewportInsets, kotlin.coroutines.Continuation<? super kotlin.Unit>);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerViewportInsets;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object setGeneralAdmissionQuantity(java.lang.String, int, java.lang.String, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Ljava/lang/String;ILjava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public static java.lang.Object setGeneralAdmissionQuantity$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, int, java.lang.String, java.lang.Integer, kotlin.coroutines.Continuation, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/String;ILjava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
   public final java.lang.Object holdGeneralAdmission(java.lang.String, int, java.lang.String, java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;ILjava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public static java.lang.Object holdGeneralAdmission$default(io.seatlayer.android.SeatLayerPickerController, java.lang.String, int, java.lang.String, java.lang.Integer, kotlin.coroutines.Continuation, int, java.lang.Object);
@@ -2647,6 +2665,8 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Lio/seatlayer/android/SeatLayerPickerController;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
   public final java.lang.Object abort(kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object rejectCheckoutHandoff(io.seatlayer.android.SeatLayerPickerCheckoutHandoff, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCheckoutHandoff;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object rejectHandoff(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object checkout(java.lang.Integer, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerCheckoutHandoff>);
@@ -2661,6 +2681,8 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final void confirmPendingTable();
     descriptor: ()V
+  public final void setCartSheetExpanded(boolean);
+    descriptor: (Z)V
   public final void setCartExpanded(boolean);
     descriptor: (Z)V
   public final void setCartSheetDetent(io.seatlayer.android.SeatLayerPickerSheetDetent);
@@ -2689,6 +2711,14 @@ public final class io.seatlayer.android.SeatLayerPickerController {
     descriptor: ()V
   public final void setResumeAfterCheckout(boolean);
     descriptor: (Z)V
+  public final java.lang.Object releasePickerOwnedHold(kotlin.coroutines.Continuation<? super java.lang.Boolean>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final void emitHaptic(io.seatlayer.android.SeatLayerPickerHapticCue);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerHapticCue;)V
+  public final void retry();
+    descriptor: ()V
+  public final void dismissError();
+    descriptor: ()V
   public final void dismissActionError();
     descriptor: ()V
   public final java.lang.Object removeWithUndo(io.seatlayer.android.SeatLayerPickerCartLine, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
@@ -2714,6 +2744,8 @@ public final class io.seatlayer.android.SeatLayerPickerController {
   public final java.lang.Object setLifecycle(java.lang.String, kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerSnapshot>);
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final java.lang.Object refreshAvailability(kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerLifecycleResult>);
+    descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+  public final java.lang.Object refreshAccess(kotlin.coroutines.Continuation<? super io.seatlayer.android.SeatLayerPickerLifecycleResult>);
     descriptor: (Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final void dismissHoldLapse();
     descriptor: ()V
@@ -2991,6 +3023,32 @@ public final class io.seatlayer.android.SeatLayerPickerGeneralAdmissionArea {
     descriptor: ()I
   public boolean equals(java.lang.Object);
     descriptor: (Ljava/lang/Object;)Z
+}
+public final class io.seatlayer.android.SeatLayerPickerHapticCue extends java.lang.Enum<io.seatlayer.android.SeatLayerPickerHapticCue> {
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue SelectionAdded;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue SectionFocused;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue TicketRemoved;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue HoldEnding;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue HoldCreated;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue HoldExpired;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue CardArrived;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue SeatConfirmed;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static final io.seatlayer.android.SeatLayerPickerHapticCue CardCancelled;
+    descriptor: Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static io.seatlayer.android.SeatLayerPickerHapticCue[] values();
+    descriptor: ()[Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static io.seatlayer.android.SeatLayerPickerHapticCue valueOf(java.lang.String);
+    descriptor: (Ljava/lang/String;)Lio/seatlayer/android/SeatLayerPickerHapticCue;
+  public static kotlin.enums.EnumEntries<io.seatlayer.android.SeatLayerPickerHapticCue> getEntries();
+    descriptor: ()Lkotlin/enums/EnumEntries;
 }
 public final class io.seatlayer.android.SeatLayerPickerHold {
   public io.seatlayer.android.SeatLayerPickerHold(boolean, java.lang.Double, java.lang.String);
@@ -3347,9 +3405,9 @@ public final class io.seatlayer.android.SeatLayerPickerPresentationCoordinator {
     descriptor: (Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
   public final void confirmPendingTable();
     descriptor: ()V
-  public final void setCartExpanded(boolean);
+  public final void setCartSheetExpanded(boolean);
     descriptor: (Z)V
-  public final void dismissActionError();
+  public final void dismissError();
     descriptor: ()V
   public final java.lang.Object removeWithUndo(io.seatlayer.android.SeatLayerPickerCartLine, kotlin.coroutines.Continuation<? super java.lang.Boolean>);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -4355,6 +4413,10 @@ public final class io.seatlayer.android.SeatLayerPickerStateHolder {
     descriptor: ()Lkotlinx/coroutines/flow/StateFlow;
   public final kotlinx.coroutines.flow.SharedFlow<io.seatlayer.android.SeatLayerChartLoad> getChartLoads();
     descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
+  public final kotlinx.coroutines.flow.SharedFlow<io.seatlayer.android.SeatLayerPickerHapticCue> getHapticCues();
+    descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
+  public final kotlinx.coroutines.flow.SharedFlow<kotlin.Unit> getReloadRequests();
+    descriptor: ()Lkotlinx/coroutines/flow/SharedFlow;
   public final io.seatlayer.android.SeatLayerPickerController getController();
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerController;
   public final java.lang.Object close(kotlin.coroutines.Continuation<? super kotlin.Unit>);
@@ -4369,6 +4431,10 @@ public final class io.seatlayer.android.SeatLayerPickerStateHolder {
     descriptor: (Lio/seatlayer/android/SeatLayerPickerStateHolder;Lio/seatlayer/android/ReadyInfo;Lio/seatlayer/android/SeatLayerPickerReadyTiming;ILjava/lang/Object;)V
   public final void emitChartLoad$seatlayer(io.seatlayer.android.SeatLayerChartLoad);
     descriptor: (Lio/seatlayer/android/SeatLayerChartLoad;)V
+  public final void emitHaptic$seatlayer(io.seatlayer.android.SeatLayerPickerHapticCue);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerHapticCue;)V
+  public final void requestReload$seatlayer();
+    descriptor: ()V
   public final io.seatlayer.android.SeatLayerPickerSnapshot acceptSnapshot$seatlayer(kotlinx.serialization.json.JsonElement);
     descriptor: (Lkotlinx/serialization/json/JsonElement;)Lio/seatlayer/android/SeatLayerPickerSnapshot;
   public final boolean acceptSnapshot$seatlayer(io.seatlayer.android.SeatLayerPickerSnapshot);
@@ -4399,7 +4465,7 @@ public final class io.seatlayer.android.SeatLayerPickerStateHolder {
     descriptor: ()V
   public final void answer$seatlayer(io.seatlayer.android.SeatLayerPickerSelectedSeat);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerSelectedSeat;)V
-  public final void setCartExpanded$seatlayer(boolean);
+  public final void setCartSheetExpanded$seatlayer(boolean);
     descriptor: (Z)V
   public final void setActionInFlight$seatlayer(boolean);
     descriptor: (Z)V

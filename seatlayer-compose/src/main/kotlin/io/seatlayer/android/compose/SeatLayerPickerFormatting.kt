@@ -4,13 +4,21 @@ import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
 
-public fun interface SeatLayerPickerMoneyFormatter {
+/** How every amount in the native chrome is rendered. */
+public fun interface SeatLayerMoneyFormatter {
     public fun format(amount: Double, currency: String): String
 
     public companion object {
+        /**
+         * The platform's own formatting for [locale].
+         *
+         * A currency this device does not know keeps its code beside the
+         * number rather than being dressed as the locale's own money.
+         */
         @JvmStatic
-        public fun localized(locale: Locale = Locale.getDefault()): SeatLayerPickerMoneyFormatter =
-            SeatLayerPickerMoneyFormatter { amount, currency ->
+        @JvmOverloads
+        public fun localized(locale: Locale = Locale.getDefault()): SeatLayerMoneyFormatter =
+            SeatLayerMoneyFormatter { amount, currency ->
                 val formatter = NumberFormat.getCurrencyInstance(locale)
                 val known = runCatching { Currency.getInstance(currency) }.getOrNull()
                 if (known == null) {
@@ -26,3 +34,7 @@ public fun interface SeatLayerPickerMoneyFormatter {
             }
     }
 }
+
+/** The name this formatter had before the four SDKs agreed on one. */
+@Deprecated("Renamed to SeatLayerMoneyFormatter.", ReplaceWith("SeatLayerMoneyFormatter"))
+public typealias SeatLayerPickerMoneyFormatter = SeatLayerMoneyFormatter

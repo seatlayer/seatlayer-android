@@ -142,7 +142,7 @@ public fun SeatLayerPickerHeader(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         tonalElevation = resolvedStyle.elevation ?: 0.dp,
         shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: 0.dp),
     ) {
@@ -208,7 +208,7 @@ public fun SeatLayerPickerHeader(
                     Text(
                         text = venue,
                         style = MaterialTheme.typography.bodySmall,
-                        color = scope.theme.muted,
+                        color = scope.theme.mutedText,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -225,12 +225,12 @@ public fun SeatLayerPickerHeader(
                     },
                 shape = CircleShape,
                 color = Color.Transparent,
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     SeatLayerPickerIcon(
                         glyph = SeatLayerPickerGlyph.Close,
-                        color = scope.theme.onSurface,
+                        color = scope.theme.text,
                         modifier = Modifier.size(if (compact) 20.dp else 22.dp),
                     )
                 }
@@ -295,7 +295,7 @@ public fun SeatLayerPriceLegend(
         Surface(
             modifier = modifier.fillMaxWidth(),
             color = resolvedStyle.containerColor ?: scope.theme.surface,
-            contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+            contentColor = resolvedStyle.contentColor ?: scope.theme.text,
             tonalElevation = resolvedStyle.elevation ?: 1.dp,
             shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: 0.dp),
         ) { content() }
@@ -349,7 +349,7 @@ private fun PickerLegendChip(
                 Spacer(Modifier.width(5.dp))
                 Text(
                     text = price,
-                    color = if (selected) scope.theme.onAccent else scope.theme.onSurface,
+                    color = if (selected) scope.theme.onAccent else scope.theme.text,
                     fontSize = SeatLayerSizeTokens.LEGEND_CHIP_FONT_SIZE.sp,
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1,
@@ -366,7 +366,7 @@ private fun PickerLegendChip(
                 role = Role.Checkbox
                 toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
             },
-        shape = RoundedCornerShape(scope.theme.cornerRadius),
+        shape = RoundedCornerShape(scope.theme.radius),
         color = if (selected) scope.theme.accent.copy(alpha = 0.14f)
         else scope.theme.background,
         border = androidx.compose.foundation.BorderStroke(
@@ -387,7 +387,7 @@ private fun PickerLegendChip(
             Spacer(Modifier.width(8.dp))
             Column {
                 Text(category.label, style = MaterialTheme.typography.labelLarge, maxLines = 1)
-                Text(price, style = MaterialTheme.typography.labelSmall, color = scope.theme.muted)
+                Text(price, style = MaterialTheme.typography.labelSmall, color = scope.theme.mutedText)
             }
         }
     }
@@ -406,18 +406,16 @@ public fun SeatLayerPickerMapControls(
         return
     }
     val controls: @Composable () -> Unit = {
-        if (scope.options.chrome.zoom) {
+        if (scope.options.chrome.showZoomControls) {
             SeatLayerPickerZoomControls(layout = layout)
         }
         if (
-            scope.options.chrome.overview &&
+            scope.options.chrome.showOverviewControl &&
             scope.state.snapshot?.map?.canZoomOut == true
         ) {
             SeatLayerPickerStepOutControl()
-        } else if (scope.options.chrome.fit) {
-            SeatLayerPickerFitControl()
         }
-        if (scope.options.chrome.colorblind) {
+        if (scope.options.chrome.showColorblindControl) {
             SeatLayerPickerColorblindControl()
         }
     }
@@ -488,21 +486,21 @@ private fun MapControl(
             },
         shape = CircleShape,
         color = Color.Transparent,
-        contentColor = theme.onSurface,
+        contentColor = theme.text,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = CircleShape,
                 color = theme.surface.copy(alpha = 0.94f),
-                contentColor = theme.onSurface,
+                contentColor = theme.text,
                 border = androidx.compose.foundation.BorderStroke(1.dp, theme.divider),
                 shadowElevation = 3.dp,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     SeatLayerPickerIcon(
                         glyph = glyph,
-                        color = theme.onSurface,
+                        color = theme.text,
                         modifier = Modifier
                             .size(DefaultPickerIconSize)
                             .clearAndSetSemantics { },
@@ -553,7 +551,7 @@ public fun SeatLayerPickerAttribution(
     Surface(
         modifier = modifier,
         color = if (compact) Color.Transparent else scope.theme.surface.copy(alpha = 0.94f),
-        contentColor = scope.theme.muted,
+        contentColor = scope.theme.mutedText,
         shape = RoundedCornerShape(if (compact) 0.dp else 8.dp),
     ) {
         Row(
@@ -566,7 +564,7 @@ public fun SeatLayerPickerAttribution(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SeatLayerPickerPoweredMark(
-                background = scope.theme.muted,
+                background = scope.theme.mutedText,
                 ink = scope.theme.surface,
             )
             Spacer(Modifier.width(4.dp))
@@ -710,14 +708,14 @@ public fun SeatLayerPickerErrorView(
             Text(
                 text = scope.strings.errorMessage,
                 style = MaterialTheme.typography.titleMedium,
-                color = scope.theme.onSurface,
+                color = scope.theme.text,
             )
             failure?.message?.takeIf(String::isNotBlank)?.let { message ->
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodySmall,
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                 )
             }
             Spacer(Modifier.height(20.dp))
@@ -745,7 +743,7 @@ public fun SeatLayerPickerEmptyView(
         Text(
             text = scope.strings.soldOutTitle,
             style = MaterialTheme.typography.titleMedium,
-            color = scope.theme.onSurface,
+            color = scope.theme.text,
             modifier = Modifier.padding(28.dp),
         )
     }
@@ -759,7 +757,7 @@ internal fun PickerDivider() {
 private fun categoryPrice(
     category: SeatLayerPickerCategory,
     currency: String,
-    formatter: SeatLayerPickerMoneyFormatter,
+    formatter: SeatLayerMoneyFormatter,
 ): String {
     if (category.notForSale || category.available <= 0) return "—"
     return if (category.priceMin == category.priceMax) {

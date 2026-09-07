@@ -152,7 +152,7 @@ internal suspend fun SeatLayerPickerController.performLifecycle(
     return try {
         val initial = lifecycleMutation("picker.lifecycle", payload)
         val refreshed = if (initial?.outcome == null && supportsAvailabilityRefresh) {
-            refreshAvailability()
+            refreshAccess()
         } else {
             null
         }

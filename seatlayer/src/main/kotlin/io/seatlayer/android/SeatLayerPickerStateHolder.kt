@@ -27,6 +27,10 @@ public class SeatLayerPickerStateHolder(
     private val mutableChartLoads = MutableSharedFlow<SeatLayerChartLoad>(
         extraBufferCapacity = 1,
     )
+    private val mutableHapticCues = MutableSharedFlow<SeatLayerPickerHapticCue>(
+        extraBufferCapacity = 8,
+    )
+    private val mutableReloadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private val answeredSeatIdentities = linkedSetOf<String>()
     private var presentationSessionId: String? = null
 
@@ -35,7 +39,7 @@ public class SeatLayerPickerStateHolder(
 
     internal val bridgeProfile: SeatLayerPickerBridgeProfile =
         SeatLayerPickerBridgeProfile.create(
-            enable3D = behavior.enableVenue3D,
+            enable3D = behavior.enable3D,
             enableSeatView = behavior.enableSeatView,
             config = behavior.bridgeConfig(),
         )
@@ -43,6 +47,13 @@ public class SeatLayerPickerStateHolder(
     public val state: StateFlow<SeatLayerPickerState> = mutableState.asStateFlow()
     /** Runtime-authored load records; late collectors do not receive old attempts. */
     public val chartLoads: SharedFlow<SeatLayerChartLoad> = mutableChartLoads.asSharedFlow()
+
+    /** Cues the chrome plays; a late collector never feels an old moment. */
+    public val hapticCues: SharedFlow<SeatLayerPickerHapticCue> =
+        mutableHapticCues.asSharedFlow()
+
+    /** Requests to load the map again after a failure. */
+    public val reloadRequests: SharedFlow<Unit> = mutableReloadRequests.asSharedFlow()
     public val controller: SeatLayerPickerController = SeatLayerPickerController(this)
 
     public suspend fun close() {
@@ -93,6 +104,14 @@ public class SeatLayerPickerStateHolder(
 
     internal fun emitChartLoad(load: SeatLayerChartLoad) {
         mutableChartLoads.tryEmit(load)
+    }
+
+    internal fun emitHaptic(cue: SeatLayerPickerHapticCue) {
+        mutableHapticCues.tryEmit(cue)
+    }
+
+    internal fun requestReload() {
+        mutableReloadRequests.tryEmit(Unit)
     }
 
     internal fun acceptSnapshot(value: JsonElement?): SeatLayerPickerSnapshot? =
@@ -264,7 +283,7 @@ public class SeatLayerPickerStateHolder(
         }
     }
 
-    internal fun setCartExpanded(expanded: Boolean) {
+    internal fun setCartSheetExpanded(expanded: Boolean) {
         update { it.copy(presentation = it.presentation.copy(cartExpanded = expanded)) }
     }
 
@@ -428,7 +447,7 @@ private fun SeatLayerPickerBehavior.bridgeConfig(): kotlinx.serialization.json.J
         "readOnly" to kotlinx.serialization.json.JsonPrimitive(readOnly),
         "confirmSelection" to kotlinx.serialization.json.JsonPrimitive(confirmSelection),
         "enableBestAvailable" to kotlinx.serialization.json.JsonPrimitive(enableBestAvailable),
-        "enable3D" to kotlinx.serialization.json.JsonPrimitive(enableVenue3D),
+        "enable3D" to kotlinx.serialization.json.JsonPrimitive(enable3D),
         "enableSeatView" to kotlinx.serialization.json.JsonPrimitive(enableSeatView),
         "holdTtlMs" to jsonNumber(holdTtlMillis),
         "initialHoldId" to jsonString(initialHoldId),
