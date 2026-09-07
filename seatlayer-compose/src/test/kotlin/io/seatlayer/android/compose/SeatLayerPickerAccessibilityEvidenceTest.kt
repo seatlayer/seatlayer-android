@@ -104,21 +104,6 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
         // a range no chip can hold.
         composeRule.onAllNodesWithContentDescription("Standard — USD 40+")
             .assertCountEquals(2)
-        // The control names how many filters are on: a screen reader that says
-        // only "accessibility" over a filtered map has hidden the filtering.
-        composeRule.onNodeWithContentDescription("Accessibility and colour options · 2")
-            .performClick()
-        composeRule.mainClock.advanceTimeBy(1_000)
-        composeRule.waitForIdle()
-        // The design source's own minimum, not Android's older 48: every
-        // number in this chrome comes from the generated tokens.
-        composeRule.onNodeWithText("Wheelchair · 8")
-            .assertHasClickAction()
-            .assertIsOn()
-            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
-        composeRule.onNodeWithText("Aisle Seat · 0")
-            .assertIsNotEnabled()
-            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
         // Among the seats `+` has retired: it is out of the reading order, but
         // it KEEPS ITS SLOT, so the disc above it never moves out from under a
         // thumb already reaching for it.
@@ -155,6 +140,28 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
 
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
         composeRule.onNodeWithText("TEST MODE").assertIsDisplayed()
+
+        // The sheet is opened LAST: it covers the map, so everything drawn on
+        // the map has to be read before the sheet is asked for.
+        //
+        // The control names how many filters are on: a screen reader that says
+        // only "accessibility" over a filtered map has hidden the filtering.
+        composeRule.onNodeWithContentDescription("Accessibility and colour options · 2")
+            .performClick()
+        composeRule.mainClock.advanceTimeBy(1_000)
+        composeRule.waitForIdle()
+        // The design source's own minimum, not Android's older 48: every
+        // number in this chrome comes from the generated tokens.
+        composeRule.onNodeWithContentDescription("Wheelchair space, 8 free")
+            .assertHasClickAction()
+            .assertIsOn()
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
+        // A provision the venue has but has sold out of keeps its name, its
+        // icon and its figure, and goes dark. The key has no name in the
+        // string table, so the row is drawn under its wire key.
+        composeRule.onNodeWithContentDescription("aisle-seat, 0")
+            .assertIsNotEnabled()
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
     }
 
     private fun fixtureScope(): SeatLayerPickerScope {

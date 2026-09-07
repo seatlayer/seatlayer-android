@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,19 +23,15 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.seatlayer.android.SeatLayerPickerAccessNeed
 import io.seatlayer.android.SeatLayerPickerAccessibleStep
 import io.seatlayer.android.SeatLayerPickerSnapshot
 import kotlinx.coroutines.launch
@@ -328,118 +323,3 @@ private fun PickerAccessibleStepperPill(
 
 private val ACCESS_STEP_GLYPH_SIZE: Dp = 14.dp
 private val ACCESS_STEP_CHEVRON_SIZE: Dp = 16.dp
-
-@Composable
-internal fun AccessibilityNeedChip(
-    need: SeatLayerPickerAccessNeed,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier
-            .heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
-            .semantics {
-                role = Role.Checkbox
-                toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
-            },
-        color = if (selected) {
-            scope.theme.accent.copy(alpha = ACCESS_CHIP_SELECTED_WASH)
-        } else {
-            Color.Transparent
-        },
-        contentColor = if (selected) scope.theme.accent else scope.theme.text,
-        border = BorderStroke(
-            if (selected) ACCESS_CHIP_SELECTED_LINE else 1.dp,
-            if (selected) scope.theme.accent else scope.theme.divider,
-        ),
-        shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
-    ) {
-        Row(
-            modifier = Modifier.padding(
-                horizontal = ACCESS_CHIP_PADDING_X,
-                vertical = SeatLayerSizeTokens.ACCESS_ROW_PADDING_Y.dp,
-            ),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (selected) {
-                SeatLayerPickerIcon(
-                    SeatLayerPickerGlyph.Check,
-                    scope.theme.accent,
-                    Modifier
-                        .size(SeatLayerSizeTokens.ACCESS_NOTE_ICON_SIZE.dp)
-                        .clearAndSetSemantics { },
-                )
-                Spacer(Modifier.size(SeatLayerSizeTokens.ZOOM_COLUMN_GAP.dp))
-            }
-            Text(
-                needLabel(need),
-                color = if (enabled) {
-                    if (selected) scope.theme.accent else scope.theme.text
-                } else {
-                    scope.theme.mutedText.copy(alpha = ACCESS_CHIP_DISABLED_INK)
-                },
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
-}
-
-private const val ACCESS_CHIP_SELECTED_WASH = 0.12f
-private const val ACCESS_CHIP_DISABLED_INK = 0.6f
-private val ACCESS_CHIP_SELECTED_LINE: Dp = 1.5.dp
-private val ACCESS_CHIP_PADDING_X: Dp = 14.dp
-
-private fun needLabel(need: SeatLayerPickerAccessNeed): String =
-    need.key.replace('-', ' ').replace('_', ' ')
-        .split(' ')
-        .filter(String::isNotBlank)
-        .joinToString(" ") { word -> word.replaceFirstChar(Char::uppercase) } +
-        " · ${need.count}"
-
-@Composable
-internal fun AccessibilityToggleOption(
-    label: String,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = ACCESS_ROW_MIN_HEIGHT)
-            .semantics {
-                role = Role.Switch
-                toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
-            },
-        color = Color.Transparent,
-        contentColor = scope.theme.text,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = ACCESS_ROW_PADDING_X),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                label,
-                modifier = Modifier.weight(1f),
-                color = if (enabled) scope.theme.text else scope.theme.mutedText,
-                fontWeight = FontWeight.Medium,
-            )
-            Switch(
-                checked = selected,
-                onCheckedChange = null,
-                enabled = enabled,
-                modifier = Modifier.clearAndSetSemantics { },
-            )
-        }
-    }
-}
-
-private val ACCESS_ROW_MIN_HEIGHT: Dp = 52.dp
-private val ACCESS_ROW_PADDING_X: Dp = 4.dp

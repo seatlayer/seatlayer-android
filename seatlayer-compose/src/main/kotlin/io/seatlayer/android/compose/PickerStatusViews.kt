@@ -51,77 +51,237 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.sp
+import io.seatlayer.android.SeatLayerException
+import io.seatlayer.android.SeatLayerPickerErrorCodes
+import io.seatlayer.android.SeatLayerPickerHoldLapse
+import io.seatlayer.android.SeatLayerPickerRecovery
 import io.seatlayer.android.SeatLayerPickerPhase
 import kotlinx.coroutines.launch
 
+/**
+ * Whether motion may play at all on this device.
+ *
+ * One accessor decides for every surface, so none of them can forget: a
+ * platform that has turned animations off gets the settled state directly,
+ * and anything sequenced behind a skipped animation runs immediately.
+ */
+@Composable
+internal fun seatLayerPickerMotionEnabled(): Boolean = remember {
+    Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
+}
+
+/**
+ * Says, once, that a hold lapsed — and offers the seats back where it can.
+ *
+ * A persistent line where the buyer's tickets were, and nothing blocking. A
+ * dialog was considered and rejected: the buyer has usually just come back
+ * from somewhere else, and a modal is a second thing to dismiss before they
+ * can see whether their seats are still there — over a map that is still
+ * entirely usable, and a lapse that is often fully recoverable.
+ */
 @Composable
 public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
+    // A host that would rather own the moment takes it whole; `onHoldExpired`
+    // fires either way.
+    if (!scope.options.announceHoldLapse) return
     val lapse = scope.state.holdLapse ?: return
     val coroutineScope = rememberCoroutineScope()
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = scope.theme.surface,
-        contentColor = scope.theme.text,
-        shape = RoundedCornerShape(scope.styles.cardRadius),
-        shadowElevation = 8.dp,
+    val recoverable = lapse.recoverableLabels.size
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                start = LAPSE_PAD_START.dp,
+                top = LAPSE_PAD_TOP.dp,
+                end = LAPSE_PAD_END.dp,
+                bottom = LAPSE_PAD_BOTTOM.dp,
+            )
+            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Column(Modifier.padding(16.dp)) {
-            Text(scope.strings.holdExpired, fontWeight = FontWeight.SemiBold)
-            if (lapse.lapsedLabels.isNotEmpty()) {
+        Column(Modifier.weight(1f)) {
+            Text(
+                scope.strings.holdLapsedTitle,
+                color = scope.theme.text,
+                fontSize = LAPSE_TITLE_SIZE.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = scope.theme.fontFamily,
+            )
+            seatLayerHoldLapseBody(scope.strings, lapse)?.let { body ->
                 Text(
-                    lapse.lapsedLabels.joinToString(),
+                    body,
                     color = scope.theme.mutedText,
-                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = LAPSE_BODY_SIZE.sp,
+                    fontFamily = scope.theme.fontFamily,
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                if (lapse.recoverableLabels.isNotEmpty()) {
-                    Button(
-                        onClick = {
-                            coroutineScope.launch {
-                                scope.performAction {
-                                    scope.controller.reselectLapsedSeats(
-                                        scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
-                                    )
-                                }
-                            }
-                        },
-                        modifier = Modifier.heightIn(min = 48.dp),
-                        shape = RoundedCornerShape(scope.styles.buttonRadius),
-                    ) { Text(scope.strings.reselectSeats(lapse.recoverableLabels.size)) }
-                }
-                TextButton(
-                    onClick = scope.controller::dismissHoldLapse,
-                    modifier = Modifier.heightIn(min = 48.dp),
-                ) { Text(scope.strings.dismiss) }
+        }
+        if (recoverable > 0) {
+            TextButton(
+                onClick = {
+                    coroutineScope.launch {
+                        scope.performAction {
+                            scope.controller.reselectLapsedSeats(
+                                scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier.heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+            ) {
+                Text(
+                    scope.strings.reselectSeats(recoverable),
+                    color = scope.theme.accent,
+                    fontSize = LAPSE_TITLE_SIZE.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    fontFamily = scope.theme.fontFamily,
+                )
+            }
+        } else {
+            TextButton(
+                onClick = scope.controller::dismissHoldLapse,
+                modifier = Modifier.heightIn(min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+            ) {
+                Text(
+                    scope.strings.dismiss,
+                    color = scope.theme.mutedText,
+                    fontSize = LAPSE_BODY_SIZE.sp,
+                    fontFamily = scope.theme.fontFamily,
+                )
             }
         }
     }
 }
 
+/**
+ * The sentence under the lapse title, or null when there is nothing to add.
+ *
+ * Two facts at most, and only the ones that are true: how long the hold was
+ * good for, when the session named a window, and how many of the seats are
+ * gone for good, when some are and some are not.
+ */
+public fun seatLayerHoldLapseBody(
+    strings: SeatLayerPickerStrings,
+    lapse: SeatLayerPickerHoldLapse,
+): String? {
+    val parts = buildList {
+        lapse.heldForMillis?.let { add(strings.holdLapsedBody(it / MILLIS_PER_MINUTE)) }
+        if (lapse.recovery == SeatLayerPickerRecovery.Partial) {
+            add(strings.seatsNotRecovered(lapse.unrecoverableCount))
+        }
+    }
+    return parts.takeIf(List<String>::isNotEmpty)?.joinToString(" ")
+}
+
+/**
+ * Refusals the runtime answers when the picker tries to change a hold it may
+ * not change.
+ *
+ * The buyer came back from checkout and tapped another seat, or asked for a
+ * hold they already have. Each is a STATE with a way out, not a failure, and
+ * the bar says so in the buyer's words rather than the bridge's.
+ */
+private val HOLD_OWNERSHIP_CODES = setOf(
+    SeatLayerPickerErrorCodes.HOLD_OWNED_BY_HOST,
+    SeatLayerPickerErrorCodes.HOLD_SELECTION_MISMATCH,
+    SeatLayerPickerErrorCodes.HOLD_ALREADY_ACTIVE,
+)
+
+/**
+ * The inline failure bar, and the one place the picker states a hold it may
+ * not change.
+ *
+ * The runtime's own sentence for those refusals is never shown to the buyer:
+ * the bar says the STATE instead, with the one action that gets them out of it.
+ */
 @Composable
 public fun SeatLayerPickerActionError(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
     val error = scope.state.presentation.lastActionError ?: return
+    val handoff = scope.state.presentation.checkoutHandoff
+    val hostOwnedHold = scope.state.snapshot?.hold
+        ?.let { it.active && it.owner == "host" } == true
+    val code = (error as? SeatLayerException.Bridge)?.code
+    val coroutineScope = rememberCoroutineScope()
+    var title: String = error.message?.takeIf(String::isNotBlank) ?: scope.strings.actionFailed
+    var detail: String? = null
+    var release: (() -> Unit)? = null
+    if (code != null && code in HOLD_OWNERSHIP_CODES) {
+        if (handoff != null || hostOwnedHold) {
+            title = scope.strings.holdInCheckoutTitle
+            detail = scope.strings.holdInCheckoutBody
+            // Rejecting the handoff puts the seats back on sale so the buyer
+            // can pick again; with no handoff to give back there is nothing to
+            // offer but dismiss.
+            if (handoff != null) {
+                release = {
+                    coroutineScope.launch {
+                        scope.performAction {
+                            scope.controller.rejectCheckoutHandoff(handoff)
+                            scope.controller.dismissError()
+                        }
+                    }
+                }
+            }
+        } else {
+            title = scope.strings.holdAlreadyHeldTitle
+            detail = scope.strings.holdAlreadyHeldBody
+        }
+    }
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Assertive },
         color = scope.theme.error,
         contentColor = scope.theme.onAccent,
         shape = RoundedCornerShape(scope.styles.cardRadius),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(
+                horizontal = ERROR_PAD_X.dp,
+                vertical = ERROR_PAD_Y.dp,
+            ),
+            verticalAlignment = Alignment.Top,
         ) {
-            Text(
-                error.message?.takeIf(String::isNotBlank) ?: scope.strings.actionFailed,
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.bodySmall,
-            )
+            Column(Modifier.weight(1f)) {
+                Text(
+                    title,
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = scope.theme.fontFamily,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                detail?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontFamily = scope.theme.fontFamily,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+                release?.let { onRelease ->
+                    TextButton(
+                        onClick = onRelease,
+                        modifier = Modifier.heightIn(
+                            min = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                        ),
+                        colors = ButtonDefaults.textButtonColors(
+                            contentColor = scope.theme.onAccent,
+                        ),
+                    ) { Text(scope.strings.releaseAndChangeSeats) }
+                }
+            }
             TextButton(
                 onClick = scope.controller::dismissError,
-                modifier = Modifier.sizeIn(minHeight = 48.dp),
+                modifier = Modifier.sizeIn(minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = scope.theme.onAccent,
                 ),
@@ -129,6 +289,16 @@ public fun SeatLayerPickerActionError(modifier: Modifier = Modifier) {
         }
     }
 }
+
+private const val MILLIS_PER_MINUTE: Int = 60_000
+private const val LAPSE_PAD_START: Float = 14f
+private const val LAPSE_PAD_TOP: Float = 8f
+private const val LAPSE_PAD_END: Float = 6f
+private const val LAPSE_PAD_BOTTOM: Float = 2f
+private const val LAPSE_TITLE_SIZE: Float = 13f
+private const val LAPSE_BODY_SIZE: Float = 12f
+private const val ERROR_PAD_X: Float = 14f
+private const val ERROR_PAD_Y: Float = 10f
 
 @Composable
 public fun SeatLayerPickerLoadingView(modifier: Modifier = Modifier) {
@@ -167,9 +337,7 @@ private fun VenueLoadingSilhouette(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    val animationsEnabled = remember {
-        Build.VERSION.SDK_INT < 26 || ValueAnimator.areAnimatorsEnabled()
-    }
+    val animationsEnabled = seatLayerPickerMotionEnabled()
     val transition = rememberInfiniteTransition(label = "seatlayer-venue-loading")
     val sweep by transition.animateFloat(
         initialValue = 0.45f,
@@ -215,46 +383,65 @@ private fun VenueLoadingSilhouette(
     }
 }
 
+/**
+ * The map did not load.
+ *
+ * The runtime's own error card is suppressed under the native chrome contract,
+ * so this is the one telling and the one retry — and the retry remounts the
+ * picker rather than patching a half-built one.
+ */
 @Composable
 public fun SeatLayerPickerErrorView(
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val scope = LocalSeatLayerPickerScope.current
-    val failure = (scope.state.phase as? SeatLayerPickerPhase.Failed)?.error
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(scope.theme.background),
+            .background(scope.theme.background)
+            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
         contentAlignment = Alignment.Center,
     ) {
         Column(
-            modifier = Modifier.padding(28.dp),
+            modifier = Modifier.padding(ERROR_VIEW_GUTTER.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = scope.strings.errorMessage,
+                text = scope.strings.mapDidNotLoad,
+                modifier = Modifier.semantics { heading() },
                 style = MaterialTheme.typography.titleMedium,
                 color = scope.theme.text,
+                fontFamily = scope.theme.fontFamily,
             )
-            failure?.message?.takeIf(String::isNotBlank)?.let { message ->
-                Spacer(Modifier.height(8.dp))
-                Text(
-                    text = message,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = scope.theme.mutedText,
-                )
-            }
-            Spacer(Modifier.height(20.dp))
+            Spacer(Modifier.height(ERROR_VIEW_GAP.dp))
+            Text(
+                text = scope.strings.checkConnection,
+                style = MaterialTheme.typography.bodySmall,
+                color = scope.theme.mutedText,
+                fontFamily = scope.theme.fontFamily,
+            )
+            Spacer(Modifier.height(ERROR_VIEW_ACTION_GAP.dp))
             Button(
                 onClick = onRetry,
-                modifier = Modifier.sizeIn(minHeight = 48.dp),
+                modifier = Modifier.sizeIn(
+                    minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                ),
+                shape = RoundedCornerShape(scope.styles.buttonRadius),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = scope.theme.accent,
+                    contentColor = scope.theme.onAccent,
+                ),
             ) {
-                Text(scope.strings.retry)
+                Text(scope.strings.retry, fontFamily = scope.theme.fontFamily)
             }
         }
     }
 }
+
+private const val ERROR_VIEW_GUTTER: Float = 28f
+private const val ERROR_VIEW_GAP: Float = 8f
+private const val ERROR_VIEW_ACTION_GAP: Float = 20f
 
 @Composable
 public fun SeatLayerPickerEmptyView(

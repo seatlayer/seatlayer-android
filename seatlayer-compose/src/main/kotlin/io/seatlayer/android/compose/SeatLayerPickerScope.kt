@@ -42,6 +42,14 @@ private data class DefaultSeatLayerPickerScope(
     override val controller: SeatLayerPickerController = stateHolder.controller
 }
 
+/**
+ * The reasons that mean the buyer's own session lapsed.
+ *
+ * A revoked link and a link that was never verified are different facts and
+ * are reported only through `onAccessUnavailable`.
+ */
+private val SEATLAYER_ACCESS_EXPIRY_REASONS = setOf("no_token", "provider_failed")
+
 internal val LocalSeatLayerPickerScope = compositionLocalOf<SeatLayerPickerScope> {
     error("SeatLayer picker component must be placed inside SeatLayerPickerScope")
 }
@@ -148,6 +156,38 @@ public fun SeatLayerPickerScope(
                 callbacks.onSelectionChanged(snapshot.selection)
                 callbacks.onHoldChanged(snapshot.hold)
             }
+        }
+        // The palette the picker actually resolved, after branding and the
+        // host's own theme have had their say — a host matching its checkout
+        // to the map cannot compute this itself.
+        LaunchedEffect(resolvedTheme, callbacks.onThemeResolved) {
+            callbacks.onThemeResolved(resolvedTheme)
+        }
+        LaunchedEffect(state.snapshot?.selectionValidity, callbacks.onSelectionValidityChanged) {
+            callbacks.onSelectionValidityChanged(state.snapshot?.selectionValidity)
+        }
+        // The sale, not the hand-off: a buyer on the way to pay has not paid.
+        LaunchedEffect(state.presentation.bookedHandoff, callbacks.onBooked) {
+            state.presentation.bookedHandoff?.let(callbacks.onBooked)
+        }
+        // The runtime's own expiry signal. A snapshot only shows a hold going
+        // inactive, which is also what a deliberate release and a sale look
+        // like, so the host is told from the event rather than from state.
+        LaunchedEffect(stateHolder, callbacks.onHoldExpired) {
+            stateHolder.holdExpiries.collect { callbacks.onHoldExpired() }
+        }
+        // One session the server will no longer answer for, told once per
+        // reason. `onAccessExpired` is the narrower of the two: it fires only
+        // where the session itself lapsed rather than where the link was
+        // revoked or was never verified.
+        val accessReason = state.snapshot
+            ?.takeIf { it.accessConfigured && it.accessStatus == "unavailable" }
+            ?.accessReason
+        LaunchedEffect(state.snapshot?.accessStatus, accessReason) {
+            if (state.snapshot?.accessStatus != "unavailable") return@LaunchedEffect
+            if (state.snapshot?.accessConfigured != true) return@LaunchedEffect
+            callbacks.onAccessUnavailable(accessReason)
+            if (accessReason in SEATLAYER_ACCESS_EXPIRY_REASONS) callbacks.onAccessExpired()
         }
 
         androidx.compose.runtime.CompositionLocalProvider(

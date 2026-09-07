@@ -37,7 +37,13 @@ import io.seatlayer.android.SeatLayerPickerImmersive
 import io.seatlayer.android.SeatLayerPickerVenue3DAction
 import kotlinx.coroutines.launch
 
-/** Native controls that belong to the immersive venue scene. */
+/**
+ * Native controls that belong to the immersive venue scene.
+ *
+ * All of it wears the dark glass of §3.14 whatever the resolved mode is,
+ * because it floats over a rendered venue. The runtime suppresses its own
+ * words under the native chrome contract, so these are the only ones.
+ */
 @Composable
 public fun SeatLayerVenue3D(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
@@ -49,184 +55,155 @@ public fun SeatLayerVenue3D(modifier: Modifier = Modifier) {
         !snapshot.capabilities.contains("venue3d") ||
         !scope.controller.supportsVenue3D
     ) return
-    val chromeTheme = SeatLayerPickerTheme.dark().copy(
-        accent = scope.theme.accent,
-        onAccent = scope.theme.onAccent,
-    )
     val neighbours = SeatLayerPickerImmersive.neighbours(snapshot)
     val target = neighbours.target
-    val targeted = neighbours.targetSeatId != null
-    val focused = SeatLayerPickerImmersive.hasFocusedView(snapshot)
-    val canNavigate = scope.controller.supportsCapability("venue-3d-controls-v1") &&
-        scope.controller.supportsCommand("picker.setVenue3DNavigationMode")
+    // Sitting in an exact seat: the back pill is the way out of a SEAT, not
+    // out of the scene, so it is drawn only here.
+    val seated = neighbours.targetSeatId != null
+    // The deck is the runtime's to advertise; without it there is a scene and
+    // no navigation, which is a state rather than a failure.
+    val deck = scope.controller.supportsCapability("venue-3d-controls-v1")
+    val canSetMode = deck && scope.controller.supportsCommand("picker.setVenue3DNavigationMode")
+    val panning = map.view3DNavigationMode == "pan"
     Box(modifier.fillMaxSize()) {
-        ImmersiveLabelAction(
-            label = if (focused) scope.strings.backToVenue else scope.strings.mapView,
-            glyph = SeatLayerPickerGlyph.Back,
-            modifier = Modifier.align(Alignment.TopStart).padding(10.dp),
-            theme = chromeTheme,
-        ) {
-            scope.controller.venue3D(
-                if (focused) SeatLayerPickerVenue3DAction.Back
-                else SeatLayerPickerVenue3DAction.Map,
-            )
+        if (seated) {
+            PickerImmersiveBackPill(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp),
+            ) { scope.controller.venue3D(SeatLayerPickerVenue3DAction.Back) }
         }
 
-        if (canNavigate) {
-            PickerRoundAction(
-                scopeLabel = if (map.view3DNavigationMode == "pan") {
-                    scope.strings.rotateVenue
-                } else {
-                    scope.strings.moveVenue
-                },
-                glyph = if (map.view3DNavigationMode == "pan") {
-                    SeatLayerPickerGlyph.Orbit
-                } else {
-                    SeatLayerPickerGlyph.Move
-                },
-                modifier = Modifier.align(Alignment.TopEnd).padding(8.dp),
-                accent = true,
-                themeOverride = chromeTheme,
+        if (canSetMode) {
+            // Two states, one control, and the drag hint says what the gesture
+            // will do rather than what the mode is called.
+            PickerImmersiveChip(
+                label = if (panning) scope.strings.rotateVenue else scope.strings.moveVenue,
+                glyph = if (panning) SeatLayerPickerGlyph.Orbit else SeatLayerPickerGlyph.Move,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp),
+                showsLabel = false,
             ) {
-                scope.controller.set3DNavigationMode(
-                    if (map.view3DNavigationMode == "pan") "orbit" else "pan",
-                )
+                scope.controller.set3DNavigationMode(if (panning) "orbit" else "pan")
             }
         }
 
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(horizontal = 12.dp, vertical = 10.dp),
+                .padding(SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp),
         ) {
             target?.let { seat ->
-                Surface(
-                    color = chromeTheme.surface.copy(alpha = 0.88f),
-                    contentColor = chromeTheme.onSurface,
-                    shape = RoundedCornerShape(999.dp),
-                    border = BorderStroke(1.dp, chromeTheme.divider),
-                ) {
-                    Text(
-                        listOf(seat.buyerFacingLabel, scope.strings.viewFromYourSeat)
-                            .joinToString(" · "),
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 7.dp),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
+                PickerImmersiveCaption(
+                    listOf(seat.buyerFacingLabel, scope.strings.viewFromYourSeat)
+                        .joinToString(" \u00b7 "),
+                )
             }
+            if (!deck) return@Column
             Row(
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                horizontalArrangement = Arrangement.spacedBy(
+                    SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp,
+                ),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                if (targeted) {
-                    PickerRoundAction(
-                        scopeLabel = scope.strings.previousSeat,
+                if (seated) {
+                    // Seat-to-seat travel along the authored row. Section-to-
+                    // section travel is NOT offered: the snapshot carries no
+                    // stop list, and a control that cannot say where it goes
+                    // is a door into an empty room (§4.9).
+                    PickerImmersiveChip(
+                        label = scope.strings.previousSeat,
                         glyph = SeatLayerPickerGlyph.Back,
                         enabled = neighbours.previousSeatId != null,
-                        themeOverride = chromeTheme,
-                    ) {
-                        scope.controller.venue3D(SeatLayerPickerVenue3DAction.Previous)
-                    }
+                        showsLabel = false,
+                    ) { scope.controller.venue3D(SeatLayerPickerVenue3DAction.Previous) }
                     if (
                         scope.options.enableSeatView &&
                         scope.controller.supportsSeatView &&
                         snapshot.capabilities.contains("seatView")
                     ) {
-                        ImmersiveLabelAction(
-                            label = scope.strings.viewFromHere,
+                        PickerImmersiveChip(
+                            label = scope.strings.openVenue360,
                             glyph = SeatLayerPickerGlyph.Eye,
-                            theme = chromeTheme,
                         ) {
-                            scope.controller.openSeatView(neighbours.targetSeatId!!)
+                            neighbours.targetSeatId?.let { scope.controller.openSeatView(it) }
                         }
                     }
-                    PickerRoundAction(
-                        scopeLabel = scope.strings.nextSeat,
+                    PickerImmersiveChip(
+                        label = scope.strings.nextSeat,
                         glyph = SeatLayerPickerGlyph.Forward,
                         enabled = neighbours.nextSeatId != null,
-                        themeOverride = chromeTheme,
-                    ) {
-                        scope.controller.venue3D(SeatLayerPickerVenue3DAction.Next)
-                    }
-                    PickerRoundAction(
-                        scopeLabel = scope.strings.recentre,
+                        showsLabel = false,
+                    ) { scope.controller.venue3D(SeatLayerPickerVenue3DAction.Next) }
+                    PickerImmersiveChip(
+                        label = scope.strings.recentre,
                         glyph = SeatLayerPickerGlyph.Recentre,
-                        themeOverride = chromeTheme,
-                    ) {
-                        scope.controller.venue3D(SeatLayerPickerVenue3DAction.Recenter)
-                    }
-                } else {
-                    PickerRoundAction(
-                        scopeLabel = scope.strings.zoomOut,
-                        glyph = SeatLayerPickerGlyph.Minus,
-                        enabled = map.canZoomOut &&
-                            scope.controller.supportsCommand("picker.zoomOut"),
-                        themeOverride = chromeTheme,
-                    ) { scope.controller.zoomOut() }
-                    ImmersiveLabelAction(
-                        label = scope.strings.fitVenue,
-                        glyph = SeatLayerPickerGlyph.Fit,
-                        enabled = scope.controller.supportsCommand("picker.zoomToFit"),
-                        theme = chromeTheme,
-                    ) { scope.controller.zoomToFit() }
-                    PickerRoundAction(
-                        scopeLabel = scope.strings.zoomIn,
-                        glyph = SeatLayerPickerGlyph.Plus,
-                        enabled = map.canZoomIn &&
-                            scope.controller.supportsCommand("picker.zoomIn"),
-                        themeOverride = chromeTheme,
-                    ) { scope.controller.zoomIn() }
+                        showsLabel = false,
+                    ) { scope.controller.venue3D(SeatLayerPickerVenue3DAction.Recenter) }
                 }
+                // The way home from any depth, and it is never dimmed: the
+                // camera facts in a snapshot are only as fresh as the last
+                // state change, and a pinch changes no state.
+                PickerImmersiveChip(
+                    label = scope.strings.fitWholeVenue,
+                    glyph = SeatLayerPickerGlyph.Fit,
+                ) { scope.controller.venue3D(SeatLayerPickerVenue3DAction.Back) }
             }
         }
     }
 }
 
+/** The way out of a seat: top-left, on the control glass, at the pill height. */
 @Composable
-private fun ImmersiveLabelAction(
-    label: String,
-    glyph: SeatLayerPickerGlyph,
+private fun PickerImmersiveBackPill(
     modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    theme: SeatLayerPickerTheme,
     action: suspend () -> Unit,
 ) {
     val scope = LocalSeatLayerPickerScope.current
+    val glass = pickerControlGlass()
     val coroutineScope = rememberCoroutineScope()
     Surface(
         onClick = { coroutineScope.launch { scope.performAction(action) } },
-        enabled = enabled && !scope.state.presentation.actionInFlight,
         modifier = modifier
-            .height(48.dp)
+            .height(SeatLayerSizeTokens.IMMERSIVE_BACK_PILL_HEIGHT.dp)
             .semantics {
                 role = Role.Button
-                contentDescription = label
+                contentDescription = scope.strings.backToVenue
             },
-        shape = RoundedCornerShape(9.dp),
-        color = theme.surface.copy(alpha = 0.9f),
-        contentColor = theme.text,
-        border = BorderStroke(1.dp, theme.divider),
-        shadowElevation = 3.dp,
+        color = glass.ground,
+        contentColor = glass.ink,
+        shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
+        border = BorderStroke(1.dp, glass.line),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 12.dp),
+            modifier = Modifier.padding(
+                horizontal = SeatLayerSizeTokens.IMMERSIVE_NAV_CHIP_PADDING_X.dp,
+            ),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SeatLayerPickerIcon(
-                glyph = glyph,
-                color = theme.text,
-                modifier = Modifier.size(16.dp).clearAndSetSemantics { },
+                SeatLayerPickerGlyph.Back,
+                glass.ink,
+                Modifier
+                    .size(SeatLayerSizeTokens.IMMERSIVE_BACK_ICON_SIZE.dp)
+                    .clearAndSetSemantics { },
             )
-            Spacer(Modifier.width(6.dp))
-            Text(label, fontSize = 12.sp, fontWeight = FontWeight.ExtraBold)
+            Spacer(Modifier.width(BACK_PILL_GAP.dp))
+            Text(
+                scope.strings.backToVenue,
+                color = glass.ink,
+                fontSize = SeatLayerSizeTokens.IMMERSIVE_BACK_FONT_SIZE.sp,
+                fontWeight = FontWeight.ExtraBold,
+                fontFamily = scope.theme.fontFamily,
+            )
         }
     }
 }
+
+private const val BACK_PILL_GAP: Float = 6f
 
 /** Labelled Seat map / 3D segmented control. */
 @Composable

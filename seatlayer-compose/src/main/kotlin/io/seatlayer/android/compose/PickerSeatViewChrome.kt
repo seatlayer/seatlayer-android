@@ -1,6 +1,5 @@
 package io.seatlayer.android.compose
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** Bottom-only caption for panorama; the renderer owns the close control and default drag hint. */
+/**
+ * The native caption strip over the 2D view-from-seat panorama.
+ *
+ * Every word here is the runtime's, carried on `seatView.changed`: the seat's
+ * identity, the caption, the disclosure badge and the drag hint. The strip
+ * PRINTS them and never re-derives the disclosure — whether a view is a
+ * photograph or a model is the runtime's finding, and a native re-derivation
+ * from two booleans is a second opinion the buyer did not ask for.
+ *
+ * A runtime advertising `native-seat-view-chrome-v1` is asked at init to
+ * suppress its own words, so a host that hides this strip OWNS the disclosure
+ * itself: turning it off does not give the words back to the runtime. The
+ * panorama's own close control stays the runtime's either way.
+ */
 @Composable
 public fun SeatLayerSeatViewChrome(
     modifier: Modifier = Modifier,
@@ -32,52 +44,52 @@ public fun SeatLayerSeatViewChrome(
     val title = view.title?.trim()?.takeIf(String::isNotEmpty)
     val caption = view.caption?.trim()?.takeIf(String::isNotEmpty)
     val badge = view.badge?.trim()?.takeIf(String::isNotEmpty)
-        ?: when {
-            view.real -> scope.strings.realSeatView
-            view.generated -> scope.strings.generatedSeatView
-            else -> null
-        }
     val dragHint = view.dragHint?.trim()?.takeIf(String::isNotEmpty)
-    val chromeTheme = SeatLayerPickerTheme.dark().copy(
-        accent = scope.theme.accent,
-        onAccent = scope.theme.onAccent,
-    )
+    if (title == null && caption == null && badge == null && dragHint == null) return
+    val glass = pickerCaptionGlass()
     Box(modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
                 .padding(
-                    start = 12.dp,
-                    top = 12.dp,
-                    end = 12.dp,
-                    // The runtime keeps its own drag hint in the lowest
-                    // panorama band. Leave that band free unless a custom
-                    // host explicitly opts into drawing the hint natively.
-                    bottom = if (showDragHint) 12.dp else 48.dp,
+                    start = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                    top = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                    end = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                    // The runtime keeps its own close control and drag hint in
+                    // the lowest panorama band. Leave that band free unless a
+                    // host has explicitly taken the hint over.
+                    bottom = if (showDragHint) {
+                        SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp
+                    } else {
+                        SEAT_VIEW_RUNTIME_BAND.dp
+                    },
                 ),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp),
         ) {
             if (title != null || caption != null || badge != null) {
-                Surface(
-                    modifier = Modifier.fillMaxWidth().widthIn(max = 420.dp),
-                    color = chromeTheme.surface.copy(alpha = 0.9f),
-                    contentColor = chromeTheme.onSurface,
-                    border = BorderStroke(1.dp, chromeTheme.divider),
-                    shape = RoundedCornerShape(12.dp),
-                    shadowElevation = 3.dp,
+                PickerGlassSurface(
+                    glass = glass,
+                    shape = RoundedCornerShape(SeatLayerRadiusTokens.CHIP.dp),
+                    modifier = Modifier.fillMaxWidth().widthIn(max = SEAT_VIEW_MAX_WIDTH.dp),
                 ) {
                     Row(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 9.dp),
+                        modifier = Modifier.padding(
+                            horizontal = SeatLayerSizeTokens.IMMERSIVE_NAV_CHIP_PADDING_X.dp,
+                            vertical = SEAT_VIEW_PAD_Y.dp,
+                        ),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Column(Modifier.weight(1f)) {
                             title?.let {
                                 Text(
                                     it,
-                                    fontSize = 12.sp,
+                                    color = glass.ink,
+                                    fontSize = SeatLayerSizeTokens
+                                        .IMMERSIVE_NAV_CHIP_FONT_SIZE.sp,
                                     fontWeight = FontWeight.ExtraBold,
+                                    fontFamily = scope.theme.fontFamily,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
@@ -85,25 +97,32 @@ public fun SeatLayerSeatViewChrome(
                             caption?.let {
                                 Text(
                                     it,
-                                    fontSize = 11.sp,
+                                    color = glass.ink.copy(alpha = SEAT_VIEW_MUTED),
+                                    fontSize = SeatLayerSizeTokens
+                                        .IMMERSIVE_CAPTION_FONT_SIZE.sp,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = chromeTheme.muted,
+                                    fontFamily = scope.theme.fontFamily,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                 )
                             }
                         }
-                        badge?.let { badge ->
+                        badge?.let {
                             Surface(
-                                color = chromeTheme.onSurface.copy(alpha = 0.12f),
-                                contentColor = chromeTheme.onSurface,
-                                shape = RoundedCornerShape(999.dp),
+                                color = glass.ink.copy(alpha = SEAT_VIEW_BADGE_WASH),
+                                contentColor = glass.ink,
+                                shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
                             ) {
                                 Text(
-                                    badge,
-                                    modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
-                                    fontSize = 10.sp,
+                                    it,
+                                    modifier = Modifier.padding(
+                                        horizontal = SEAT_VIEW_BADGE_PAD_X.dp,
+                                        vertical = SEAT_VIEW_BADGE_PAD_Y.dp,
+                                    ),
+                                    color = glass.ink,
+                                    fontSize = SEAT_VIEW_BADGE_FONT.sp,
                                     fontWeight = FontWeight.Bold,
+                                    fontFamily = scope.theme.fontFamily,
                                 )
                             }
                         }
@@ -111,21 +130,17 @@ public fun SeatLayerSeatViewChrome(
                 }
             }
             dragHint?.takeIf { showDragHint }?.let { hint ->
-                Surface(
-                    color = chromeTheme.surface.copy(alpha = 0.82f),
-                    contentColor = chromeTheme.muted,
-                    shape = RoundedCornerShape(999.dp),
-                ) {
-                    Text(
-                        hint,
-                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
+                PickerImmersiveCaption(hint)
             }
         }
     }
 }
+
+private const val SEAT_VIEW_MAX_WIDTH: Float = 420f
+private const val SEAT_VIEW_PAD_Y: Float = 9f
+private const val SEAT_VIEW_RUNTIME_BAND: Float = 48f
+private const val SEAT_VIEW_MUTED: Float = 0.72f
+private const val SEAT_VIEW_BADGE_WASH: Float = 0.12f
+private const val SEAT_VIEW_BADGE_PAD_X: Float = 9f
+private const val SEAT_VIEW_BADGE_PAD_Y: Float = 5f
+private const val SEAT_VIEW_BADGE_FONT: Float = 10f

@@ -339,6 +339,7 @@ internal fun WideSidePanel(builders: SeatLayerPickerBuilders) {
                         )
                     }
                 }
+                SeatLayerPickerSalesClosedStatement(Modifier.padding(horizontal = 12.dp))
                 SeatLayerPickerPart(
                     SeatLayerPickerPart.CheckoutBar,
                     builders[SeatLayerPickerPart.CheckoutBar],
@@ -476,6 +477,25 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
             compact = compact,
         )
     }
+
+    // Every map-level state, in the order one may cover another. Each renders
+    // nothing when its own condition is false.
+    if (!immersive) {
+        SeatLayerPickerSoldOutOverlay()
+        if (scope.options.resolvedExtendHoldPrompt(wide)) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(
+                        start = 14.dp,
+                        end = 14.dp,
+                        bottom = bottomPadding + 70.dp,
+                    ),
+            ) { SeatLayerPickerExtendHoldPrompt() }
+        }
+    }
+    SeatLayerPickerAccessPanel()
+    SeatLayerPickerBookedOverlay()
 
     when (scope.state.phase) {
         SeatLayerPickerPhase.Idle,

@@ -101,7 +101,10 @@ public class SeatLayerPickerVisualEvidenceTest {
     @Test
     public fun holdLapseAndUndoNotices() {
         render(PickerEvidenceScenario.Recovery)
-        composeRule.onNodeWithText("Your hold expired", substring = true).assertIsDisplayed()
+        // The lapse is stated as what happened to the seats, and the offer to
+        // take them back is counted on what the refresh still calls free.
+        composeRule.onNodeWithText("Your seats were released.").assertIsDisplayed()
+        composeRule.onNodeWithText("Select it again").assertIsDisplayed()
         composeRule.onNodeWithText("Undo").assertIsDisplayed()
     }
 
@@ -112,7 +115,9 @@ public class SeatLayerPickerVisualEvidenceTest {
             themeMode = SeatLayerPickerThemeMode.Dark,
         )
         composeRule.onNodeWithContentDescription("Previous seat").assertIsDisplayed()
-        composeRule.onNodeWithText("View from here").assertIsDisplayed()
+        composeRule.onNodeWithText("Open venue 360°").assertIsDisplayed()
+        composeRule.onNodeWithText("Show whole venue").assertIsDisplayed()
+        composeRule.onNodeWithContentDescription("Back to venue").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Next seat").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Recentre on the stage").assertIsDisplayed()
     }
@@ -144,7 +149,8 @@ public class SeatLayerPickerVisualEvidenceTest {
     public fun failureRetryState() {
         render(PickerEvidenceScenario.Error)
         composeRule.onNodeWithText("Choose your seats").assertIsDisplayed()
-        composeRule.onNodeWithText("The seat map didn’t load").assertIsDisplayed()
+        composeRule.onNodeWithText("The seat map didn't load").assertIsDisplayed()
+        composeRule.onNodeWithText("Check your connection and try again.").assertIsDisplayed()
         composeRule.onNodeWithText("Try again").assertIsDisplayed()
     }
 
