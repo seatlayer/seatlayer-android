@@ -63,10 +63,17 @@ straight renames:
 | `holdCountdown` | `showHoldPill` |
 | `attribution` | `showAttribution` |
 
-The remaining two, `dock` and `fit`, have no successor on this class; see
-[Changed defaults](#changed-defaults) below. Two switches are new:
+`dock` has no successor on this class; see
+[Changed defaults](#changed-defaults) below. Three switches are new:
 `showVenue3DChrome` and `showSeatViewChrome`, for the 3D and panorama chrome,
-both on by default.
+both on by default, and `showZoomToFitControl` for the whole-venue disc, which
+takes over from `fit`.
+
+Four switches now read `Boolean?`, where null means "whatever this width
+should do" rather than a fixed answer: `showOverviewControl`,
+`showZoomControls`, `showZoomToFitControl` and `showColorblindControl`. A host
+that stored one of them in a `Boolean` field widens it; `true` and `false`
+still mean exactly what they meant.
 
 ## Renamed: theme, styles, and formatter
 
@@ -107,6 +114,15 @@ composable `logo` slot. All of the new fields have defaults.
 | --- | --- |
 | `SeatLayerPickerDenseRun` | Every ticket is its own cart line; read `SeatLayerPickerCartLine` |
 | `SeatLayerPickerProjections.denseRuns` | `SeatLayerPickerProjections.confirmedCart(items, pending).items` |
+| `SeatLayerPickerZoomControls` | `SeatLayerPickerZoomInButton`, `SeatLayerPickerZoomOutButton` |
+| `SeatLayerPickerUndoNotice` | `SeatLayerPickerToastLayer` |
+
+`SeatLayerPickerZoomControls` drew a fixed pair. The map's control column is
+now assembled from one disc per control, so a host-owned layout places exactly
+the discs it wants and each keeps its own enabled rule.
+`SeatLayerPickerUndoNotice` was one notice with one action; the toast band is
+the single surface for every transient sentence the picker says, undo
+included.
 
 The dense run collapsed structurally equivalent addressed seats into one row.
 It hid the seat a buyer was looking for behind a summary they then had to open,
@@ -123,11 +139,12 @@ no longer controls it and always reads `false`; the switch moved to
 that wants it. The section it named is already on the map, under the buyer's
 thumb.
 
-**The built-in layouts no longer draw a fit control.**
+**The fit control became the whole-venue disc.**
 `SeatLayerPickerChromeOptions.fit` no longer controls anything and always reads
-`false`. The whole-venue control (`showOverviewControl`) does the same job
-without going stale under a pinch. `SeatLayerPickerFitControl` is still public,
-so a host-owned Compose layout that wants the control can place it.
+`false`; `showZoomToFitControl` is the switch, and the disc is on at both
+widths. It is always live, whatever the camera last reported, so a pinch can
+never strand a buyer with no way back to the venue.
+`SeatLayerPickerFitControl` is still public for a host-owned layout.
 
 ## Upgrade checklist
 
@@ -138,8 +155,8 @@ so a host-owned Compose layout that wants the control can place it.
 4. Replace any use of `denseRuns` or `SeatLayerPickerDenseRun`.
 5. If you relied on the section dock bar, set
    `SeatLayerPickerOptions(showDockBar = true)`.
-6. If you relied on the built-in fit control, place `SeatLayerPickerFitControl`
-   in your own layout.
+6. Replace `SeatLayerPickerZoomControls` with the individual zoom buttons, and
+   `SeatLayerPickerUndoNotice` with `SeatLayerPickerToastLayer`.
 7. Confirm the renderer origin `https://cdn.seatlayer.io` is still registered on
    your publishable key; the pinned page moves to
    `seatlayer-js@0.84.1/mobile.html`.
