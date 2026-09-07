@@ -1,5 +1,92 @@
 # Changelog
 
+## 0.4.0
+
+Runtime pin 0.84.1, up from 0.71.5. The public API takes the names every
+SeatLayer buyer SDK shares, and every number and word the native chrome draws
+now comes from one locked design source.
+
+- **The picker reads what a seat actually is.** A seat's accommodations, its
+  wheelchair provision, a restricted or obstructed view, a premium seat and the
+  organizer's own note arrive with the seat and are modelled as notes in one
+  fixed reading order, over the twelve accommodations the runtime reports, on
+  `SeatLayerPickerSelectedSeat.seatNotes()`. The picker also reads the
+  whole-venue and zoom-ceiling camera facts, per-section accessible counts,
+  where a seat is on screen, and the seat-view thumbnail with its distance and
+  how the view was produced. An older runtime simply sends none of it.
+- **Every ticket is its own line in the cart.** The collapsed run the ticket
+  list used to draw hid the seat a buyer was looking for behind a summary they
+  then had to open, and a row they cannot act on directly is not a shorter
+  list.
+- **No section dock bar by default on any width.** The section it named is
+  already on the map, under the buyer's thumb. `showDockBar = true` brings it
+  back for a host that wants it.
+- **The built-in layouts no longer draw a fit control.** The whole-venue
+  control does the same job without going stale under a pinch.
+- **`SeatLayerPickerStyles.scrimColor`** names the wash drawn over the map
+  while a card is up. Unset, it takes the design source's own confirm scrim
+  over the theme's background, so the wash stays in step with a rebranded
+  picker.
+- **The theme's brand mark is a composable slot**, not an image URL the SDK
+  decides the shape of: a mark is a wordmark, a painter or a whole row
+  depending on the brand.
+- **The option and callback surface is the shared one.**
+  `SeatLayerPickerOptions` gains `eventName`, `pricing` (per-category and
+  per-tier price overrides with the money formatter), `showBookedOverlay`,
+  `showDockBar`, `showExtendHoldPrompt`, `seatCardGlass`,
+  `persistColorblindPreference` and `manageSystemOverlays`;
+  `SeatLayerPickerCallbacks` gains `onBooked`, `onSeatConfidence`,
+  `onSectionFocused`, `onSeatSelected`, `onSeatRemoved`, `onSeatViewOpened`,
+  `onHoldExpired`, `onAccessExpired`, `onAccessUnavailable`,
+  `onSelectedObjectUnavailable`, `onSelectionValidityChanged`,
+  `onThemeResolved` and `onContinue`. A host can wire a moment once and not
+  again at the release that starts raising it.
+- **The controller reaches three newer runtime commands**, each gated on the
+  runtime's own command table and a no-op without it: the tapped seat can be
+  marked as the candidate (`picker.setSelectionFocus`), native chrome can tell
+  the map which rectangles it covers (`picker.setBlockedRegions`), and one seat
+  can be brought into the free part of the map (`picker.frameSeat`). It also
+  reads the `seat.retap` event, gains `releasePickerOwnedHold`, `emitHaptic`,
+  `retry`, `setCartSheetDetent`, the seat-card and seat-lift presentation
+  calls, and `supportsAccessNeeds` / `supportsAccessibilityFocus` /
+  `supportsSectionAccessCounts` / `supportsSeatViewThumbnail`.
+- **Tokens, strings and 37 locale dictionaries are generated** from a checked-in
+  design source under `Design/`, locked by a four-key SHA-256 file and shared
+  with the other SeatLayer buyer SDKs. The generated Kotlin is checked in and
+  the release gate re-runs the generators, so a hand-edited constant cannot
+  ship.
+- **The offline JavaScript fixture is gone.** The SDK vendors no JavaScript: it
+  loads the one pinned, immutable hosted runtime page, like every other
+  SeatLayer buyer SDK.
+- The release gate is split. `checkFast` runs on every push — unit and
+  screenshot tests, the design lock, the generators, the public API and raw
+  ABI dumps, hygiene and the source-line limit — and `validateRelease` runs on
+  a tag. `./gradlew validate` is still both. JitPack is no longer configured;
+  Maven Central is the only supported channel.
+
+**Renamed.** The old names are kept as `@Deprecated` forwarders for one
+release and are removed in 0.5.0. See
+[the 0.3.x migration guide](docs/migration-0.4.md) for the full table.
+`SeatLayerPickerOptions.enableVenue3D` becomes `enable3D`; `holdTtlMillis: Int?`
+becomes `holdTtl: Duration?`; all sixteen `SeatLayerPickerChromeOptions` flags
+take their `showX` names; `SeatLayerPickerTheme.onSurface`, `muted` and
+`cornerRadius` become `text`, `mutedText` and `radius`;
+`SeatLayerPickerMoneyFormatter` becomes `SeatLayerMoneyFormatter`; and eleven
+controller methods take their shared names, including `setLimitedViewFilter` →
+`setLimitedViewHidden`, `holdGeneralAdmission` → `setGeneralAdmissionQuantity`,
+`refreshAvailability` → `refreshAccess` and `rejectHandoff` →
+`rejectCheckoutHandoff`. No bridge wire name changed: only the Kotlin names
+moved.
+
+**Breaking.** `SeatLayerPickerDenseRun` and
+`SeatLayerPickerProjections.denseRuns` are removed with the dense ticket list.
+`SeatLayerPickerChromeOptions.dock` and `.fit` no longer control anything: the
+dock bar moved to `SeatLayerPickerOptions.showDockBar` and is off by default on
+every width, and the fit control is no longer drawn by the built-in layouts
+(`SeatLayerPickerFitControl` remains public for a host-owned layout).
+`SeatLayerPickerTheme` requires the new field names when constructed
+positionally.
+
 ## 0.3.5
 
 - Clarifies the Android and Jetpack Compose package names and descriptions on
