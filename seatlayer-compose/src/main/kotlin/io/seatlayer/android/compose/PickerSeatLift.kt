@@ -1,6 +1,7 @@
 package io.seatlayer.android.compose
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -263,9 +264,12 @@ private const val RE_ASK_LATE = 450L
  */
 @Composable
 internal fun Modifier.pickerFadeUnderCard(cardUp: Boolean): Modifier {
+    val reducedMotion = pickerReducedMotion()
     val alpha by animateFloatAsState(
         targetValue = if (cardUp) 0f else 1f,
-        animationSpec = tween(SeatLayerMotionTokens.CROSSFADE),
+        // A buyer who has turned animations off, and a capture, both get the
+        // settled end of the fade rather than a frame from the middle of it.
+        animationSpec = if (reducedMotion) snap() else tween(SeatLayerMotionTokens.CROSSFADE),
         label = "seatlayer-map-controls-fade",
     )
     return this.alpha(alpha).pickerSwallowTouches(cardUp)

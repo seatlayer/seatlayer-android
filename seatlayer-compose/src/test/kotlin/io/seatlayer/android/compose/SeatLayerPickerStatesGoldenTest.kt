@@ -133,7 +133,12 @@ public class SeatLayerPickerStatesGoldenTest {
                 explicitTheme = scope.theme,
                 branding = null,
             ) {
-                CompositionLocalProvider(LocalSeatLayerPickerScope provides scope) {
+                CompositionLocalProvider(
+                    LocalSeatLayerPickerScope provides scope,
+                    // Entrances settle at once: a reference image must not
+                    // depend on how many frames the clock was advanced by.
+                    LocalSeatLayerPickerCapture provides true,
+                ) {
                     Box(Modifier.fillMaxSize().background(scope.theme.background)) {
                         SeatLayerPickerAccessibilityFiltersForEvidence(
                             availability = SeatLayerPickerAccessibilityAvailability(
@@ -162,7 +167,12 @@ public class SeatLayerPickerStatesGoldenTest {
                 explicitTheme = scope.theme,
                 branding = null,
             ) {
-                CompositionLocalProvider(LocalSeatLayerPickerScope provides scope) {
+                CompositionLocalProvider(
+                    LocalSeatLayerPickerScope provides scope,
+                    // Entrances settle at once: a reference image must not
+                    // depend on how many frames the clock was advanced by.
+                    LocalSeatLayerPickerCapture provides true,
+                ) {
                     Box(Modifier.fillMaxSize().background(scope.theme.background)) { content() }
                 }
             }

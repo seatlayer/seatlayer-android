@@ -49,6 +49,24 @@ public class PickerMapChromeUiTest {
     public val composeRule = createComposeRule()
 
     @Test
+    public fun aCaptureAsksEveryEntranceForItsSettledFrame() {
+        // The one accessor every animated surface already consults. A capture
+        // says so once, and nothing downstream has to know it is being
+        // photographed — nor does any golden have to name a frame count.
+        var underCapture: Boolean? = null
+        var ordinary: Boolean? = null
+        composeRule.setContent {
+            CompositionLocalProvider(LocalSeatLayerPickerCapture provides true) {
+                underCapture = pickerReducedMotion()
+            }
+            ordinary = pickerReducedMotion()
+        }
+        composeRule.waitForIdle()
+        assertEquals(true, underCapture)
+        assertEquals(false, ordinary)
+    }
+
+    @Test
     public fun everyControlOnTheMapReportsItsRectangleInTheMapsOwnFrame() {
         val registry = PickerBlockedRegionRegistry()
         composeRule.setContent {

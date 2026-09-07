@@ -87,6 +87,9 @@ public class SeatLayerPickerChromeGoldenTest {
                     // Pinned so the hold pill reads the same eight minutes in
                     // every capture, whatever the composition cost.
                     LocalSeatLayerPickerClock provides { SEATLAYER_EVIDENCE_NOW_MILLIS.toLong() },
+                    // Entrances settle at once: a reference image must not
+                    // depend on how many frames the clock was advanced by.
+                    LocalSeatLayerPickerCapture provides true,
                 ) {
                     Box(Modifier.fillMaxSize().background(scope.theme.background)) {
                         with(scope) {
