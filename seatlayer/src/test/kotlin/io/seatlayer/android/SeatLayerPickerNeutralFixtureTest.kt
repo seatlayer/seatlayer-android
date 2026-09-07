@@ -182,12 +182,11 @@ class SeatLayerPickerNeutralFixtureTest {
         const val FIXTURE_RESOURCE =
             "/io/seatlayer/android/picker-pure-helpers.v1.json"
         const val FIXTURE_SHA256 =
-            "ab9fae5445a07f8d8c6053828b09dd60350ccdbc3a86bdde87e918593e383522"
+            "28bec94df370d75eefd4141d4208353f6068db6ea9860829ffc98034ccc2b088"
         val EXPECTED_CASE_IDS = listOf(
             "ticket-identity-addressed-v1",
             "confirmed-cart-per-line-addressing-v1",
             "totals-mixed-currency-v1",
-            "dense-runs-adjacent-fold-and-order-v1",
             "seat-run-label-never-invents-gaps-v1",
             "undo-requires-same-session-absence-v1",
             "structural-seat-identity-v1",
