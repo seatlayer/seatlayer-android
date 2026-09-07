@@ -37,8 +37,10 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -320,7 +322,11 @@ private fun PickerQuantityStepper(
             )
             Text(
                 text = value.toString(),
-                modifier = Modifier.weight(1f),
+                // The number the two keys move, said when it moves: the buyer
+                // presses a key, not the figure between them.
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics { liveRegion = LiveRegionMode.Polite },
                 color = theme.text,
                 fontSize = SeatLayerTypeTokens.BEST_SEATS_SELECT_SIZE.sp,
                 fontWeight = FontWeight(BestSeatsLiterals.KEY_GLYPH_WEIGHT),

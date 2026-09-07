@@ -18,9 +18,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -76,9 +78,24 @@ public fun SeatLayerDockBar(
                 color = dotColor,
             ) { }
             Spacer(Modifier.width(DOCK_DOT_GAP))
+            // Where the buyer is and how much of it is left, as one sentence
+            // that speaks when it changes: the dock re-writes itself as the
+            // camera moves, and nobody presses it to find out.
+            val spokenSection = buildString {
+                append(focused.displayLabel ?: focused.label)
+                focused.seatsLeft?.let {
+                    append(", ")
+                    append(scope.strings.seatsLeft(it))
+                }
+            }
             Text(
                 focused.displayLabel ?: focused.label,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .semantics {
+                        liveRegion = LiveRegionMode.Polite
+                        contentDescription = spokenSection
+                    },
                 fontSize = SeatLayerSizeTokens.DOCK_NAME_FONT_SIZE.sp,
                 fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_SECTION_WEIGHT),
                 maxLines = 1,
@@ -87,6 +104,8 @@ public fun SeatLayerDockBar(
             focused.seatsLeft?.let { count ->
                 Text(
                     " ·  ${scope.strings.seatsLeft(count)}",
+                    // Already spoken by the name beside it.
+                    modifier = Modifier.clearAndSetSemantics { },
                     color = scope.theme.mutedText,
                     fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
                     fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_COUNT_WEIGHT),

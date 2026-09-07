@@ -164,9 +164,15 @@ public fun SeatLayerPickerExtendHoldPrompt(
 
     val coroutineScope = rememberCoroutineScope()
     val clock = "%d:%02d".format(remaining / 60_000L, remaining / 1_000L % 60L)
+    // The prompt arrives unasked, so it says so — ONCE. Its own countdown is
+    // frozen at the moment it appeared: a live region fed a running clock
+    // speaks every second, and the countdown belongs to the hold pill, which
+    // announces at the minute and through the last minute (§4.10).
+    val arrival = remember(expiryMillis) { clock }
     Surface(
         modifier = modifier.semantics(mergeDescendants = false) {
             liveRegion = LiveRegionMode.Polite
+            contentDescription = scope.strings.seatsHeldForNeedMoreTime(arrival)
         },
         color = scope.theme.surface,
         contentColor = scope.theme.text,

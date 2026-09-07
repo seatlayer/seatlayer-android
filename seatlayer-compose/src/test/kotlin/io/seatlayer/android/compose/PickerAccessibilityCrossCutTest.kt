@@ -150,6 +150,116 @@ public class PickerAccessibilityCrossCutTest {
         )
     }
 
+    @Test
+    public fun theFootTotalSaysItselfWhenItChanges() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Confirmation, LIGHT)
+        render(scope)
+        assertTrue(
+            "the foot's total line is one of the surfaces that speak unasked: " +
+                liveRegionSentences(),
+            liveRegionSentences().any { it.contains("USD") },
+        )
+    }
+
+    @Test
+    public fun theSectionDockSaysWhereTheBuyerIsAndWhatIsLeft() {
+        val scope = pickerEvidenceScope(
+            PickerEvidenceScenario.SectionFocus,
+            LIGHT,
+            SeatLayerPickerOptions(showDockBar = true),
+        )
+        render(scope)
+        assertTrue(
+            "the dock re-writes itself as the camera moves: " + liveRegionSentences(),
+            liveRegionSentences().any { it.startsWith("Section 102") },
+        )
+    }
+
+    @Test
+    public fun theHoldCountdownIsLive() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Cart, LIGHT)
+        render(scope)
+        assertTrue(
+            "the hold pill speaks the time left: " + liveRegionSentences(),
+            liveRegionSentences().any { it.contains("8") },
+        )
+    }
+
+    @Test
+    public fun anArrivingBuyerStateSaysSoWithoutBeingAsked() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Error, LIGHT)
+        render(scope)
+        assertTrue(
+            "a state that arrives unasked says so: " + liveRegionSentences(),
+            liveRegionSentences().isNotEmpty(),
+        )
+    }
+
+    @Test
+    public fun exactlyOneTransientRegionCarriesThePickersSpeech() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Confirmation, LIGHT)
+        withRemovalToast(scope)
+        render(scope)
+        val said = liveRegionSentences()
+        val transient = said.filter { it.contains(scope.strings.seatRemoved) }
+        assertTrue("the toast band owns transient speech: $said", transient.size == 1)
+    }
+
+    @Test
+    public fun theCountdownSpeaksOnTheMinuteAndThroughTheLastMinute() {
+        val strings = SeatLayerPickerStrings.localized("en")
+        for (second in 1..59) {
+            assertTrue(
+                "the last minute is owed every second, and $second was silent",
+                seatLayerHoldAnnouncement(second.toLong(), strings) != null,
+            )
+        }
+        for (minute in 1..14) {
+            assertTrue(
+                "the $minute minute mark must be said",
+                seatLayerHoldAnnouncement(minute * 60L, strings) != null,
+            )
+        }
+        val quiet = (61L..899L).filter { it % 60L != 0L }
+        assertTrue(
+            "a live region fed a running clock speaks once a second for a " +
+                "quarter of an hour",
+            quiet.all { seatLayerHoldAnnouncement(it, strings) == null },
+        )
+        assertFalse(
+            "an expired hold has no time left to read",
+            seatLayerHoldAnnouncement(0L, strings) != null,
+        )
+    }
+
+    /** What every live region in the rendered picker currently says. */
+    private fun liveRegionSentences(): List<String> {
+        val said = mutableListOf<String>()
+        fun walk(node: SemanticsNode) {
+            if (node.config.contains(SemanticsProperties.LiveRegion)) {
+                val own = node.config
+                    .getOrElseNullable(SemanticsProperties.ContentDescription) { null }
+                    ?.joinToString(" ")
+                said += own ?: spokenText(node)
+            }
+            node.children.forEach(::walk)
+        }
+        walk(composeRule.onRoot(useUnmergedTree = true).fetchSemanticsNode())
+        return said
+    }
+
+    /** Everything written inside [node], in tree order. */
+    private fun spokenText(node: SemanticsNode): String {
+        val parts = mutableListOf<String>()
+        fun walk(current: SemanticsNode) {
+            current.config.getOrElseNullable(SemanticsProperties.Text) { null }
+                ?.forEach { parts += it.text }
+            current.children.forEach(::walk)
+        }
+        walk(node)
+        return parts.joinToString(" ")
+    }
+
     /** Every traversal index between [node] and the root, nearest first. */
     private fun orderPath(node: SemanticsNode): List<Float> {
         val path = mutableListOf<Float>()
@@ -240,18 +350,24 @@ public class PickerAccessibilityCrossCutTest {
 
     private fun render(scope: SeatLayerPickerScope) {
         composeRule.setContent {
-            SeatLayerPickerThemeProvider(
-                mode = scope.themeMode,
-                explicitTheme = scope.theme,
-                branding = scope.state.snapshot?.branding,
+            CompositionLocalProvider(
+                // Pinned, so the hold pill reads the same eight minutes
+                // however long the composition took.
+                LocalSeatLayerPickerClock provides { SEATLAYER_EVIDENCE_NOW_MILLIS.toLong() },
             ) {
-                CompositionLocalProvider(LocalSeatLayerPickerScope provides scope) {
-                    Box(Modifier.fillMaxSize().background(scope.theme.background)) {
-                        with(scope) {
-                            SeatLayerReadyMadePicker(
-                                modifier = Modifier.fillMaxSize(),
-                                builders = SeatLayerPickerBuilders(map = { _, _ -> }),
-                            )
+                SeatLayerPickerThemeProvider(
+                    mode = scope.themeMode,
+                    explicitTheme = scope.theme,
+                    branding = scope.state.snapshot?.branding,
+                ) {
+                    CompositionLocalProvider(LocalSeatLayerPickerScope provides scope) {
+                        Box(Modifier.fillMaxSize().background(scope.theme.background)) {
+                            with(scope) {
+                                SeatLayerReadyMadePicker(
+                                    modifier = Modifier.fillMaxSize(),
+                                    builders = SeatLayerPickerBuilders(map = { _, _ -> }),
+                                )
+                            }
                         }
                     }
                 }
