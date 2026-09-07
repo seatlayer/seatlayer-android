@@ -1263,7 +1263,7 @@ public final class io.seatlayer.android.SeatLayerConfiguration {
     descriptor: (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Integer;Ljava/lang/String;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/lang/String;ZLio/seatlayer/android/BuyerAccessToken;Lio/seatlayer/android/BuyerAccessTokenProvider;Ljava/util/List;Ljava/util/List;Ljava/lang/Integer;Ljava/util/List;JJLjava/util/Map;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 public final class io.seatlayer.android.SeatLayerConfigurationKt {
-  public static final java.lang.String SEATLAYER_ANDROID_VERSION = "0.3.5";
+  public static final java.lang.String SEATLAYER_ANDROID_VERSION = "0.4.0";
     descriptor: Ljava/lang/String;
   public static final java.lang.String SEATLAYER_HOSTED_WEB_VERSION = "0.84.1";
     descriptor: Ljava/lang/String;
@@ -3401,6 +3401,10 @@ public final class io.seatlayer.android.SeatLayerPickerPresentationState {
     descriptor: ()Lio/seatlayer/android/SeatLayerPickerSheetDetent;
   public final io.seatlayer.android.SeatLayerPickerConfirmedCartProjection confirmedCart(io.seatlayer.android.SeatLayerPickerSnapshot);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerSnapshot;)Lio/seatlayer/android/SeatLayerPickerConfirmedCartProjection;
+  public final boolean getCheckoutHoldsTheCart();
+    descriptor: ()Z
+  public final boolean canMutateCart(io.seatlayer.android.SeatLayerPickerSnapshot);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerSnapshot;)Z
   public final boolean canCheckout(io.seatlayer.android.SeatLayerPickerSnapshot, boolean, boolean);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerSnapshot;ZZ)Z
   public final java.lang.String nextBackStep-n-BVXV0(io.seatlayer.android.SeatLayerPickerSnapshot, io.seatlayer.android.SeatLayerSeatView);
@@ -3503,6 +3507,10 @@ public final class io.seatlayer.android.SeatLayerPickerProjections {
     descriptor: Lio/seatlayer/android/SeatLayerPickerProjections;
   public final io.seatlayer.android.SeatLayerPickerTicketIdentity ticketIdentity(io.seatlayer.android.SeatLayerPickerCartLine);
     descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;)Lio/seatlayer/android/SeatLayerPickerTicketIdentity;
+  public final java.lang.String cartLineKey(io.seatlayer.android.SeatLayerPickerCartLine, int);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;I)Ljava/lang/String;
+  public final boolean sameTicket(io.seatlayer.android.SeatLayerPickerCartLine, io.seatlayer.android.SeatLayerPickerCartLine);
+    descriptor: (Lio/seatlayer/android/SeatLayerPickerCartLine;Lio/seatlayer/android/SeatLayerPickerCartLine;)Z
   public final io.seatlayer.android.SeatLayerPickerConfirmedCartProjection confirmedCart(java.util.List<io.seatlayer.android.SeatLayerPickerCartLine>, io.seatlayer.android.SeatLayerPickerSelectedSeat);
     descriptor: (Ljava/util/List;Lio/seatlayer/android/SeatLayerPickerSelectedSeat;)Lio/seatlayer/android/SeatLayerPickerConfirmedCartProjection;
   public final io.seatlayer.android.SeatLayerPickerCartTotals totals(java.util.List<io.seatlayer.android.SeatLayerPickerCartLine>);
