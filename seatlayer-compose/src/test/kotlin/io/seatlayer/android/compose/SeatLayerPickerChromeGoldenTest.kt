@@ -82,7 +82,12 @@ public class SeatLayerPickerChromeGoldenTest {
                 explicitTheme = scope.theme,
                 branding = scope.state.snapshot?.branding,
             ) {
-                CompositionLocalProvider(LocalSeatLayerPickerScope provides scope) {
+                CompositionLocalProvider(
+                    LocalSeatLayerPickerScope provides scope,
+                    // Pinned so the hold pill reads the same eight minutes in
+                    // every capture, whatever the composition cost.
+                    LocalSeatLayerPickerClock provides { SEATLAYER_EVIDENCE_NOW_MILLIS.toLong() },
+                ) {
                     Box(Modifier.fillMaxSize().background(scope.theme.background)) {
                         with(scope) {
                             SeatLayerReadyMadePicker(
