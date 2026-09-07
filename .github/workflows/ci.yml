@@ -3,8 +3,10 @@ name: CI
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -14,7 +16,11 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  validate:
+  # Every push and pull request. Unit and Robolectric/Roborazzi screenshot
+  # tests, the design source lock, both generators in --check mode, the public
+  # API and raw ABI dumps, the hygiene script, and the source-line limit.
+  check:
+    name: check
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -26,11 +32,26 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: "22"
-      - run: node --version
       - uses: gradle/actions/setup-gradle@v6
-      # `validate` is the whole release gate in one job. Keep an eye on the
-      # elapsed time reported here: the job's own limit is 20 minutes, so when
-      # the gate approaches it, split it into a per-push `check` (unit tests,
-      # design and hygiene checks, API dumps) and a tag-only `validateRelease`
-      # (consumer smoke builds, benchmark assembly, lint).
-      - run: ./gradlew validate
+      - run: ./gradlew checkFast
+
+  # Tags and manual runs only. Lint, both Maven publications, the benchmark and
+  # sample assemblies, and the external consumer builds on the oldest and
+  # current supported toolchains. Together with `check` this is `validate`, the
+  # gate the publish workflow runs in full before it deploys to Maven Central.
+  release-gate:
+    name: validateRelease
+    if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew validateRelease

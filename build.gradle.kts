@@ -158,6 +158,25 @@ val verifyOldestExternalConsumers = tasks.register<Exec>("verifyOldestExternalCo
     commandLine("bash", "scripts/verify-oldest-external-consumers.sh")
 }
 
+val verifyPickerGenerators = tasks.register<Exec>("verifyPickerGenerators") {
+    group = "verification"
+    description = "Re-runs the design generators in --check mode; fails on a stale generated file."
+    inputs.files(
+        fileTree("tool") { include("*.mjs") },
+        fileTree("Design") { include("*.json", "*.md") },
+        fileTree("seatlayer-compose/src/main/kotlin/io/seatlayer/android/compose") {
+            include("*.g.kt")
+        },
+    )
+    outputs.upToDateWhen { false }
+    commandLine(
+        "bash",
+        "-c",
+        "node tool/generate-picker-tokens.mjs --check && " +
+            "node tool/generate-picker-locales.mjs --check",
+    )
+}
+
 val verifyPublicRepositoryHygiene = tasks.register<Exec>("verifyPublicRepositoryHygiene") {
     group = "verification"
     description = "Rejects internal process artifacts, unapproved media, local paths, and credentials."
@@ -166,21 +185,49 @@ val verifyPublicRepositoryHygiene = tasks.register<Exec>("verifyPublicRepository
     commandLine("bash", "scripts/check-public-repository.sh")
 }
 
-tasks.register("validate") {
+// The release gate is split so a push does not pay for the whole thing.
+//
+// `checkFast` is what every push and pull request runs: unit and screenshot
+// tests, the design lock, the generators in --check mode, the public API dumps, the
+// hygiene script and the source-line limit. It answers "is this change
+// correct?" and it is the lane that must stay well inside a CI job's time. It
+// is deliberately not called `check`: an unqualified `./gradlew check` would
+// also match every subproject's own `check`, and AGP hangs lint off that.
+//
+// `validateRelease` is what a tag runs: lint, both Maven publications, the
+// benchmark and sample assemblies, and the external consumer builds on both
+// supported toolchains. It answers "does this release ship?" — the questions
+// that only matter when an artifact is actually going out, and the ones that
+// cost the most minutes.
+//
+// `validate` remains the union of the two, so every task that was in the gate
+// before the split is still in it and one command still runs everything.
+val fastCheck = tasks.register("checkFast") {
     group = "verification"
-    description = "Builds, tests, lints, and validates both SDK artifacts and the sample app."
+    description = "Correctness gate for every push: tests, design lock, API dumps, hygiene."
     dependsOn(
         ":seatlayer:testDebugUnitTest",
+        ":seatlayer-compose:testDebugUnitTest",
+        ":seatlayer-compose:verifyRoborazziDebug",
+        ":seatlayer-compose:verifyPickerDesign",
+        verifyPickerGenerators,
+        verifyPublicRepositoryHygiene,
+        verifyKotlinSourceLimits,
+        verifyPublicApi,
+    )
+}
+
+val validateRelease = tasks.register("validateRelease") {
+    group = "verification"
+    description = "Release gate: lint, publications, benchmark and sample builds, consumer smoke."
+    dependsOn(
         ":seatlayer:lintRelease",
         ":seatlayer:assembleRelease",
         ":seatlayer:generatePomFileForMavenPublication",
-        ":seatlayer-compose:testDebugUnitTest",
-        ":seatlayer-compose:verifyRoborazziDebug",
         ":seatlayer-compose:lintRelease",
         ":seatlayer-compose:assembleRelease",
         ":seatlayer-compose:assembleDebugAndroidTest",
         ":seatlayer-compose:generatePomFileForMavenPublication",
-        ":seatlayer-compose:verifyPickerDesign",
         ":benchmark:assembleBenchmark",
         ":sample:lintRelease",
         ":sample:assembleRelease",
@@ -188,8 +235,11 @@ tasks.register("validate") {
         verifyPublicationMetadata,
         verifyExternalConsumers,
         verifyOldestExternalConsumers,
-        verifyPublicRepositoryHygiene,
-        verifyKotlinSourceLimits,
-        verifyPublicApi,
     )
+}
+
+tasks.register("validate") {
+    group = "verification"
+    description = "Builds, tests, lints, and validates both SDK artifacts and the sample app."
+    dependsOn(fastCheck, validateRelease)
 }
