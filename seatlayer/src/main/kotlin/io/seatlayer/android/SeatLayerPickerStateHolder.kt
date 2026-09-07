@@ -31,6 +31,7 @@ public class SeatLayerPickerStateHolder(
         extraBufferCapacity = 8,
     )
     private val mutableReloadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    private val mutableHoldExpiries = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private val answeredSeatIdentities = linkedSetOf<String>()
     private var presentationSessionId: String? = null
 
@@ -54,6 +55,15 @@ public class SeatLayerPickerStateHolder(
 
     /** Requests to load the map again after a failure. */
     public val reloadRequests: SharedFlow<Unit> = mutableReloadRequests.asSharedFlow()
+
+    /**
+     * The runtime's own expiry signal, once per expiry.
+     *
+     * A snapshot only shows a hold going inactive, which is also what a buyer
+     * releasing their seats deliberately looks like, and what a sale looks
+     * like. Only this event says the time ran out.
+     */
+    public val holdExpiries: SharedFlow<Unit> = mutableHoldExpiries.asSharedFlow()
     public val controller: SeatLayerPickerController = SeatLayerPickerController(this)
 
     public suspend fun close() {
@@ -164,6 +174,7 @@ public class SeatLayerPickerStateHolder(
     /** An expiry the buyer was told about; a hold that just leaves is a sale. */
     internal fun acceptHoldExpired() {
         holdExpiredReported = true
+        mutableHoldExpiries.tryEmit(Unit)
     }
 
     internal fun acceptSeatView(value: JsonElement?) {
