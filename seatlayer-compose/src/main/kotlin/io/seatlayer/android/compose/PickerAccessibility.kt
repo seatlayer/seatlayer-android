@@ -90,6 +90,16 @@ internal fun Modifier.pickerReadingOrder(order: Float): Modifier = semantics {
 }
 
 /**
+ * Declares this subtree the group its ordered children are ordered within.
+ *
+ * The composition root and each rung that holds more than one surface need it:
+ * a traversal index means nothing without a group to be an index into.
+ */
+internal fun Modifier.pickerReadingOrderGroup(): Modifier = semantics {
+    isTraversalGroup = true
+}
+
+/**
  * Hides this subtree from assistive technology while [hidden].
  *
  * Modality is a property of the layout parent, not of the surface that took the

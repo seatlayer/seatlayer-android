@@ -200,9 +200,14 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
         }
         if (wide) {
             val coroutineScope = rememberCoroutineScope()
-            Column(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().pickerReadingOrderGroup()) {
                 if (!panorama) {
-                    Box(Modifier.fillMaxWidth().pickerHiddenFromAccessibility(covered)) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.HEADER)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
                         PickerHeader(
                             builders = builders,
                             onClose = callbacks.onClose,
@@ -211,11 +216,17 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                         )
                     }
                 }
-                Row(Modifier.weight(1f).fillMaxWidth()) {
-                    Box(Modifier.weight(1f).fillMaxHeight()) {
+                Row(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP),
+                ) {
+                    Box(Modifier.weight(1f).fillMaxHeight().pickerReadingOrderGroup()) {
                         Box(
                             Modifier
                                 .matchParentSize()
+                                .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP)
                                 .pickerHiddenFromAccessibility(covered),
                         ) {
                             movableMap(Modifier.fillMaxSize(), reloadGeneration)
@@ -230,14 +241,23 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                             onRetry = { reloadGeneration += 1 },
                         )
                     }
-                    WideSidePanel(builders)
+                    WideSidePanel(
+                        builders = builders,
+                        modifier = Modifier
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.SHEET),
+                    )
                 }
             }
         } else {
             val coroutineScope = rememberCoroutineScope()
-            Column(Modifier.fillMaxSize()) {
+            Column(Modifier.fillMaxSize().pickerReadingOrderGroup()) {
                 if (!panorama) {
-                    Box(Modifier.fillMaxWidth().pickerHiddenFromAccessibility(covered)) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.HEADER)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
                         PickerHeader(
                             builders = builders,
                             onClose = callbacks.onClose,
@@ -251,17 +271,28 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                     // COLUMN with the map: the map surface begins and ends at
                     // their edges, so nothing reads through the rail and the
                     // rail is not part of the band the runtime frames inside.
-                    Box(Modifier.fillMaxWidth().pickerHiddenFromAccessibility(covered)) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.RAIL)
+                            .pickerHiddenFromAccessibility(covered),
+                    ) {
                         SeatLayerPickerPart(
                             SeatLayerPickerPart.Legend,
                             builders[SeatLayerPickerPart.Legend],
                         ) { SeatLayerPriceLegend(compact = true) }
                     }
                 }
-                Box(Modifier.weight(1f).fillMaxWidth()) {
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP),
+                ) {
                     Box(
                         Modifier
                             .matchParentSize()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP)
                             .pickerHiddenFromAccessibility(covered),
                     ) {
                         movableMap(Modifier.fillMaxSize(), reloadGeneration)
@@ -286,7 +317,13 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                     state.isReady &&
                     !SeatLayerPickerProjections.isProvenEmpty(state.snapshot)
                 ) {
-                    PickerCart(builders, compact = true)
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .pickerReadingOrder(SeatLayerPickerReadingOrder.SHEET),
+                    ) {
+                        PickerCart(builders, compact = true)
+                    }
                 }
             }
         }

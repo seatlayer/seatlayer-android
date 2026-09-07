@@ -10,6 +10,7 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.seatlayer.android.SeatLayerPickerRemovalPhase
 import io.seatlayer.android.SeatLayerPickerRemovalUndo
@@ -87,6 +88,110 @@ public class PickerAccessibilityCrossCutTest {
             "the open sheet is a decision surface too",
             hiddenFromAccessibility(node(text = "Fixture Arena")),
         )
+    }
+
+    @Test
+    public fun everySurfaceOverTheMapDeclaresItsPlaceInTheOneOrder() {
+        render(pickerEvidenceScope(PickerEvidenceScenario.Confirmation, LIGHT))
+        val partial = partiallyOrderedGroups(
+            composeRule.onRoot(useUnmergedTree = true).fetchSemanticsNode(),
+        )
+        assertTrue(
+            "a group with some ordered members falls back to geometry: " +
+                partial.joinToString(),
+            partial.isEmpty(),
+        )
+    }
+
+    @Test
+    public fun theOrderIsCompleteWithTheSheetOpenToo() {
+        render(pickerEvidenceScope(PickerEvidenceScenario.Cart, LIGHT))
+        val partial = partiallyOrderedGroups(
+            composeRule.onRoot(useUnmergedTree = true).fetchSemanticsNode(),
+        )
+        assertTrue(partial.joinToString(), partial.isEmpty())
+    }
+
+    @Test
+    public fun theOrderIsCompleteOnAnOrdinaryPicker() {
+        render(pickerEvidenceScope(PickerEvidenceScenario.Overview, LIGHT))
+        val partial = partiallyOrderedGroups(
+            composeRule.onRoot(useUnmergedTree = true).fetchSemanticsNode(),
+        )
+        assertTrue(partial.joinToString(), partial.isEmpty())
+    }
+
+    @Test
+    public fun theOrderIsTheBuyersOwn() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Confirmation, LIGHT)
+        render(scope)
+        assertTrue(
+            "the header is read first",
+            SeatLayerPickerReadingOrder.HEADER in orderPath(node(text = "Fixture Arena")),
+        )
+        assertTrue(
+            "the prices are read after the header",
+            SeatLayerPickerReadingOrder.RAIL in
+                orderPath(described(scope.strings.allPrices)),
+        )
+        assertTrue(
+            "the map's controls are read on the map's own rung",
+            SeatLayerPickerReadingOrder.MAP_CHROME in
+                orderPath(described(scope.strings.zoomIn)),
+        )
+        assertTrue(
+            "the card is read where a prompt is read",
+            SeatLayerPickerReadingOrder.PROMPT in orderPath(node(text = scope.strings.addSeat)),
+        )
+        assertTrue(
+            "the cart is read last",
+            SeatLayerPickerReadingOrder.SHEET in
+                orderPath(node(text = scope.strings.holdAndCheckout)),
+        )
+    }
+
+    /** Every traversal index between [node] and the root, nearest first. */
+    private fun orderPath(node: SemanticsNode): List<Float> {
+        val path = mutableListOf<Float>()
+        var walk: SemanticsNode? = node
+        while (walk != null) {
+            walk.config.getOrElseNullable(SemanticsProperties.TraversalIndex) { null }
+                ?.let(path::add)
+            walk = walk.parent
+        }
+        return path
+    }
+
+    /**
+     * Parents whose children are only PARTLY ordered.
+     *
+     * Compose falls back to geometry for a sibling with no index, so one
+     * unordered surface in an ordered group re-orders the whole group.
+     */
+    private fun partiallyOrderedGroups(root: SemanticsNode): List<String> {
+        val broken = mutableListOf<String>()
+        fun walk(node: SemanticsNode) {
+            val speaking = node.children.filter(::speaks)
+            val ordered = speaking.filter {
+                it.config.contains(SemanticsProperties.TraversalIndex)
+            }
+            if (ordered.isNotEmpty() && ordered.size != speaking.size) {
+                broken += "node ${node.id} at ${node.positionInRoot}: " +
+                    speaking.filterNot { it in ordered }.joinToString { "#" + it.id }
+            }
+            node.children.forEach(::walk)
+        }
+        walk(root)
+        return broken
+    }
+
+    /** Whether this subtree has anything to say to a screen reader. */
+    private fun speaks(node: SemanticsNode): Boolean {
+        val config = node.config
+        val own = config.contains(SemanticsProperties.ContentDescription) ||
+            config.contains(SemanticsProperties.Text) ||
+            config.contains(SemanticsProperties.Role)
+        return own || node.children.any(::speaks)
     }
 
     private fun node(text: String): SemanticsNode =
