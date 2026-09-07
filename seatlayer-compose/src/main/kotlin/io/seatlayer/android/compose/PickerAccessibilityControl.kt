@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,12 +21,9 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.toggleableState
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.seatlayer.android.SeatLayerPickerAccessNeed
 
 @Composable
 internal fun AccessibilityLauncher(
@@ -83,104 +78,6 @@ internal fun AccessibilityLauncher(
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-internal fun AccessibilityNeedChip(
-    need: SeatLayerPickerAccessNeed,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier
-            .heightIn(min = 48.dp)
-            .semantics {
-                role = Role.Checkbox
-                toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
-            },
-        color = if (selected) scope.theme.accent.copy(alpha = 0.12f) else Color.Transparent,
-        contentColor = if (selected) scope.theme.accent else scope.theme.text,
-        border = BorderStroke(
-            if (selected) 1.5.dp else 1.dp,
-            if (selected) scope.theme.accent else scope.theme.divider,
-        ),
-        shape = RoundedCornerShape(999.dp),
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (selected) {
-                SeatLayerPickerIcon(
-                    SeatLayerPickerGlyph.Check,
-                    scope.theme.accent,
-                    Modifier.size(15.dp).clearAndSetSemantics { },
-                )
-                Spacer(Modifier.size(6.dp))
-            }
-            Text(
-                needLabel(need),
-                color = if (enabled) {
-                    if (selected) scope.theme.accent else scope.theme.text
-                } else {
-                    scope.theme.mutedText.copy(alpha = 0.6f)
-                },
-                fontWeight = FontWeight.SemiBold,
-            )
-        }
-    }
-}
-
-private fun needLabel(need: SeatLayerPickerAccessNeed): String =
-    need.key.replace('-', ' ').replace('_', ' ')
-        .split(' ')
-        .filter(String::isNotBlank)
-        .joinToString(" ") { word -> word.replaceFirstChar(Char::uppercase) } +
-        " · ${need.count}"
-
-@Composable
-internal fun AccessibilityToggleOption(
-    label: String,
-    selected: Boolean,
-    enabled: Boolean,
-    onClick: () -> Unit,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 52.dp)
-            .semantics {
-                role = Role.Switch
-                toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
-            },
-        color = Color.Transparent,
-        contentColor = scope.theme.text,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                label,
-                modifier = Modifier.weight(1f),
-                color = if (enabled) scope.theme.text else scope.theme.mutedText,
-                fontWeight = FontWeight.Medium,
-            )
-            Switch(
-                checked = selected,
-                onCheckedChange = null,
-                enabled = enabled,
-                modifier = Modifier.clearAndSetSemantics { },
-            )
         }
     }
 }

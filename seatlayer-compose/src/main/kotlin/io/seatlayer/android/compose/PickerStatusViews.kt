@@ -54,6 +54,18 @@ import androidx.compose.ui.unit.dp
 import io.seatlayer.android.SeatLayerPickerPhase
 import kotlinx.coroutines.launch
 
+/**
+ * Whether motion may play at all on this device.
+ *
+ * One accessor decides for every surface, so none of them can forget: a
+ * platform that has turned animations off gets the settled state directly,
+ * and anything sequenced behind a skipped animation runs immediately.
+ */
+@Composable
+internal fun seatLayerPickerMotionEnabled(): Boolean = remember {
+    Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
+}
+
 @Composable
 public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
@@ -167,9 +179,7 @@ private fun VenueLoadingSilhouette(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    val animationsEnabled = remember {
-        Build.VERSION.SDK_INT < 26 || ValueAnimator.areAnimatorsEnabled()
-    }
+    val animationsEnabled = seatLayerPickerMotionEnabled()
     val transition = rememberInfiniteTransition(label = "seatlayer-venue-loading")
     val sweep by transition.animateFloat(
         initialValue = 0.45f,

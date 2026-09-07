@@ -100,17 +100,6 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
             .assertHasClickAction()
             .assertIsOn()
             .assertHeightIsAtLeast(48.dp)
-        composeRule.onNodeWithContentDescription("Accessibility and colour options")
-            .performClick()
-        composeRule.mainClock.advanceTimeBy(1_000)
-        composeRule.waitForIdle()
-        composeRule.onNodeWithText("Wheelchair · 8")
-            .assertHasClickAction()
-            .assertIsOn()
-            .assertHeightIsAtLeast(48.dp)
-        composeRule.onNodeWithText("Aisle Seat · 0")
-            .assertIsNotEnabled()
-            .assertHeightIsAtLeast(48.dp)
         composeRule.onNodeWithContentDescription("Zoom in")
             .assertHasClickAction()
             .assertWidthIsAtLeast(48.dp)
@@ -128,6 +117,21 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
 
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
         composeRule.onNodeWithText("TEST MODE").assertIsDisplayed()
+
+        composeRule.onNodeWithContentDescription("Accessibility and colour options")
+            .performClick()
+        composeRule.mainClock.advanceTimeBy(1_000)
+        composeRule.waitForIdle()
+        composeRule.onNodeWithContentDescription("Wheelchair space, 8 free")
+            .assertHasClickAction()
+            .assertIsOn()
+            .assertHeightIsAtLeast(48.dp)
+        // A provision the venue has but has sold out of keeps its name, its
+        // icon and its figure, and goes dark. The key has no name in the
+        // string table, so the row is drawn under its wire key.
+        composeRule.onNodeWithContentDescription("aisle-seat, 0")
+            .assertIsNotEnabled()
+            .assertHeightIsAtLeast(48.dp)
     }
 
     private fun fixtureScope(): SeatLayerPickerScope {
