@@ -85,10 +85,13 @@ public class SeatLayerPickerVisualEvidenceTest {
     @Test
     public fun expandedCartWithHold() {
         render(PickerEvidenceScenario.Cart)
-        // Every held seat is its own line: the collapsed run is retired.
-        listOf("Section 102 · A · 12", "Section 102 · A · 13", "Section 102 · A · 14")
-            .forEach { composeRule.onNodeWithText(it).assertIsDisplayed() }
-        composeRule.onNodeWithText("Hold seats & checkout").assertIsDisplayed()
+        // One card per ticket: the card names the section and the line under it
+        // carries the row, the seat and the type.
+        composeRule.onAllNodesWithText("Section 102").assertCountEquals(3)
+        listOf("A · 12", "A · 13", "A · 14")
+            .forEach { composeRule.onNodeWithText(it, substring = true).assertIsDisplayed() }
+        // A live hold moves the ladder on from "Hold seats & checkout".
+        composeRule.onNodeWithText("Continue to checkout").assertIsDisplayed()
     }
 
     @Test
@@ -203,7 +206,7 @@ public class SeatLayerPickerVisualEvidenceTest {
         composeRule.onAllNodesWithText("Section 102", substring = true)
             .onFirst()
             .assertIsDisplayed()
-        composeRule.onNodeWithText("Continue").assertIsDisplayed()
+        composeRule.onNodeWithText("Continue to checkout").assertIsDisplayed()
     }
 
     private fun render(

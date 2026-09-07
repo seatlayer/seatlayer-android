@@ -115,6 +115,8 @@ internal fun pickerEvidenceScope(
             "picker.zoomOut",
             "picker.zoomToFit",
             "picker.continue",
+            "picker.bestAvailable",
+            "picker.frameSeat",
             "picker.lifecycle",
             "picker.abort",
             "picker.destroy",
