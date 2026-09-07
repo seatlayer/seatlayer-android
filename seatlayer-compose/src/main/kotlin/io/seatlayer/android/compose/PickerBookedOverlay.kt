@@ -57,74 +57,79 @@ public fun SeatLayerPickerBookedOverlay(modifier: Modifier = Modifier) {
     var dismissed by remember(scope.stateHolder) { mutableStateOf<String?>(null) }
     if (dismissed == handoff.holdId) return
     val tickets = handoff.lineItems.sumOf { it.quantity }
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(scope.theme.background)
-            .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier = Modifier.padding(BOOKED_GUTTER.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    // A buyer-facing state owns the screen and grows with the platform text
+    // setting to the state ceiling: past it the layout breaks, and a clipped
+    // sentence is worse than a slightly smaller one.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_STATE) {
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(scope.theme.background)
+                .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite },
+            contentAlignment = Alignment.Center,
         ) {
-            Box(
-                modifier = Modifier
-                    .size(BOOKED_BADGE_SIZE.dp)
-                    .background(scope.theme.accent, CircleShape)
-                    .clearAndSetSemantics { },
-                contentAlignment = Alignment.Center,
+            Column(
+                modifier = Modifier.padding(BOOKED_GUTTER.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                SeatLayerPickerIcon(
-                    SeatLayerPickerGlyph.Check,
-                    scope.theme.onAccent,
-                    Modifier.size(BOOKED_BADGE_GLYPH.dp),
-                )
-            }
-            Spacer(Modifier.height(BOOKED_GAP.dp))
-            Text(
-                scope.strings.allSetTitle,
-                modifier = Modifier.semantics { heading() },
-                color = scope.theme.text,
-                fontSize = BOOKED_TITLE_SIZE.sp,
-                fontWeight = FontWeight.ExtraBold,
-                fontFamily = scope.theme.fontFamily,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(Modifier.height(BOOKED_GAP.dp))
-            Text(
-                "${scope.strings.ticketCount(tickets)} ${scope.strings.confirmedAndOnWay}",
-                modifier = Modifier.widthIn(max = BOOKED_COPY_WIDTH.dp),
-                color = scope.theme.mutedText,
-                fontSize = BOOKED_BODY_SIZE.sp,
-                fontFamily = scope.theme.fontFamily,
-                textAlign = TextAlign.Center,
-            )
-            if (handoff.lineItems.isNotEmpty()) {
+                Box(
+                    modifier = Modifier
+                        .size(BOOKED_BADGE_SIZE.dp)
+                        .background(scope.theme.accent, CircleShape)
+                        .clearAndSetSemantics { },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    SeatLayerPickerIcon(
+                        SeatLayerPickerGlyph.Check,
+                        scope.theme.onAccent,
+                        Modifier.size(BOOKED_BADGE_GLYPH.dp),
+                    )
+                }
                 Spacer(Modifier.height(BOOKED_GAP.dp))
-                BookedSeatList(handoff)
-            }
-            Spacer(Modifier.height(BOOKED_GAP.dp))
-            OutlinedButton(
-                onClick = { dismissed = handoff.holdId },
-                modifier = Modifier.sizeIn(
-                    minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
-                ),
-                shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
-            ) {
-                SeatLayerPickerIcon(
-                    SeatLayerPickerGlyph.Back,
-                    scope.theme.text,
-                    Modifier.size(BOOKED_BACK_GLYPH.dp).clearAndSetSemantics { },
-                )
-                Spacer(Modifier.size(BOOKED_BACK_GAP.dp))
                 Text(
-                    scope.strings.backToMap,
+                    scope.strings.allSetTitle,
+                    modifier = Modifier.semantics { heading() },
                     color = scope.theme.text,
-                    fontSize = BOOKED_ACTION_SIZE.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontSize = BOOKED_TITLE_SIZE.sp,
+                    fontWeight = FontWeight.ExtraBold,
                     fontFamily = scope.theme.fontFamily,
+                    textAlign = TextAlign.Center,
                 )
+                Spacer(Modifier.height(BOOKED_GAP.dp))
+                Text(
+                    "${scope.strings.ticketCount(tickets)} ${scope.strings.confirmedAndOnWay}",
+                    modifier = Modifier.widthIn(max = BOOKED_COPY_WIDTH.dp),
+                    color = scope.theme.mutedText,
+                    fontSize = BOOKED_BODY_SIZE.sp,
+                    fontFamily = scope.theme.fontFamily,
+                    textAlign = TextAlign.Center,
+                )
+                if (handoff.lineItems.isNotEmpty()) {
+                    Spacer(Modifier.height(BOOKED_GAP.dp))
+                    BookedSeatList(handoff)
+                }
+                Spacer(Modifier.height(BOOKED_GAP.dp))
+                OutlinedButton(
+                    onClick = { dismissed = handoff.holdId },
+                    modifier = Modifier.sizeIn(
+                        minHeight = SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp,
+                    ),
+                    shape = RoundedCornerShape(SeatLayerRadiusTokens.PILL.dp),
+                ) {
+                    SeatLayerPickerIcon(
+                        SeatLayerPickerGlyph.Back,
+                        scope.theme.text,
+                        Modifier.size(BOOKED_BACK_GLYPH.dp).clearAndSetSemantics { },
+                    )
+                    Spacer(Modifier.size(BOOKED_BACK_GAP.dp))
+                    Text(
+                        scope.strings.backToMap,
+                        color = scope.theme.text,
+                        fontSize = BOOKED_ACTION_SIZE.sp,
+                        fontWeight = FontWeight.Bold,
+                        fontFamily = scope.theme.fontFamily,
+                    )
+                }
             }
         }
     }

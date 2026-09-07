@@ -51,159 +51,168 @@ public fun SeatLayerDockBar(
         ?.color
     val dotColor = parseColor(focused.color ?: categoryColor) ?: scope.theme.accent
     val coroutineScope = rememberCoroutineScope()
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
-        shadowElevation = resolvedStyle.elevation ?: SeatLayerElevationTokens.DOCK_BAR.dp,
-        shape = androidx.compose.foundation.shape.RoundedCornerShape(
-            resolvedStyle.cornerRadius ?: 0.dp,
-        ),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(SeatLayerSizeTokens.DOCK_BAR_HEIGHT.dp)
-                .padding(
-                    start = resolvedStyle.horizontalPadding
-                        ?: SeatLayerSizeTokens.DOCK_LEADING_INSET.dp,
-                    end = resolvedStyle.horizontalPadding
-                        ?: SeatLayerSizeTokens.DOCK_TRAILING_INSET.dp,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
+    // The dock grows with the platform text setting to the dock ceiling,
+    // and the band it reports to the runtime is the band it draws.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_DOCK) {
+        Surface(
+            modifier = modifier.fillMaxWidth(),
+            color = resolvedStyle.containerColor ?: scope.theme.surface,
+            contentColor = resolvedStyle.contentColor ?: scope.theme.text,
+            shadowElevation = resolvedStyle.elevation ?: SeatLayerElevationTokens.DOCK_BAR.dp,
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(
+                resolvedStyle.cornerRadius ?: 0.dp,
+            ),
         ) {
-            Surface(
-                modifier = Modifier.size(SeatLayerSizeTokens.DOCK_DOT_SIZE.dp),
-                shape = CircleShape,
-                color = dotColor,
-            ) { }
-            Spacer(Modifier.width(DOCK_DOT_GAP))
-            // Where the buyer is and how much of it is left, as one sentence
-            // that speaks when it changes: the dock re-writes itself as the
-            // camera moves, and nobody presses it to find out.
-            val spokenSection = buildString {
-                append(focused.displayLabel ?: focused.label)
-                focused.seatsLeft?.let {
-                    append(", ")
-                    append(scope.strings.seatsLeft(it))
-                }
-            }
-            Text(
-                focused.displayLabel ?: focused.label,
+            Row(
                 modifier = Modifier
-                    .weight(1f)
-                    .semantics {
-                        liveRegion = LiveRegionMode.Polite
-                        contentDescription = spokenSection
-                    },
-                fontSize = SeatLayerSizeTokens.DOCK_NAME_FONT_SIZE.sp,
-                fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_SECTION_WEIGHT),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            focused.seatsLeft?.let { count ->
+                    .fillMaxWidth()
+                    .height(
+                            pickerScaledExtent(
+                                SeatLayerSizeTokens.DOCK_BAR_HEIGHT,
+                                SeatLayerTypeTokens.SCALE_CLAMP_DOCK,
+                            ),
+                        )
+                    .padding(
+                        start = resolvedStyle.horizontalPadding
+                            ?: SeatLayerSizeTokens.DOCK_LEADING_INSET.dp,
+                        end = resolvedStyle.horizontalPadding
+                            ?: SeatLayerSizeTokens.DOCK_TRAILING_INSET.dp,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Surface(
+                    modifier = Modifier.size(SeatLayerSizeTokens.DOCK_DOT_SIZE.dp),
+                    shape = CircleShape,
+                    color = dotColor,
+                ) { }
+                Spacer(Modifier.width(DOCK_DOT_GAP))
+                // Where the buyer is and how much of it is left, as one sentence
+                // that speaks when it changes: the dock re-writes itself as the
+                // camera moves, and nobody presses it to find out.
+                val spokenSection = buildString {
+                    append(focused.displayLabel ?: focused.label)
+                    focused.seatsLeft?.let {
+                        append(", ")
+                        append(scope.strings.seatsLeft(it))
+                    }
+                }
                 Text(
-                    " ·  ${scope.strings.seatsLeft(count)}",
-                    // Already spoken by the name beside it.
-                    modifier = Modifier.clearAndSetSemantics { },
-                    color = scope.theme.mutedText,
-                    fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
-                    fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_COUNT_WEIGHT),
+                    focused.displayLabel ?: focused.label,
+                    modifier = Modifier
+                        .weight(1f)
+                        .semantics {
+                            liveRegion = LiveRegionMode.Polite
+                            contentDescription = spokenSection
+                        },
+                    fontSize = SeatLayerSizeTokens.DOCK_NAME_FONT_SIZE.sp,
+                    fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_SECTION_WEIGHT),
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
-            }
-            // Absent is not zero. Only a runtime that counts accessible places
-            // may say how many this section has left; a dock that prints a zero
-            // from an uncounted section tells a buyer it has nothing.
-            if (scope.controller.supportsSectionAccessCounts) {
-                focused.accessibleFree?.let { free ->
+                focused.seatsLeft?.let { count ->
+                    Text(
+                        " ·  ${scope.strings.seatsLeft(count)}",
+                        // Already spoken by the name beside it.
+                        modifier = Modifier.clearAndSetSemantics { },
+                        color = scope.theme.mutedText,
+                        fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
+                        fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_COUNT_WEIGHT),
+                        maxLines = 1,
+                    )
+                }
+                // Absent is not zero. Only a runtime that counts accessible places
+                // may say how many this section has left; a dock that prints a zero
+                // from an uncounted section tells a buyer it has nothing.
+                if (scope.controller.supportsSectionAccessCounts) {
+                    focused.accessibleFree?.let { free ->
+                        Row(
+                            modifier = Modifier
+                                .padding(start = DOCK_ACCESS_GAP)
+                                .semantics {
+                                    contentDescription =
+                                        "${scope.strings.accessibility} $free"
+                                },
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                "· ",
+                                color = scope.theme.mutedText,
+                                fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
+                            )
+                            SeatLayerPickerIcon(
+                                SeatLayerPickerGlyph.Accessibility,
+                                scope.theme.mutedText,
+                                Modifier
+                                    .size(SeatLayerSizeTokens.ACCESS_ROW_ICON_SIZE.dp)
+                                    .clearAndSetSemantics { },
+                            )
+                            Text(
+                                " $free",
+                                color = scope.theme.mutedText,
+                                fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
+                                fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_COUNT_WEIGHT),
+                                maxLines = 1,
+                            )
+                        }
+                    }
+                }
+                DockIconButton(
+                    label = scope.strings.previousSection,
+                    glyph = SeatLayerPickerGlyph.Back,
+                    onClick = {
+                        sections.getOrNull(focusedIndex - 1)?.let { section ->
+                            coroutineScope.launch {
+                                scope.performAction { scope.controller.focusSection(section.id) }
+                            }
+                        }
+                    },
+                    enabled = focusedIndex > 0,
+                )
+                DockIconButton(
+                    label = scope.strings.nextSection,
+                    glyph = SeatLayerPickerGlyph.Forward,
+                    onClick = {
+                        sections.getOrNull(focusedIndex + 1)?.let { section ->
+                            coroutineScope.launch {
+                                scope.performAction { scope.controller.focusSection(section.id) }
+                            }
+                        }
+                    },
+                    enabled = focusedIndex >= 0 && focusedIndex < sections.lastIndex,
+                )
+                Surface(
+                    onClick = {
+                        coroutineScope.launch {
+                            scope.performAction { scope.controller.overview() }
+                        }
+                    },
+                    modifier = Modifier
+                        .height(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
+                        .semantics {
+                            role = Role.Button
+                            contentDescription = scope.strings.overview
+                        },
+                    color = Color.Transparent,
+                    contentColor = scope.theme.text,
+                ) {
                     Row(
-                        modifier = Modifier
-                            .padding(start = DOCK_ACCESS_GAP)
-                            .semantics {
-                                contentDescription =
-                                    "${scope.strings.accessibility} $free"
-                            },
+                        modifier = Modifier.padding(horizontal = 5.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            "· ",
-                            color = scope.theme.mutedText,
-                            fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
-                        )
                         SeatLayerPickerIcon(
-                            SeatLayerPickerGlyph.Accessibility,
-                            scope.theme.mutedText,
+                            SeatLayerPickerGlyph.Back,
+                            scope.theme.text,
                             Modifier
-                                .size(SeatLayerSizeTokens.ACCESS_ROW_ICON_SIZE.dp)
+                                .size(SeatLayerSizeTokens.DOCK_BACK_CHEVRON_SIZE.dp)
                                 .clearAndSetSemantics { },
                         )
+                        Spacer(Modifier.width(SeatLayerSizeTokens.DOCK_NAV_GAP.dp))
                         Text(
-                            " $free",
-                            color = scope.theme.mutedText,
-                            fontSize = SeatLayerSizeTokens.DOCK_COUNT_FONT_SIZE.sp,
-                            fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_COUNT_WEIGHT),
-                            maxLines = 1,
+                            scope.strings.overview,
+                            fontSize = SeatLayerSizeTokens.DOCK_BACK_FONT_SIZE.sp,
+                            fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_SECTION_WEIGHT),
                         )
                     }
-                }
-            }
-            DockIconButton(
-                label = scope.strings.previousSection,
-                glyph = SeatLayerPickerGlyph.Back,
-                onClick = {
-                    sections.getOrNull(focusedIndex - 1)?.let { section ->
-                        coroutineScope.launch {
-                            scope.performAction { scope.controller.focusSection(section.id) }
-                        }
-                    }
-                },
-                enabled = focusedIndex > 0,
-            )
-            DockIconButton(
-                label = scope.strings.nextSection,
-                glyph = SeatLayerPickerGlyph.Forward,
-                onClick = {
-                    sections.getOrNull(focusedIndex + 1)?.let { section ->
-                        coroutineScope.launch {
-                            scope.performAction { scope.controller.focusSection(section.id) }
-                        }
-                    }
-                },
-                enabled = focusedIndex >= 0 && focusedIndex < sections.lastIndex,
-            )
-            Surface(
-                onClick = {
-                    coroutineScope.launch {
-                        scope.performAction { scope.controller.overview() }
-                    }
-                },
-                modifier = Modifier
-                    .height(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
-                    .semantics {
-                        role = Role.Button
-                        contentDescription = scope.strings.overview
-                    },
-                color = Color.Transparent,
-                contentColor = scope.theme.text,
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 5.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SeatLayerPickerIcon(
-                        SeatLayerPickerGlyph.Back,
-                        scope.theme.text,
-                        Modifier
-                            .size(SeatLayerSizeTokens.DOCK_BACK_CHEVRON_SIZE.dp)
-                            .clearAndSetSemantics { },
-                    )
-                    Spacer(Modifier.width(SeatLayerSizeTokens.DOCK_NAV_GAP.dp))
-                    Text(
-                        scope.strings.overview,
-                        fontSize = SeatLayerSizeTokens.DOCK_BACK_FONT_SIZE.sp,
-                        fontWeight = FontWeight(SeatLayerTypeTokens.DOCK_SECTION_WEIGHT),
-                    )
                 }
             }
         }

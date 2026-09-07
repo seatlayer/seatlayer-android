@@ -60,37 +60,41 @@ internal fun SeatLayerPickerSheetFoot(
 ) {
     val scope = LocalSeatLayerPickerScope.current
     val hairline = scope.theme.divider
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            // Where a ticket in the air is going. This line is what the ticket
-            // has just changed, so it is what the chip flies to.
-            .pickerFlightTarget(LocalSeatLayerPickerFlight.current)
-            .then(
-                if (showHairline) {
-                    Modifier.drawBehind {
-                        drawLine(hairline, Offset(0f, 0f), Offset(size.width, 0f), 1f)
-                    }
-                } else {
-                    Modifier
-                },
+    // The collapsed cart is a fixed band with a price in it, so it stops
+    // growing sooner than the sheet above it.
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_PEEK) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                // Where a ticket in the air is going. This line is what the ticket
+                // has just changed, so it is what the chip flies to.
+                .pickerFlightTarget(LocalSeatLayerPickerFlight.current)
+                .then(
+                    if (showHairline) {
+                        Modifier.drawBehind {
+                            drawLine(hairline, Offset(0f, 0f), Offset(size.width, 0f), 1f)
+                        }
+                    } else {
+                        Modifier
+                    },
+                )
+                .padding(
+                    start = SeatLayerSizeTokens.FOOT_PAD_X.dp,
+                    end = SeatLayerSizeTokens.FOOT_PAD_X.dp,
+                    top = SeatLayerSizeTokens.FOOT_PAD_TOP.dp,
+                    bottom = SeatLayerSizeTokens.FOOT_PAD_BOTTOM.dp,
+                ),
+        ) {
+            SeatLayerHoldLapseNotice()
+            SeatLayerPickerActionError()
+            PickerTotalLine(collapsed = collapsed, onOpenCart = onOpenCart)
+            Spacer(Modifier.height(SeatLayerSizeTokens.FOOT_TOTAL_GAP.dp))
+            checkoutBar(onOpenFinder)
+            SeatLayerPickerAttribution(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                compact = true,
             )
-            .padding(
-                start = SeatLayerSizeTokens.FOOT_PAD_X.dp,
-                end = SeatLayerSizeTokens.FOOT_PAD_X.dp,
-                top = SeatLayerSizeTokens.FOOT_PAD_TOP.dp,
-                bottom = SeatLayerSizeTokens.FOOT_PAD_BOTTOM.dp,
-            ),
-    ) {
-        SeatLayerHoldLapseNotice()
-        SeatLayerPickerActionError()
-        PickerTotalLine(collapsed = collapsed, onOpenCart = onOpenCart)
-        Spacer(Modifier.height(SeatLayerSizeTokens.FOOT_TOTAL_GAP.dp))
-        checkoutBar(onOpenFinder)
-        SeatLayerPickerAttribution(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            compact = true,
-        )
+        }
     }
 }
 

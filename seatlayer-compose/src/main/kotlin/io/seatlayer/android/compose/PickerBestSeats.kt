@@ -241,7 +241,12 @@ private fun <T> PickerBestSeatsSelect(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(SeatLayerSizeTokens.BEST_SEATS_SELECT_HEIGHT.dp)
+                .height(
+                    pickerScaledExtent(
+                        SeatLayerSizeTokens.BEST_SEATS_SELECT_HEIGHT,
+                        SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                    ),
+                )
                 .clickable { expanded = true }
                 .semantics { role = Role.Button },
             shape = RoundedCornerShape(SeatLayerRadiusTokens.CONTROL.dp),
@@ -307,7 +312,12 @@ private fun PickerQuantityStepper(
     Surface(
         modifier = Modifier
             .width(SeatLayerSizeTokens.BEST_SEATS_STEPPER_WIDTH.dp)
-            .height(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp),
+            .height(
+                pickerScaledExtent(
+                    SeatLayerSizeTokens.MINIMUM_HIT_TARGET,
+                    SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                ),
+            ),
         shape = RoundedCornerShape(SeatLayerRadiusTokens.CONTROL.dp),
         color = theme.surface,
         contentColor = theme.text,
@@ -390,7 +400,12 @@ private fun PickerBestSeatsAction(
     val theme = scope.theme
     Surface(
         modifier = modifier
-            .height(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
+            .height(
+                pickerScaledExtent(
+                    SeatLayerSizeTokens.MINIMUM_HIT_TARGET,
+                    SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                ),
+            )
             .clickable(enabled = enabled, onClick = onPress)
             .semantics { role = Role.Button },
         shape = RoundedCornerShape(SeatLayerRadiusTokens.CONTROL.dp),

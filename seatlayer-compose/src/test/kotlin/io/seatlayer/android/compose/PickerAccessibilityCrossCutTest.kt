@@ -4,7 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -250,6 +254,52 @@ public class PickerAccessibilityCrossCutTest {
         )
     }
 
+    @Test
+    public fun aSurfaceGrowsWithTheTextSettingOnlyAsFarAsItsOwnCeiling() {
+        var rail = 0f
+        var sheet = 0f
+        var grown = 0.dp
+        var atDefault = 0.dp
+        var smaller = 0.dp
+        composeRule.setContent {
+            CompositionLocalProvider(LocalDensity provides Density(1f, 2f)) {
+                rail = pickerClampedFontScale(SeatLayerTypeTokens.SCALE_CLAMP_RAIL)
+                sheet = pickerClampedFontScale(SeatLayerTypeTokens.SCALE_CLAMP_SHEET)
+                grown = pickerScaledExtent(BAND, SeatLayerTypeTokens.SCALE_CLAMP_RAIL)
+            }
+            CompositionLocalProvider(LocalDensity provides Density(1f, 1f)) {
+                atDefault = pickerScaledExtent(BAND, SeatLayerTypeTokens.SCALE_CLAMP_RAIL)
+            }
+            // A buyer who made their text SMALLER is not asking for a shorter
+            // band: the 44-point controls in it still need the room.
+            CompositionLocalProvider(LocalDensity provides Density(1f, 0.85f)) {
+                smaller = pickerScaledExtent(BAND, SeatLayerTypeTokens.SCALE_CLAMP_RAIL)
+            }
+        }
+        composeRule.waitForIdle()
+        assertEquals(SeatLayerTypeTokens.SCALE_CLAMP_RAIL, rail, 0f)
+        assertEquals(SeatLayerTypeTokens.SCALE_CLAMP_SHEET, sheet, 0f)
+        assertEquals((BAND * SeatLayerTypeTokens.SCALE_CLAMP_RAIL).dp, grown)
+        assertEquals(BAND.dp, atDefault)
+        assertEquals(BAND.dp, smaller)
+    }
+
+    @Test
+    public fun theRailBandIsUnmovedAtTheDefaultAndClampedAboveIt() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Overview, LIGHT)
+        render(scope)
+        val plain = described(scope.strings.allPrices).size.height
+        fontScale.floatValue = 2f
+        composeRule.waitForIdle()
+        val scaled = described(scope.strings.allPrices).size.height
+        assertEquals(
+            "the rail stops at its own ceiling rather than clipping a price",
+            SeatLayerTypeTokens.SCALE_CLAMP_RAIL.toDouble(),
+            scaled.toDouble() / plain.toDouble(),
+            TOLERANCE,
+        )
+    }
+
     /** What every live region in the rendered picker currently says. */
     private fun liveRegionSentences(): List<String> {
         val said = mutableListOf<String>()
@@ -366,9 +416,16 @@ public class PickerAccessibilityCrossCutTest {
         )
     }
 
+    /** The platform text-size setting, as a test may move it. */
+    private val fontScale = mutableFloatStateOf(1f)
+
     private fun render(scope: SeatLayerPickerScope) {
         composeRule.setContent {
             CompositionLocalProvider(
+                LocalDensity provides Density(
+                    LocalDensity.current.density,
+                    fontScale.floatValue,
+                ),
                 // Pinned, so the hold pill reads the same eight minutes
                 // however long the composition took.
                 LocalSeatLayerPickerClock provides { SEATLAYER_EVIDENCE_NOW_MILLIS.toLong() },
@@ -399,5 +456,11 @@ public class PickerAccessibilityCrossCutTest {
     private companion object {
         val LIGHT = SeatLayerPickerThemeMode.Light
         const val SETTLE_MILLIS = 500L
+
+        /** The compact rail band: the minimum hit target, at type 1.0. */
+        const val BAND = 44f
+
+        /** One device pixel of rounding, as a ratio of a 44-point band. */
+        const val TOLERANCE = 0.03
     }
 }

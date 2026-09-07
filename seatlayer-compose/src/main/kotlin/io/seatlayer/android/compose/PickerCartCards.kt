@@ -195,7 +195,12 @@ public fun SeatLayerCartCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .offset { IntOffset(-slide.roundToInt(), 0) }
-                .heightIn(min = SeatLayerSizeTokens.CART_CARD_MIN_HEIGHT.dp)
+                .heightIn(
+                    min = pickerScaledExtent(
+                        SeatLayerSizeTokens.CART_CARD_MIN_HEIGHT,
+                        SeatLayerTypeTokens.SCALE_CLAMP_SHEET,
+                    ),
+                )
                 .alpha(if (removing) SeatLayerOpacityTokens.REMOVING else 1f)
                 .onSizeChanged { width = it.width.toFloat() }
                 .then(
