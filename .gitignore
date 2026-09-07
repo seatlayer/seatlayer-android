@@ -8,3 +8,4 @@ local.properties
 *.keystore
 captures/
 .DS_Store
+.kotlin/
