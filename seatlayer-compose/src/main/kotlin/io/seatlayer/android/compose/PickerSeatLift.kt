@@ -1,5 +1,7 @@
 package io.seatlayer.android.compose
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -252,11 +254,19 @@ private const val RE_ASK_EARLY = 350L
 private const val RE_ASK_LATE = 450L
 
 /**
- * Faded to nothing and inert while a card is up.
+ * Crossfaded to nothing and inert while a card is up.
  *
  * Faded rather than unmounted: a control that leaves the tree takes its space
  * with it, and the chrome around the map should not reflow because a question
- * was asked about one seat.
+ * was asked about one seat. Every touch is taken on the initial pass, so a
+ * thumb already travelling towards a disc cannot press one on the way out.
  */
-internal fun Modifier.pickerFadeUnderCard(cardUp: Boolean): Modifier =
-    if (!cardUp) this else this.alpha(0f).pointerInput(Unit) { awaitPointerEventScope { while (true) awaitPointerEvent() } }
+@Composable
+internal fun Modifier.pickerFadeUnderCard(cardUp: Boolean): Modifier {
+    val alpha by animateFloatAsState(
+        targetValue = if (cardUp) 0f else 1f,
+        animationSpec = tween(SeatLayerMotionTokens.CROSSFADE),
+        label = "seatlayer-map-controls-fade",
+    )
+    return this.alpha(alpha).pickerSwallowTouches(cardUp)
+}

@@ -53,7 +53,11 @@ public class SeatLayerPickerVisualEvidenceTest {
         render(PickerEvidenceScenario.SectionFocus)
         composeRule.onNodeWithText("Lower").assertIsDisplayed()
         composeRule.onNodeWithText("Upper").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Back to venue").assertIsDisplayed()
+        // The phone has no separate back-to-venue disc: the whole-venue disc at
+        // the foot of the map's own column releases a framed section with the
+        // same press that fits the chart.
+        composeRule.onAllNodesWithContentDescription("Back to venue").assertCountEquals(0)
+        composeRule.onNodeWithContentDescription("Show whole venue").assertIsDisplayed()
     }
 
     @Test

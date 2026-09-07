@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.movableContentOf
@@ -124,6 +125,13 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
         }
     }
     val density = LocalDensity.current.density
+    val blockedRegions = rememberPickerBlockedRegions()
+    // False until the first viewport-inset report lands with the picker ready.
+    // The first snapshot arrives before the runtime has been told what the
+    // native chrome covers, and a map revealed on that snapshot alone is shown
+    // at one framing and re-fitted in the next — which reads as the screen
+    // loading twice.
+    var mapFramed by remember(controller) { mutableStateOf(false) }
 
     SeatLayerPickerLifecycle()
     SeatLayerPickerBackHandler()
@@ -161,8 +169,18 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
             performAction { controller.setViewportInsets(next) }
             lastInsets = next
         }
+        mapFramed = true
     }
 
+    // A runtime that never answers must not be able to hang the picker on a
+    // loading screen, so the wait is bounded.
+    LaunchedEffect(state.isReady, controller) {
+        if (!state.isReady) return@LaunchedEffect
+        kotlinx.coroutines.delay(PICKER_MAP_FRAMING_GRACE_MS)
+        mapFramed = true
+    }
+
+    CompositionLocalProvider(LocalPickerBlockedRegions provides blockedRegions) {
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
@@ -194,6 +212,7 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                             wide = true,
                             compact = false,
                             bottomPadding = 0.dp,
+                            framing = state.isReady && !mapFramed,
                             onRetry = { reloadGeneration += 1 },
                         )
                     }
@@ -211,6 +230,16 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                         compact = true,
                     )
                 }
+                if (options.chrome.showPriceRail && state.isReady && mapFramed) {
+                    // The header, the price rail and the sheet are ROWS OF ONE
+                    // COLUMN with the map: the map surface begins and ends at
+                    // their edges, so nothing reads through the rail and the
+                    // rail is not part of the band the runtime frames inside.
+                    SeatLayerPickerPart(
+                        SeatLayerPickerPart.Legend,
+                        builders[SeatLayerPickerPart.Legend],
+                    ) { SeatLayerPriceLegend(compact = true) }
+                }
                 Box(Modifier.weight(1f).fillMaxWidth()) {
                     movableMap(Modifier.fillMaxSize(), reloadGeneration)
                     CompactChrome(
@@ -224,6 +253,7 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                         wide = false,
                         compact = true,
                         bottomPadding = (bottomChromePixels / density).dp,
+                        framing = state.isReady && !mapFramed,
                         onRetry = { reloadGeneration += 1 },
                     )
                 }
@@ -248,4 +278,11 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
         }
 
     }
+    }
 }
+
+/**
+ * How long the loading surface waits for the runtime to say it has framed the
+ * map inside the native chrome.
+ */
+internal const val PICKER_MAP_FRAMING_GRACE_MS: Long = 700

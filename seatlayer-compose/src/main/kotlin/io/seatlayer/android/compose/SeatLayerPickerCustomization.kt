@@ -38,9 +38,20 @@ public data class SeatLayerPickerChromeOptions(
     val showFloorSelector: Boolean = true,
     val showFloorStrip: Boolean = true,
     val showMapControls: Boolean = true,
-    val showOverviewControl: Boolean = true,
-    val showZoomControls: Boolean = true,
-    val showColorblindControl: Boolean = true,
+    /**
+     * Back to the venue from a framed section. Null is off on a phone, where
+     * the whole-venue disc in the map's own column already releases a section.
+     */
+    val showOverviewControl: Boolean? = null,
+    /** The `+` disc. Null is on at both widths. */
+    val showZoomControls: Boolean? = null,
+    /** The whole-venue disc. Null is on at both widths. */
+    val showZoomToFitControl: Boolean? = null,
+    /**
+     * The colourblind-safe disc. Null is off on a phone, where the choice lives
+     * inside the accessibility sheet rather than in a corner of the map.
+     */
+    val showColorblindControl: Boolean? = null,
     val showViewModeControl: Boolean = true,
     val showAccessibilityControl: Boolean = true,
     val showTicketPanel: Boolean = true,
@@ -68,13 +79,13 @@ public data class SeatLayerPickerChromeOptions(
     val mapControls: Boolean get() = showMapControls
 
     @Deprecated("Renamed to showOverviewControl.", ReplaceWith("showOverviewControl"))
-    val overview: Boolean get() = showOverviewControl
+    val overview: Boolean get() = overviewControlFor(phone = false)
 
     @Deprecated("Renamed to showZoomControls.", ReplaceWith("showZoomControls"))
-    val zoom: Boolean get() = showZoomControls
+    val zoom: Boolean get() = zoomControlsFor(phone = false)
 
     @Deprecated("Renamed to showColorblindControl.", ReplaceWith("showColorblindControl"))
-    val colorblind: Boolean get() = showColorblindControl
+    val colorblind: Boolean get() = colorblindControlFor(phone = false)
 
     @Deprecated("Renamed to showViewModeControl.", ReplaceWith("showViewModeControl"))
     val map3D: Boolean get() = showViewModeControl
@@ -96,6 +107,29 @@ public data class SeatLayerPickerChromeOptions(
 
     @Deprecated("Renamed to showAttribution.", ReplaceWith("showAttribution"))
     val attribution: Boolean get() = showAttribution
+
+    /** Whether the `+` disc is drawn at this width. */
+    public fun zoomControlsFor(phone: Boolean): Boolean = showZoomControls ?: true
+
+    /** Whether the whole-venue disc is drawn at this width. */
+    public fun zoomToFitControlFor(phone: Boolean): Boolean = showZoomToFitControl ?: true
+
+    /**
+     * Whether the back-to-venue disc is drawn at this width.
+     *
+     * Off on a phone by default: the whole-venue disc at the foot of the map's
+     * own column releases a framed section with the same press that fits the
+     * chart, and a second control for one move reads as a puzzle.
+     */
+    public fun overviewControlFor(phone: Boolean): Boolean = showOverviewControl ?: !phone
+
+    /**
+     * Whether the colourblind-safe disc is drawn at this width.
+     *
+     * Off on a phone by default: it lives in the accessibility sheet, where the
+     * rest of the display choices are, rather than alone in a map corner.
+     */
+    public fun colorblindControlFor(phone: Boolean): Boolean = showColorblindControl ?: !phone
 
     /**
      * The dock bar moved to [SeatLayerPickerOptions.showDockBar] and is off by

@@ -40,17 +40,20 @@ class SeatLayerPickerCustomizationTest {
 
     @Test
     fun compactMapControlsAccountForEveryVisibleButton() {
-        // Two zoom discs, the whole-venue control and the colourblind control.
-        // The zoom-to-fit disc is gone: the whole-venue control reaches the
-        // same framing without going stale under a pinch.
-        assertEquals(4, compactMapControlCount(SeatLayerPickerChromeOptions()))
-        assertEquals(216.dp, compactMapControlsRequiredHeight(4))
+        // Three discs on the phone: the accessibility disc at the head of the
+        // column, `+`, and the whole venue. There is no `−` — a control that
+        // only sometimes had a step to take read as one that sometimes worked
+        // — and the colourblind choice lives in the accessibility sheet.
+        assertEquals(3, compactMapControlCount(SeatLayerPickerChromeOptions()))
+        assertEquals(120.dp, compactMapControlsRequiredHeight(3))
         assertEquals(
-            48.dp,
+            36.dp,
             compactMapControlsRequiredHeight(
                 compactMapControlCount(
                     SeatLayerPickerChromeOptions(
+                        showAccessibilityControl = false,
                         showZoomControls = false,
+                        showZoomToFitControl = true,
                         showOverviewControl = true,
                         showColorblindControl = false,
                     ),
