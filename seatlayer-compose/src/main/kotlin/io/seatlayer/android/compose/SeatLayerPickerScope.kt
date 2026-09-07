@@ -132,6 +132,16 @@ public fun SeatLayerPickerScope(
         LaunchedEffect(stateHolder, callbacks.onChartLoad) {
             stateHolder.chartLoads.collect(callbacks.onChartLoad)
         }
+        LaunchedEffect(state.snapshot?.map?.focusedSectionId, state.snapshot?.sessionId) {
+            state.snapshot?.let { snapshot ->
+                callbacks.onSectionFocused(
+                    snapshot.map.focusedSection
+                        ?: snapshot.sections.firstOrNull {
+                            it.id == snapshot.map.focusedSectionId
+                        },
+                )
+            }
+        }
         LaunchedEffect(state.snapshot?.sessionId, state.snapshot?.revision) {
             state.snapshot?.let { snapshot ->
                 callbacks.onSnapshot(snapshot)

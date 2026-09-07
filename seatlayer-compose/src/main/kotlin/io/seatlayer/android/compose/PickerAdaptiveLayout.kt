@@ -1,5 +1,7 @@
 package io.seatlayer.android.compose
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,8 +18,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import io.seatlayer.android.SeatLayerPickerPhase
@@ -49,75 +56,88 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
     LaunchedEffect(dockVisible) {
         if (!dockVisible) onBottomMeasured(0)
     }
+    // Only chrome drawn OVER the map is counted here. The header, the price
+    // rail and the cart sheet are rows of the same column as the map surface,
+    // so the map already begins and ends where they do — measuring them again
+    // would frame every section into a band that does not exist.
     if (regularMap) Column(
         modifier = Modifier
             .align(Alignment.TopCenter)
             .fillMaxWidth()
             .onGloballyPositioned { onTopMeasured(it.size.height) },
+        horizontalAlignment = Alignment.End,
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-        ) {
-            if (scope.options.chrome.showPriceRail) {
-                Box(Modifier.weight(1f)) {
-                    SeatLayerPickerPart(
-                        SeatLayerPickerPart.Legend,
-                        builders[SeatLayerPickerPart.Legend],
-                    ) { SeatLayerPriceLegend(compact = true) }
-                }
-            } else {
-                Box(Modifier.weight(1f))
-            }
-            if (scope.options.enable3D && scope.options.chrome.showViewModeControl) {
-                SeatLayerPickerViewModeControl(
-                    modifier = Modifier.padding(end = 10.dp),
-                    compact = true,
-                )
+        if (scope.options.enable3D && scope.options.chrome.showViewModeControl) {
+            PickerMapChromeRegion(
+                modifier = Modifier.padding(
+                    end = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                    top = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                ),
+            ) {
+                SeatLayerPickerViewModeControl(compact = true)
             }
         }
         if (
             scope.options.chrome.showFloorStrip &&
             snapshot?.map?.floors.orEmpty().pickerAuthoredFloors().size > 1
         ) {
-            SeatLayerPickerPart(
-                SeatLayerPickerPart.FloorStrip,
-                builders[SeatLayerPickerPart.FloorStrip],
-            ) { SeatLayerFloorStrip(compact = true) }
-        }
-        SeatLayerPickerTestModeIndicator(
-            modifier = Modifier.padding(start = 10.dp),
-            compact = true,
-        )
-    }
-
-    if (regularMap && scope.state.isReady && scope.options.chrome.showMapControls) {
-        if (scope.options.chrome.showAccessibilityControl) {
-            SeatLayerPickerPart(
-                SeatLayerPickerPart.AccessibilityFilters,
-                builders[SeatLayerPickerPart.AccessibilityFilters],
+            PickerMapChromeRegion(
+                modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp),
             ) {
-                SeatLayerPickerAccessibilityFilters(
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(start = 8.dp, bottom = bottomPadding + 8.dp),
-                    compact = true,
-                )
+                SeatLayerPickerPart(
+                    SeatLayerPickerPart.FloorStrip,
+                    builders[SeatLayerPickerPart.FloorStrip],
+                ) { SeatLayerFloorStrip(compact = true) }
             }
         }
+        PickerMapChromeRegion(
+            modifier = Modifier
+                .align(Alignment.Start)
+                .padding(
+                    start = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                    top = SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp,
+                ),
+        ) {
+            SeatLayerPickerTestModeIndicator(compact = true)
+        }
+    }
+
+    // The discs step out of the way of a seat card: a column of controls poking
+    // out beside the card asking about a seat read as clutter, and none of them
+    // may be pressed while it asks. They FADE rather than unmount, so nothing
+    // moves under a thumb already reaching for one.
+    val cardUp = scope.state.presentation.candidateSeat != null &&
+        scope.options.chrome.showConfirmCard
+    val controlsAlpha by animateFloatAsState(
+        targetValue = if (cardUp) 0f else 1f,
+        animationSpec = tween(SeatLayerMotionTokens.CROSSFADE),
+        label = "seatlayer-map-controls-fade",
+    )
+    if (scope.state.isReady && scope.options.chrome.showMapControls) {
         SeatLayerPickerPart(
             SeatLayerPickerPart.MapControls,
             builders[SeatLayerPickerPart.MapControls],
         ) {
-            Box(
+            SeatLayerPickerMapControls(
                 modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(end = 8.dp, bottom = bottomPadding + 8.dp),
-            ) {
-                if (snapshot?.map?.canZoomOut == true && scope.options.chrome.showOverviewControl) {
-                    SeatLayerPickerStepOutControl()
-                }
-            }
+                    .matchParentSize()
+                    .alpha(controlsAlpha)
+                    .pickerSwallowTouches(cardUp),
+                compact = true,
+                bottomInset = bottomPadding,
+                // The turnkey phone layout draws the Map/3D control on the top
+                // band itself, so the two can never land on top of each other
+                // whatever the translated labels measure.
+                includeViewModeControl = false,
+                accessibilityControl = {
+                    SeatLayerPickerPart(
+                        SeatLayerPickerPart.AccessibilityFilters,
+                        builders[SeatLayerPickerPart.AccessibilityFilters],
+                    ) { SeatLayerPickerAccessibilityFilters(compact = true) }
+                },
+            )
         }
     }
 
@@ -126,11 +146,11 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
             SeatLayerPickerPart.DockBar,
             builders[SeatLayerPickerPart.DockBar],
         ) {
-            SeatLayerDockBar(
-                Modifier
+            PickerMapChromeRegion(
+                modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .onGloballyPositioned { onBottomMeasured(it.size.height) },
-            )
+            ) { SeatLayerDockBar() }
         }
     }
 
@@ -156,13 +176,42 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
     }
 }
 
+/**
+ * How many discs the phone column carries.
+ *
+ * Three: the accessibility disc at its head, `+`, and the whole venue. `+`
+ * keeps its slot when it retires, so this figure does not move with the camera.
+ */
 internal fun compactMapControlCount(chrome: SeatLayerPickerChromeOptions): Int =
-    (if (chrome.showZoomControls) 2 else 0) +
-        (if (chrome.showOverviewControl) 1 else 0) +
-        (if (chrome.showColorblindControl) 1 else 0)
+    (if (chrome.showAccessibilityControl) 1 else 0) +
+        (if (chrome.zoomControlsFor(phone = true)) 1 else 0) +
+        (if (chrome.zoomToFitControlFor(phone = true)) 1 else 0)
 
 internal fun compactMapControlsRequiredHeight(controlCount: Int): androidx.compose.ui.unit.Dp =
-    if (controlCount <= 0) 0.dp else (controlCount * 48 + (controlCount - 1) * 8).dp
+    if (controlCount <= 0) {
+        0.dp
+    } else {
+        (
+            controlCount * SeatLayerSizeTokens.MAP_CONTROL_SIZE +
+                (controlCount - 1) * SeatLayerSizeTokens.ZOOM_COLUMN_GAP
+            ).dp
+    }
+
+/** Takes every touch inside, without moving the nodes underneath it. */
+internal fun Modifier.pickerSwallowTouches(swallow: Boolean): Modifier =
+    if (!swallow) {
+        this
+    } else {
+        this.pointerInput(Unit) {
+            awaitPointerEventScope {
+                while (true) {
+                    awaitPointerEvent(PointerEventPass.Initial)
+                        .changes
+                        .forEach(PointerInputChange::consume)
+                }
+            }
+        }
+    }
 
 @Composable
 internal fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
@@ -175,7 +224,9 @@ internal fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
     if (!regularMap) return
 
     SeatLayerPickerTestModeIndicator(
-        modifier = Modifier.align(Alignment.TopStart).padding(12.dp),
+        modifier = Modifier
+            .align(Alignment.TopStart)
+            .padding(SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp),
         compact = false,
     )
     if (scope.options.chrome.showMapControls && scope.state.isReady) {
@@ -184,7 +235,10 @@ internal fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
             builders[SeatLayerPickerPart.MapControls],
         ) {
             SeatLayerPickerMapControls(
-                Modifier.align(Alignment.CenterEnd).padding(end = 12.dp),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp),
+                compact = false,
             )
         }
     }
@@ -367,6 +421,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
     wide: Boolean,
     compact: Boolean,
     bottomPadding: androidx.compose.ui.unit.Dp,
+    framing: Boolean = false,
     onRetry: () -> Unit,
 ) {
     val scope = LocalSeatLayerPickerScope.current
@@ -428,7 +483,15 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
             SeatLayerPickerPart.Error,
             builders[SeatLayerPickerPart.Error],
         ) { SeatLayerPickerErrorView(onRetry) }
-        is SeatLayerPickerPhase.Ready -> if (
+        // Ready, but the runtime has not been told what the chrome covers yet:
+        // revealing the map now shows it at one framing and then re-fits it in
+        // front of the buyer.
+        is SeatLayerPickerPhase.Ready -> if (framing) {
+            SeatLayerPickerPart(
+                SeatLayerPickerPart.Loading,
+                builders[SeatLayerPickerPart.Loading],
+            ) { SeatLayerPickerLoadingView() }
+        } else if (
             SeatLayerPickerProjections.isProvenEmpty(scope.state.snapshot)
         ) {
             SeatLayerPickerPart(

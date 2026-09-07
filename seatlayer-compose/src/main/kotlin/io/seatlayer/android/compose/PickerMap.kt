@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import io.seatlayer.android.SeatLayerPickerMapView
@@ -24,12 +25,25 @@ public fun SeatLayerPickerMap(
     reloadKey: Any? = Unit,
 ) {
     val scope = LocalSeatLayerPickerScope.current
+    val regions = LocalPickerBlockedRegions.current
     var mapView by remember(scope.stateHolder) {
         mutableStateOf<SeatLayerPickerMapView?>(null)
     }
+    // Three separate things, in this order: the engine is warmed, the surface
+    // is laid out, and only THEN is the chart loaded into it. A page adopted
+    // before the picker has a size is framed against nothing and re-fitted the
+    // moment it gets one, which a buyer reads as the screen loading twice.
+    var sized by remember(scope.stateHolder) { mutableStateOf(false) }
     key(scope.stateHolder) {
         AndroidView(
-            modifier = modifier.testTag("seatlayer-picker-map"),
+            modifier = modifier
+                .testTag("seatlayer-picker-map")
+                .onGloballyPositioned { coordinates ->
+                    regions?.bindMap(coordinates)
+                    if (coordinates.size.width > 0 && coordinates.size.height > 0) {
+                        sized = true
+                    }
+                },
             factory = { context ->
                 SeatLayerPickerMapView(context).also { mapView = it }
             },
@@ -39,7 +53,8 @@ public fun SeatLayerPickerMap(
         )
     }
 
-    LaunchedEffect(mapView, scope.stateHolder, reloadKey) {
+    LaunchedEffect(mapView, scope.stateHolder, reloadKey, sized) {
+        if (!sized) return@LaunchedEffect
         mapView?.let { view ->
             try {
                 view.load(scope.stateHolder)
@@ -53,6 +68,7 @@ public fun SeatLayerPickerMap(
     val activeMapView = mapView
     DisposableEffect(activeMapView) {
         onDispose {
+            regions?.bindMap(null)
             activeMapView?.let { view ->
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate).launch {
                     view.close()
