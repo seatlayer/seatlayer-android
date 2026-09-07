@@ -7,6 +7,14 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      record_goldens:
+        description: >-
+          Re-record the reference images on this runner image and upload them
+          as an artifact instead of verifying them. Commit the artifact, then
+          let an ordinary run verify it.
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -33,7 +41,26 @@ jobs:
         with:
           node-version: "22"
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew checkFast
+
+      # The reference images are rendered by the JVM harness, so they are
+      # pinned to the Robolectric configuration AND to the toolchain that drew
+      # them. A machine whose fonts or graphics stack differ from the recording
+      # machine's produces a diff that reads as a chrome regression. Record on
+      # this runner, commit the artifact, and every later run compares like
+      # with like. Treat a runner-image bump as the signal to re-record.
+      - name: Record the reference images
+        if: inputs.record_goldens
+        run: ./gradlew recordRoborazziDebug
+      - uses: actions/upload-artifact@v4
+        if: always() && inputs.record_goldens
+        with:
+          name: reference-images
+          path: seatlayer-compose/src/test/snapshots
+          if-no-files-found: error
+
+      - name: Run the fast gate
+        if: ${{ !inputs.record_goldens }}
+        run: ./gradlew checkFast
 
   # Tags and manual runs only. Lint, both Maven publications, the benchmark and
   # sample assemblies, and the external consumer builds on the oldest and

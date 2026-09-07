@@ -207,3 +207,24 @@ missing, mis-sized, or a few pixels off.
 Frames only compare pixel-for-pixel when both were captured at the same screen
 size and density. The walk warns when the device does not match the expected
 size.
+
+## Reference images and the machine that drew them
+
+The picker's reference images are rendered by the JVM test harness, so they are
+deterministic for a given Robolectric configuration *and* a given toolchain.
+They are not portable across machines whose fonts or graphics stacks differ: a
+set recorded on one architecture can fail on another by several percent per
+image, and the diff looks like a chrome regression rather than what it is.
+
+Two rules follow.
+
+1. **Record on the machine that verifies.** CI can do it: run the `CI` workflow
+   manually with `record_goldens` enabled, download the `reference-images`
+   artifact, commit it, and let an ordinary run verify. Recording locally is
+   fine while iterating, but the committed set should come from the runner.
+2. **A runner-image or toolchain bump is a re-record signal**, and it is a
+   deliberate commit of its own — never folded into a change that also alters
+   the chrome, because then nothing distinguishes the two.
+
+`robolectric.properties` is part of the same contract: changing the SDK level or
+any qualifier rebases every image. See the follow-ups note on golden pinning.
