@@ -461,11 +461,16 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
             builders[SeatLayerPickerPart.ActionError],
         ) { SeatLayerPickerActionError(Modifier.width(360.dp)) }
     }
+    // ONE surface owns transient speech. The toast band is it, so anything
+    // that would otherwise announce for itself — the extend-hold card among
+    // them — says its sentence through this same queue.
+    val toasts = rememberSeatLayerPickerToastQueue()
     if (!immersive) {
         SeatLayerPickerToastLayer(
             modifier = Modifier.align(Alignment.BottomCenter),
             bottomInset = bottomPadding,
             lifted = scope.state.presentation.candidateSeat != null,
+            queue = toasts,
         )
     }
 
@@ -491,7 +496,15 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
                         end = 14.dp,
                         bottom = bottomPadding + 70.dp,
                     ),
-            ) { SeatLayerPickerExtendHoldPrompt() }
+            ) {
+                SeatLayerPickerExtendHoldPrompt(
+                    onAnnounce = { answer ->
+                        answer.announcement?.let {
+                            toasts.show(SeatLayerPickerToast(message = it))
+                        }
+                    },
+                )
+            }
         }
     }
     SeatLayerPickerAccessPanel()
