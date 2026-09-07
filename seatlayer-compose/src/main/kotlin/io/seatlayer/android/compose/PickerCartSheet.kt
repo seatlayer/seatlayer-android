@@ -350,7 +350,14 @@ private fun PickerCartRegion(
                     .alpha(if (open) 1f else 0f)
                     .onGloballyPositioned { onExtrasMeasured(it.size.height / density) },
             ) {
-                if (!hasTickets) bestAvailable()
+                Column(Modifier.fillMaxWidth()) {
+                    // A closed sale is stated where the buyer is looking for a
+                    // way to pay, not only in the wide panel: the phone's foot
+                    // holds a button that can do nothing, and the sentence
+                    // above it is why.
+                    SeatLayerPickerSalesClosedStatement()
+                    if (!hasTickets) bestAvailable()
+                }
             }
         }
     }
