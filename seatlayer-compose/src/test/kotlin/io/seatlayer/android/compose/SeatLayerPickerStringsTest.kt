@@ -35,6 +35,38 @@ class SeatLayerPickerStringsTest {
     }
 
     @Test
+    fun `the token table wins where no host named a locale`() {
+        // Seven `en` rows of the locale table disagree with the token table
+        // the chrome is designed against. Nothing the buyer sees may come
+        // from them unless a host asked for that locale by name.
+        val tokens = SeatLayerPickerStrings()
+        val fromDevice = pickerDefaultStrings("en-GB")
+
+        assertEquals(tokens.fitVenue, fromDevice.fitVenue)
+        assertEquals(tokens.close, fromDevice.close)
+        assertEquals(tokens.recentre, fromDevice.recentre)
+        assertEquals(tokens.testMode, fromDevice.testMode)
+        assertEquals(tokens.accessibility, fromDevice.accessibility)
+        assertEquals(tokens.accessibilityTitle, fromDevice.accessibilityTitle)
+        assertEquals(tokens.errorMessage, fromDevice.errorMessage)
+        // A device in a language the token table has no words for still gets
+        // its own: the rule is about English, not about ignoring the catalogue.
+        assertEquals("de", pickerDefaultStrings("de-AT").languageTag)
+        assertEquals(
+            SeatLayerPickerStrings.localized("de-AT").fitVenue,
+            pickerDefaultStrings("de-AT").fitVenue,
+        )
+    }
+
+    @Test
+    fun `a host that names en gets the locale files own wording`() {
+        val named = SeatLayerPickerStrings.localized("en")
+
+        assertEquals("Show whole venue", named.fitVenue)
+        assertTrue(named.fitVenue != SeatLayerPickerStrings().fitVenue)
+    }
+
+    @Test
     fun `unknown currency never masquerades as the locale currency`() {
         val formatted = SeatLayerMoneyFormatter.localized(Locale.US)
             .format(12.0, "ZZZ")
