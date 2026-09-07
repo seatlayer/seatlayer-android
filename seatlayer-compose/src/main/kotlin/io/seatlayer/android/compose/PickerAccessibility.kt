@@ -1,9 +1,16 @@
 package io.seatlayer.android.compose
 
 import android.provider.Settings
+import androidx.compose.foundation.focusable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.contentDescription
@@ -133,6 +140,24 @@ internal fun Modifier.pickerVenueMapRegion(): Modifier {
         contentDescription = name
         stateDescription = hint
     }
+}
+
+/**
+ * Gives the screen back to the map when a decision surface hands it over.
+ *
+ * Accepted or cancelled, the answer leaves the buyer where they were rather
+ * than at the top of the tree — the map is the thing they came back to, and a
+ * screen reader dropped at the header has to be walked down to it again.
+ */
+@Composable
+internal fun Modifier.pickerMapFocusReturn(covered: Boolean): Modifier {
+    val requester = remember { FocusRequester() }
+    var wasCovered by remember { mutableStateOf(covered) }
+    LaunchedEffect(covered) {
+        if (wasCovered && !covered) runCatching { requester.requestFocus() }
+        wasCovered = covered
+    }
+    return focusRequester(requester).focusable()
 }
 
 /**

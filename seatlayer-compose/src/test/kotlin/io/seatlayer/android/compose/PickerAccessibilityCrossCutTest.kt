@@ -1,21 +1,31 @@
 package io.seatlayer.android.compose
 
+import android.content.Context
+import android.content.res.Configuration
+import android.graphics.Typeface
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsNode
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.createFontFamilyResolver
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import io.seatlayer.android.SeatLayerPickerPresentationState
 import io.seatlayer.android.SeatLayerPickerRemovalPhase
 import io.seatlayer.android.SeatLayerPickerRemovalUndo
 import io.seatlayer.android.SeatLayerPickerState
@@ -300,6 +310,102 @@ public class PickerAccessibilityCrossCutTest {
         )
     }
 
+    @Test
+    public fun theMapTakesTheScreenBackWhenTheCardIsAnswered() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Confirmation, LIGHT)
+        render(scope)
+        answerTheCard(scope)
+        assertEquals(
+            "an accepted card gives the screen back to the map",
+            true,
+            described(scope.strings.venueMap("North Hall"))
+                .config
+                .getOrElseNullable(SemanticsProperties.Focused) { null },
+        )
+    }
+
+    @Test
+    public fun theMapTakesTheScreenBackWhenAPromptIsDismissed() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.GeneralAdmission, LIGHT)
+        render(scope)
+        // Dismissed is the same handover as accepted: the buyer is left where
+        // they were rather than at the top of the tree.
+        dismissThePrompt(scope)
+        assertEquals(
+            true,
+            described(scope.strings.venueMap("North Hall"))
+                .config
+                .getOrElseNullable(SemanticsProperties.Focused) { null },
+        )
+    }
+
+    @Test
+    public fun boldTextIsThePlatformsToApplyAndTheSdkDoesNotApplyItTwice() {
+        // Compose carries the configuration's `fontWeightAdjustment` into the
+        // font resolver it installs above every picker, so a picker that also
+        // stepped its own weights would apply the buyer's setting twice. Here
+        // the setting is turned on around the same asked-for weight, and the
+        // face that comes back is a heavier one.
+        var plain: Typeface? = null
+        var bold: Typeface? = null
+        composeRule.setContent {
+            val context = LocalContext.current
+            val asking = FontWeight(SeatLayerTypeTokens.HEADER_TITLE_WEIGHT)
+            plain = resolvedFace(context, asking)
+            bold = resolvedFace(context.withBoldText(), asking)
+        }
+        composeRule.waitForIdle()
+        assertTrue(
+            "the platform's own setting has to reach the picker's type",
+            plain?.weight != bold?.weight,
+        )
+        assertEquals(
+            "and no further than the heaviest face there is",
+            BOLD_TEXT_CEILING,
+            bold?.weight,
+        )
+    }
+
+    @Composable
+    private fun resolvedFace(context: Context, weight: FontWeight): Typeface =
+        createFontFamilyResolver(context)
+            .resolve(FontFamily.Default, weight)
+            .value as Typeface
+
+    /** The same device, with the platform's `bold text` setting turned on. */
+    private fun Context.withBoldText(): Context = createConfigurationContext(
+        Configuration(resources.configuration).apply {
+            fontWeightAdjustment = BOLD_TEXT_ADJUSTMENT
+        },
+    )
+
+    /** Dismisses the standing prompt, the way its own way out does. */
+    private fun dismissThePrompt(scope: SeatLayerPickerScope) {
+        mutatePresentation(scope) { it.copy(activePrompt = null) }
+    }
+
+    /** Answers the standing card, the way a press on either button does. */
+    private fun answerTheCard(scope: SeatLayerPickerScope) {
+        mutatePresentation(scope) { it.copy(candidateSeat = null) }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun mutatePresentation(
+        scope: SeatLayerPickerScope,
+        block: (SeatLayerPickerPresentationState) -> SeatLayerPickerPresentationState,
+    ) {
+        val field = SeatLayerPickerStateHolder::class.java.getDeclaredField("mutableState")
+        field.isAccessible = true
+        val flow = field.get(scope.stateHolder) as MutableStateFlow<SeatLayerPickerState>
+        flow.value = flow.value.let { state ->
+            state.copy(presentation = block(state.presentation))
+        }
+        liveState.value = flow.value
+        composeRule.waitForIdle()
+        composeRule.mainClock.advanceTimeBy(SETTLE_MILLIS)
+        composeRule.waitForIdle()
+    }
+
     /** What every live region in the rendered picker currently says. */
     private fun liveRegionSentences(): List<String> {
         val said = mutableListOf<String>()
@@ -419,7 +525,23 @@ public class PickerAccessibilityCrossCutTest {
     /** The platform text-size setting, as a test may move it. */
     private val fontScale = mutableFloatStateOf(1f)
 
+    /**
+     * The picker's state, as the composition can actually watch it.
+     *
+     * The fixture scope reads its holder outside the snapshot system, so a
+     * change made mid-test would never reach a skippable composable.
+     */
+    private val liveState = mutableStateOf<SeatLayerPickerState?>(null)
+
+    /** [scope], with a state the composition subscribes to. */
+    private fun watchable(scope: SeatLayerPickerScope): SeatLayerPickerScope =
+        object : SeatLayerPickerScope by scope {
+            override val state: SeatLayerPickerState
+                get() = liveState.value ?: scope.state
+        }
+
     private fun render(scope: SeatLayerPickerScope) {
+        val watched = watchable(scope)
         composeRule.setContent {
             CompositionLocalProvider(
                 LocalDensity provides Density(
@@ -435,9 +557,9 @@ public class PickerAccessibilityCrossCutTest {
                     explicitTheme = scope.theme,
                     branding = scope.state.snapshot?.branding,
                 ) {
-                    CompositionLocalProvider(LocalSeatLayerPickerScope provides scope) {
+                    CompositionLocalProvider(LocalSeatLayerPickerScope provides watched) {
                         Box(Modifier.fillMaxSize().background(scope.theme.background)) {
-                            with(scope) {
+                            with(watched) {
                                 SeatLayerReadyMadePicker(
                                     modifier = Modifier.fillMaxSize(),
                                     builders = SeatLayerPickerBuilders(map = { _, _ -> }),
@@ -462,5 +584,11 @@ public class PickerAccessibilityCrossCutTest {
 
         /** One device pixel of rounding, as a ratio of a 44-point band. */
         const val TOLERANCE = 0.03
+
+        /** What Android's own `bold text` setting adds to every weight. */
+        const val BOLD_TEXT_ADJUSTMENT = 300
+
+        /** No weight goes past the heaviest face the platform will make. */
+        const val BOLD_TEXT_CEILING = 1000
     }
 }

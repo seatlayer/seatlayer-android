@@ -229,7 +229,12 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                                 .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP)
                                 .pickerHiddenFromAccessibility(covered),
                         ) {
-                            Box(Modifier.matchParentSize().pickerVenueMapRegion()) {
+                            Box(
+                                Modifier
+                                    .matchParentSize()
+                                    .pickerVenueMapRegion()
+                                    .pickerMapFocusReturn(covered),
+                            ) {
                                 movableMap(Modifier.fillMaxSize(), reloadGeneration)
                             }
                             WideMapChrome(builders)
@@ -296,6 +301,7 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                             .matchParentSize()
                             .pickerReadingOrder(SeatLayerPickerReadingOrder.MAP)
                             .pickerVenueMapRegion()
+                            .pickerMapFocusReturn(covered)
                             .pickerHiddenFromAccessibility(covered),
                     ) {
                         movableMap(Modifier.fillMaxSize(), reloadGeneration)
