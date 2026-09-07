@@ -222,6 +222,16 @@ class SeatLayerPickerPresentationTest {
         assertTrue(resumed.copy(candidateSeat = null).canCheckout(held, true, readOnly = false))
     }
 
+    @Test
+    fun `undo matches the ticket, never the row scoped line key`() {
+        // Two seats of one row share the runtime's `lineKey`, so matching on it
+        // reports the removed seat as still in the cart and never offers undo.
+        val removed = line("row_102-A", "102-A-1", "seat-1", 25.0)
+        val neighbour = line("row_102-A", "102-A-2", "seat-2", 25.0)
+        assertFalse(SeatLayerPickerProjections.sameTicket(removed, neighbour))
+        assertEquals(removed.lineKey, neighbour.lineKey)
+    }
+
     private fun handoff(): SeatLayerPickerCheckoutHandoff = SeatLayerPickerCheckoutHandoff(
         holdId = "hold-1",
         expiresAt = 0.0,

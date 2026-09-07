@@ -1,6 +1,7 @@
 package io.seatlayer.android.compose
 
 import io.seatlayer.android.SeatLayerPickerCartLine
+import io.seatlayer.android.SeatLayerPickerProjections
 import io.seatlayer.android.SeatLayerPickerSelectedSeat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -194,6 +195,43 @@ public class PickerCartRulesTest {
         val line = cartLine("A-12", row = "A", seat = "12")
         assertEquals("A · 12 · Lower Bowl", pickerCardPositionLine(line, "Lower Bowl", "Section 102"))
         assertEquals("A · 12", pickerCardPositionLine(line, "Lower Bowl", "lower bowl"))
+    }
+
+    @Test
+    public fun twoSeatsOfOneRowAreTwoCards_notOneDrawnTwice() {
+        // The runtime's own key is ROW-scoped: both seats arrive under it.
+        val first = cartLine("102-A-1", row = "102-A", seat = "1")
+            .copy(lineKey = "row_102-A", seatId = "seat-1")
+        val second = cartLine("102-A-2", row = "102-A", seat = "2")
+            .copy(lineKey = "row_102-A", seatId = "seat-2")
+        assertEquals(first.lineKey, second.lineKey)
+        assertEquals(
+            2,
+            listOf(first, second)
+                .mapIndexed { index, line ->
+                    SeatLayerPickerProjections.cartLineKey(line, index)
+                }
+                .toSet()
+                .size,
+        )
+        assertFalse(SeatLayerPickerProjections.sameTicket(first, second))
+        assertTrue(SeatLayerPickerProjections.sameTicket(first, first.copy(unitPrice = 99.0)))
+    }
+
+    @Test
+    public fun aLineWithNoSeatOfItsOwnStillGetsItsOwnKey() {
+        // A best-available result or a resumed hold names no seat at all.
+        val first = cartLine("row_102-A", row = "102-A", seat = null)
+        val second = cartLine("row_102-A", row = "102-A", seat = null)
+        assertEquals(
+            2,
+            listOf(first, second)
+                .mapIndexed { index, line ->
+                    SeatLayerPickerProjections.cartLineKey(line, index)
+                }
+                .toSet()
+                .size,
+        )
     }
 
     @Test

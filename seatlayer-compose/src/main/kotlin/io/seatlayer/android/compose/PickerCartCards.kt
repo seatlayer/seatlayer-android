@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.seatlayer.android.SeatLayerPickerCartLine
 import io.seatlayer.android.SeatLayerPickerHapticCue
+import io.seatlayer.android.SeatLayerPickerProjections
 import io.seatlayer.android.SeatLayerPickerRemovalPhase
 import io.seatlayer.android.SeatLayerPickerSeatNote
 import io.seatlayer.android.SeatLayerPickerSelectedSeat
@@ -83,8 +84,14 @@ public fun SeatLayerPickerCartList(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(SeatLayerSizeTokens.CART_CARD_GAP.dp),
     ) {
-        confirmed.items.forEach { line ->
-            key(line.lineKey) { SeatLayerCartCard(line) }
+        // Keyed per TICKET, never on the runtime's `lineKey`: that key is
+        // row-scoped, so both seats of row 102-A arrive under one `row_…`
+        // string and a list keyed on it draws line 0 twice — the buyer's
+        // second seat simply is not on the screen.
+        confirmed.items.forEachIndexed { index, line ->
+            key(SeatLayerPickerProjections.cartLineKey(line, index)) {
+                SeatLayerCartCard(line)
+            }
         }
     }
 }
@@ -109,7 +116,9 @@ public fun SeatLayerCartCard(
     val held = snapshot?.hold?.owner == "host"
     val removable = !scope.options.readOnly
     val undo = scope.state.presentation.removalUndo
-    val removing = undo?.line?.lineKey == line.lineKey &&
+    val identity = SeatLayerPickerProjections.ticketIdentity(line)
+    val removing = undo != null &&
+        SeatLayerPickerProjections.sameTicket(undo.line, line) &&
         undo.phase == SeatLayerPickerRemovalPhase.AwaitingRemove
     val notes = seat?.let {
         seatLayerPickerSeatNotes(it.accessibility, it.wheelchairSpaceType, it.commercial)
@@ -128,8 +137,8 @@ public fun SeatLayerCartCard(
 
     // Swipe travel is kept in pixels: it is compared against the card's own
     // measured width and moved by the finger, both of which arrive in pixels.
-    var slide by remember(line.lineKey) { mutableFloatStateOf(0f) }
-    var width by remember(line.lineKey) { mutableFloatStateOf(0f) }
+    var slide by remember(identity) { mutableFloatStateOf(0f) }
+    var width by remember(identity) { mutableFloatStateOf(0f) }
     // A host-owned hold is not the picker's to change — unless the host has
     // said the checkout came back, which is what excuses the whole gate.
     val swipeEnabled = removable &&

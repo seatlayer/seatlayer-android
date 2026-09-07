@@ -40,6 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.Dp
+import io.seatlayer.android.SeatLayerPickerProjections
 import io.seatlayer.android.SeatLayerPickerRemovalPhase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -121,7 +122,10 @@ public fun SeatLayerPickerToastLayer(
         undo.phase == SeatLayerPickerRemovalPhase.UndoWindow &&
         scope.state.presentation.canUndoRemoval(scope.state.snapshot)
     val coroutineScope = rememberComposeScope()
-    LaunchedEffect(canUndo, undo?.line?.lineKey) {
+    // Per ticket: `lineKey` is row-scoped, so removing the second seat of a
+    // row it already named would not restart the sentence.
+    val undoneTicket = undo?.line?.let(SeatLayerPickerProjections::ticketIdentity)
+    LaunchedEffect(canUndo, undoneTicket) {
         if (!canUndo) return@LaunchedEffect
         queue.show(
             SeatLayerPickerToast(
