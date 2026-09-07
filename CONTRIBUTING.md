@@ -1,10 +1,24 @@
 # Contributing
 
-Use JDK 17 and an Android SDK containing platform 36.
+Use JDK 17, Node 22, and an Android SDK containing platform 36.
 
 ```bash
 ./gradlew validate
 ```
+
+`validate` builds the external consumer projects under `consumer-smoke/` as a
+**separate Gradle build**, which does not inherit the root build's SDK location.
+Either export `ANDROID_HOME`, or create `local.properties` in *both* the root
+and `consumer-smoke/`:
+
+```bash
+printf 'sdk.dir=%s\n' "$ANDROID_HOME" | tee local.properties consumer-smoke/local.properties
+```
+
+Both files are gitignored. Without the second one the gate runs for several
+minutes and then fails at `verifyExternalConsumers` with "SDK location not
+found", which looks like a build break and is not one. CI has `ANDROID_HOME` set
+by the runner image and never needs either file.
 
 Keep public API additions source-compatible where possible. New bridge fields
 must decode loss-tolerantly because the native package and vendored Web SDK can
