@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Emits the generated Kotlin token objects from `design/tokens.json`.
+// Emits the generated Kotlin token objects from `Design/tokens.json`.
 //
 //   node tool/generate-picker-tokens.mjs            # write
 //   node tool/generate-picker-tokens.mjs --check    # fail if stale
@@ -12,17 +12,18 @@
 
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadDesign, sha256 } from './picker-design-core.mjs';
 import {
   argbLong,
-  flatten,
   generatedHeader,
   isRecord,
   kotlinFloat,
   kotlinInt,
   kotlinString,
-  loadDesign,
   screamingSnake,
-} from './picker-design-core.mjs';
+  sourceDigests,
+  validateDesign,
+} from './kotlin-emit.mjs';
 
 const OUT_DIR = 'seatlayer-compose/src/main/kotlin/io/seatlayer/android/compose';
 const PROSE_KEYS = new Set(['note', 'reducedMotion']);
@@ -84,8 +85,12 @@ function curveEntries(curve) {
 
 /** @param {ReturnType<typeof loadDesign>} design */
 function render(design) {
-  const { tokens, sha256 } = design;
-  const header = generatedHeader({ generator: 'generate-picker-tokens.mjs', sha256 });
+  const { tokens } = design;
+  const digests = sourceDigests(design, sha256);
+  const header = generatedHeader({
+    generator: 'generate-picker-tokens.mjs',
+    sha256: digests,
+  });
   const type = /** @type {Record<string, any>} */ (tokens.type);
   const motion = /** @type {Record<string, any>} */ (tokens.motion);
 
@@ -104,9 +109,10 @@ function render(design) {
     header,
     '/** Every generated constant carries the digest of the design file above. */',
     object('SeatLayerDesignSource', [
-      ['TOKENS_SHA256', kotlinString(sha256.tokens)],
-      ['LOCALE_STRINGS_SHA256', kotlinString(sha256.localeStrings)],
-      ['COMPONENTS_SHA256', kotlinString(sha256.components)],
+      ['TOKENS_SHA256', kotlinString(digests.tokens)],
+      ['LOCALE_STRINGS_SHA256', kotlinString(digests.localeStrings)],
+      ['COMPONENTS_SHA256', kotlinString(digests.components)],
+      ['PICKER_SPEC_SHA256', kotlinString(digests.spec)],
     ], 'String'),
     '',
     object('SeatLayerLightTokens', entries(tokens.color.light, argbLong), 'Long'),
@@ -156,7 +162,9 @@ function render(design) {
 
 function main() {
   const check = process.argv.includes('--check');
-  const files = render(loadDesign('design'));
+  const design = loadDesign('.');
+  validateDesign(design.tokens, design.locales);
+  const files = render(design);
   const stale = [];
   for (const [name, contents] of Object.entries(files)) {
     const path = join(OUT_DIR, name);

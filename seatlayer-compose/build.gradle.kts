@@ -112,8 +112,8 @@ mavenPublishing {
 
 val verifyPickerDesign = tasks.register("verifyPickerDesign") {
     group = "verification"
-    description = "Verifies design/, source-lock.json and the generated Kotlin agree."
-    val designDirectory = rootProject.layout.projectDirectory.dir("design")
+    description = "Verifies Design/, source-lock.json and the generated Kotlin agree."
+    val designDirectory = rootProject.layout.projectDirectory.dir("Design")
     val generatedDirectory = layout.projectDirectory.dir(
         "src/main/kotlin/io/seatlayer/android/compose",
     )
@@ -121,6 +121,7 @@ val verifyPickerDesign = tasks.register("verifyPickerDesign") {
         "tokens.json" to "tokensSha256",
         "locale_strings.json" to "localeStringsSha256",
         "components.md" to "componentsSha256",
+        "picker-spec.md" to "pickerSpecSha256",
     )
     val generated = listOf(
         "SeatLayerPickerTokens.g.kt",
@@ -148,7 +149,7 @@ val verifyPickerDesign = tasks.register("verifyPickerDesign") {
                 ?.groupValues
                 ?.get(1)
             check(declared == actual) {
-                "design/$file does not match design/source-lock.json.$field. " +
+                "Design/$file does not match Design/source-lock.json.$field. " +
                     "Re-copy the design source, then run the generators."
             }
             file to actual
@@ -160,6 +161,7 @@ val verifyPickerDesign = tasks.register("verifyPickerDesign") {
             "tokens.json" to "tokens.json         SHA-256: ",
             "locale_strings.json" to "locale_strings.json SHA-256: ",
             "components.md" to "components.md       SHA-256: ",
+            "picker-spec.md" to "picker-spec.md      SHA-256: ",
         )
         generated.forEach { name ->
             val header = generatedDirectory.file(name).asFile.readText().take(1_024)

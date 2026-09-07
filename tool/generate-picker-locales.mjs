@@ -16,14 +16,14 @@
 
 import { readFileSync, writeFileSync, readdirSync, unlinkSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadDesign, pluralFamilies, sha256 } from './picker-design-core.mjs';
 import {
-  flatten,
   generatedHeader,
   kotlinString,
-  loadDesign,
-  pluralPairs,
   screamingSnake,
-} from './picker-design-core.mjs';
+  sourceDigests,
+  validateDesign,
+} from './kotlin-emit.mjs';
 
 const OUT_DIR = 'seatlayer-compose/src/main/kotlin/io/seatlayer/android/compose';
 const LOCALE_FILE_PREFIX = 'SeatLayerPickerLocaleData';
@@ -92,14 +92,32 @@ const PLATFORM_EXTRAS = Object.freeze({
   total: 'Total',
 });
 
+/**
+ * The `xOne`/`xOther` families the shared walker found, as `base -> {one,
+ * other, base}` where `base` is the bare key only when the table also carries
+ * it. A bare key that a pair shadows is the `other` wording repeated, so it
+ * becomes the plural function rather than a field of its own.
+ *
+ * @param {Record<string, string>} strings
+ */
+function pluralPairs(strings) {
+  const present = new Set(Object.keys(strings));
+  const pairs = new Map();
+  for (const family of pluralFamilies({ strings })) {
+    const { one, other } = family.forms;
+    if (!one || !other) continue;
+    pairs.set(family.base, { one, other, base: present.has(family.base) ? family.base : null });
+  }
+  return pairs;
+}
+
 /** @param {Record<string, string>} strings */
 function plan(strings) {
   const keys = Object.keys(strings);
-  const pairs = pluralPairs(keys);
+  const pairs = pluralPairs(strings);
   const shadowedBases = new Set(
     [...pairs.values()].filter((pair) => pair.base !== null).map((pair) => pair.base),
   );
-  const pluralHalves = new Set([...pairs.values()].flatMap((pair) => [pair.one, pair.other]));
   const accommodations = new Set(Object.values(ACCESS_NEEDS));
 
   /** @type {Array<{name: string, token: string | null, literal: string}>} */
@@ -156,10 +174,12 @@ function functionSource(name, parameters, plural) {
 
 /** @param {ReturnType<typeof loadDesign>} design */
 function renderStrings(design, planned) {
-  const { sha256 } = design;
   const { fields, pairs } = planned;
   const lines = [];
-  lines.push(generatedHeader({ generator: 'generate-picker-locales.mjs', sha256 }));
+  lines.push(generatedHeader({
+    generator: 'generate-picker-locales.mjs',
+    sha256: sourceDigests(design, sha256),
+  }));
   lines.push('import androidx.compose.runtime.Immutable');
   lines.push('import java.util.Locale');
   lines.push('');
@@ -220,7 +240,7 @@ function renderStrings(design, planned) {
   lines.push('            val defaults = SeatLayerPickerStrings(languageTag = tag)');
   lines.push('            fun text(key: String, fallback: String): String = dictionary[key] ?: fallback');
   lines.push('            return defaults.copy(');
-  const localeKeys = new Set(Object.keys(design.locales.en));
+  const localeKeys = new Set(Object.keys(design.locales.strings.en));
   const names = new Set(fields.map((field) => field.name));
   const localized = [];
   for (const key of [...localeKeys].sort()) {
@@ -267,8 +287,11 @@ function renderStrings(design, planned) {
 
 /** @param {ReturnType<typeof loadDesign>} design */
 function renderLocales(design) {
-  const { locales, sha256 } = design;
-  const header = generatedHeader({ generator: 'generate-picker-locales.mjs', sha256 });
+  const locales = design.locales.strings;
+  const header = generatedHeader({
+    generator: 'generate-picker-locales.mjs',
+    sha256: sourceDigests(design, sha256),
+  });
   const tags = Object.keys(locales).sort();
   const size = Math.ceil(tags.length / LOCALE_GROUPS);
   /** @type {Record<string, string>} */
@@ -312,7 +335,8 @@ function renderLocales(design) {
 
 function main() {
   const check = process.argv.includes('--check');
-  const design = loadDesign('design');
+  const design = loadDesign('.');
+  validateDesign(design.tokens, design.locales);
   const planned = plan(design.tokens.strings);
   const strings = renderStrings(design, planned);
   const files = {
