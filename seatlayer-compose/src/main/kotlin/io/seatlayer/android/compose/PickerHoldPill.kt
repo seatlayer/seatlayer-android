@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -37,6 +39,16 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 /**
+ * The wall clock the countdown reads.
+ *
+ * Replaced only where a frame has to be reproducible — a captured reference
+ * image of a live countdown otherwise depends on how many ticks the
+ * composition happened to cost, which is a flaky gate, not evidence.
+ */
+internal val LocalSeatLayerPickerClock: ProvidableCompositionLocal<() -> Long> =
+    staticCompositionLocalOf { { System.currentTimeMillis() } }
+
+/**
  * The picker's ONE clock.
  *
  * It shows the full server hold. The SDK never names a hold length of its own
@@ -52,14 +64,15 @@ public fun SeatLayerPickerHoldCountdown(modifier: Modifier = Modifier) {
     val expiresAt = hold.expiresAt ?: return
     if (!hold.active) return
     val reducedMotion = pickerReducedMotion()
+    val now = LocalSeatLayerPickerClock.current
     val expiryMillis = seatLayerNormalizeEpochMillis(expiresAt)
     var remaining by remember(expiryMillis) {
-        mutableLongStateOf(seatLayerHoldSecondsLeft(expiryMillis, System.currentTimeMillis()))
+        mutableLongStateOf(seatLayerHoldSecondsLeft(expiryMillis, now()))
     }
     LaunchedEffect(expiryMillis) {
         while (remaining > 0) {
             delay(HoldPillLiterals.TICK_MILLIS)
-            remaining = seatLayerHoldSecondsLeft(expiryMillis, System.currentTimeMillis())
+            remaining = seatLayerHoldSecondsLeft(expiryMillis, now())
         }
     }
     val expiring = seatLayerHoldIsExpiring(remaining)

@@ -8,6 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -206,6 +207,30 @@ public class SeatLayerPickerStatesTest {
 
         composeRule.onAllNodesWithText(strings.addMinutes(SEATLAYER_HOLD_EXTEND_STEP_MINUTES))
             .assertCountEquals(0)
+    }
+
+    @Test
+    public fun aHostOwnedHoldStillShowsTheBuyerTheClock() {
+        val strings = SeatLayerPickerStrings.localized("en")
+        // Whoever holds the seats, the buyer's time is running. Only the
+        // OFFER of more time is withheld from a hold this picker cannot
+        // mutate; the countdown itself is the buyer's, not the owner's.
+        val pinned = 1_800_000_000_000L
+        show(
+            pickerAccessScope(
+                hold = SeatLayerPickerHold(
+                    active = true,
+                    expiresAt = (pinned + 120_000L).toDouble(),
+                    owner = "host",
+                ),
+            ),
+        ) {
+            CompositionLocalProvider(LocalSeatLayerPickerClock provides { pinned }) {
+                SeatLayerPickerHoldCountdown()
+            }
+        }
+
+        composeRule.onNodeWithText(strings.heldFor(seatLayerHoldClock(120))).assertIsDisplayed()
     }
 
     @Test

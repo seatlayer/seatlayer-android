@@ -59,6 +59,17 @@ import java.lang.reflect.Proxy
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonObject
 
+/**
+ * The instant every captured reference image is taken at.
+ *
+ * A fixed epoch rather than the wall clock: the hold pill draws a live
+ * countdown, so a frame captured against the real clock differs by a second
+ * depending on how long the composition took, and a golden that fails on
+ * scheduler luck teaches everyone to re-record rather than to look.
+ */
+internal const val SEATLAYER_EVIDENCE_NOW_MILLIS: Double = 1_800_000_000_000.0
+
+
 internal enum class PickerEvidenceScenario {
     Overview,
     SectionFocus,
@@ -478,7 +489,7 @@ private fun evidenceSnapshot(scenario: PickerEvidenceScenario): SeatLayerPickerS
         hold = SeatLayerPickerHold(
             active = scenario == PickerEvidenceScenario.Cart,
             expiresAt = if (scenario == PickerEvidenceScenario.Cart) {
-                System.currentTimeMillis() + 8 * 60_000.0
+                SEATLAYER_EVIDENCE_NOW_MILLIS + 8 * 60_000.0
             } else {
                 null
             },

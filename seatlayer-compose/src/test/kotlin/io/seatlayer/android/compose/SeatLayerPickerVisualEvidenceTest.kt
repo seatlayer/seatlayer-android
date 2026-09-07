@@ -238,6 +238,9 @@ public class SeatLayerPickerVisualEvidenceTest {
             CompositionLocalProvider(
                 LocalDensity provides Density(platformDensity.density, fontScale),
                 LocalLayoutDirection provides layoutDirection,
+                // Pinned so the hold pill reads the same eight minutes in
+                // every capture, whatever the composition cost.
+                LocalSeatLayerPickerClock provides { SEATLAYER_EVIDENCE_NOW_MILLIS.toLong() },
             ) {
                 SeatLayerPickerThemeProvider(
                     mode = themeMode,
