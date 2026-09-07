@@ -8,14 +8,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertHeightIsAtLeast
 import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertWidthIsAtLeast
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -77,9 +80,9 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
                             ),
                         )
                         Row {
-                            SeatLayerPickerZoomControls(
-                                layout = SeatLayerPickerMapControlsLayout.Horizontal,
-                            )
+                            SeatLayerPickerZoomInButton()
+                            SeatLayerPickerZoomOutButton()
+                            SeatLayerPickerShowWholeVenueButton()
                             SeatLayerPickerColorblindControl()
                             SeatLayerPickerLimitedViewControl()
                         }
@@ -92,29 +95,53 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
             .assertHasClickAction()
             .assertWidthIsAtLeast(48.dp)
             .assertHeightIsAtLeast(48.dp)
-        composeRule.onNodeWithText("Standard")
+        // The wide chip is name · price; the phone chip is the price alone.
+        composeRule.onNodeWithText("Standard · USD 40+").assertHasClickAction()
+        composeRule.onNodeWithText("USD 40+")
             .assertHasClickAction()
-            .assertIsOn()
-            .assertHeightIsAtLeast(48.dp)
-        composeRule.onNodeWithContentDescription("Standard, USD 40–USD 60")
-            .assertHasClickAction()
-            .assertIsOn()
-            .assertHeightIsAtLeast(48.dp)
-        composeRule.onNodeWithContentDescription("Accessibility and colour options")
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
+        // The NAME is spoken on both, and a spread becomes a floor rather than
+        // a range no chip can hold.
+        composeRule.onAllNodesWithContentDescription("Standard — USD 40+")
+            .assertCountEquals(2)
+        // The control names how many filters are on: a screen reader that says
+        // only "accessibility" over a filtered map has hidden the filtering.
+        composeRule.onNodeWithContentDescription("Accessibility and colour options · 2")
             .performClick()
         composeRule.mainClock.advanceTimeBy(1_000)
         composeRule.waitForIdle()
+        // The design source's own minimum, not Android's older 48: every
+        // number in this chrome comes from the generated tokens.
         composeRule.onNodeWithText("Wheelchair · 8")
             .assertHasClickAction()
             .assertIsOn()
-            .assertHeightIsAtLeast(48.dp)
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
         composeRule.onNodeWithText("Aisle Seat · 0")
             .assertIsNotEnabled()
-            .assertHeightIsAtLeast(48.dp)
-        composeRule.onNodeWithContentDescription("Zoom in")
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MINIMUM_HIT_TARGET.dp)
+        // Among the seats `+` has retired: it is out of the reading order, but
+        // it KEEPS ITS SLOT, so the disc above it never moves out from under a
+        // thumb already reaching for it.
+        composeRule.onAllNodesWithContentDescription("Zoom in").assertCountEquals(0)
+        composeRule.onNodeWithContentDescription("Zoom in", useUnmergedTree = true)
+            .assertWidthIsAtLeast(SeatLayerSizeTokens.MAP_CONTROL_SIZE.dp)
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MAP_CONTROL_SIZE.dp)
+        // The map discs are the design source's own 36 dp, drawn on the map
+        // rather than on a panel: a 48 dp disc column takes a fifth of a phone
+        // map, and the corner it stands in is not a toolbar.
+        //
+        // The whole-venue disc is ALWAYS live, whatever the camera last said:
+        // a pinch changes no state, so dimming it on a stale reading strands a
+        // buyer with no way out.
+        composeRule.onNodeWithContentDescription("Show whole venue")
             .assertHasClickAction()
-            .assertWidthIsAtLeast(48.dp)
-            .assertHeightIsAtLeast(48.dp)
+            .assertIsEnabled()
+            .assertWidthIsAtLeast(SeatLayerSizeTokens.MAP_CONTROL_SIZE.dp)
+            .assertHeightIsAtLeast(SeatLayerSizeTokens.MAP_CONTROL_SIZE.dp)
+        // `−` is live only among the seats, where there is still a rung.
+        composeRule.onNodeWithContentDescription("Zoom out")
+            .assertHasClickAction()
+            .assertIsEnabled()
         composeRule.onNodeWithContentDescription("Colourblind-friendly colours")
             .assertHasClickAction()
             .assertIsOn()
