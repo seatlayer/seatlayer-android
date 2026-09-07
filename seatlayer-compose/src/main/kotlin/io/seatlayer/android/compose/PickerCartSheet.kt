@@ -311,6 +311,7 @@ private fun PickerCartRegion(
     onCartMeasured: (Float) -> Unit,
     onExtrasMeasured: (Float) -> Unit,
 ) {
+    val scope = LocalSeatLayerPickerScope.current
     val density = LocalDensity.current.density
     val scrollState = rememberScrollState()
     LaunchedEffect(hasTickets) { if (!hasTickets) onCartMeasured(0f) }
@@ -360,7 +361,19 @@ private fun PickerCartRegion(
                     // holds a button that can do nothing, and the sentence
                     // above it is why.
                     SeatLayerPickerSalesClosedStatement()
-                    if (!hasTickets) bestAvailable()
+                    if (!hasTickets) {
+                        // An empty tray says how a seat gets into it. Spoken
+                        // only: the form under it is the visible answer, and a
+                        // sentence printed above it would say twice what the
+                        // button already says once.
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .semantics {
+                                    contentDescription = scope.strings.emptyTrayHint
+                                },
+                        ) { bestAvailable() }
+                    }
                 }
             }
         }

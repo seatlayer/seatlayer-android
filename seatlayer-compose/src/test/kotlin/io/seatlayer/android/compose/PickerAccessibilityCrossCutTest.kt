@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsNode
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.createFontFamilyResolver
@@ -406,6 +407,71 @@ public class PickerAccessibilityCrossCutTest {
         composeRule.waitForIdle()
     }
 
+    @Test
+    public fun everyControlOnTheMapHasAName() {
+        sweepForNames(PickerEvidenceScenario.SectionFocus)
+    }
+
+    @Test
+    public fun everyControlOnTheCardHasAName() {
+        sweepForNames(PickerEvidenceScenario.Confirmation)
+    }
+
+    @Test
+    public fun everyControlInTheOpenSheetHasAName() {
+        sweepForNames(PickerEvidenceScenario.Cart)
+    }
+
+    @Test
+    public fun everyControlInTheSceneHasAName() {
+        sweepForNames(PickerEvidenceScenario.Venue3D)
+    }
+
+    private fun sweepForNames(scenario: PickerEvidenceScenario) {
+        render(
+            pickerEvidenceScope(
+                scenario,
+                LIGHT,
+                SeatLayerPickerOptions(showDockBar = true),
+            ),
+        )
+        val seen = mutableListOf<String>()
+        val unnamed = unnamedControls(scenario.name, seen)
+        assertTrue(
+            "a sweep that walked no controls proves nothing",
+            seen.size >= CONTROLS_PER_SCREEN,
+        )
+        assertTrue(
+            "a control with no name is a control nobody can choose: " +
+                unnamed.joinToString(),
+            unnamed.isEmpty(),
+        )
+    }
+
+    @Test
+    public fun theEmptyTraySaysHowASeatGetsIntoIt() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Overview, LIGHT)
+        render(scope)
+        described(scope.strings.emptyTrayHint)
+    }
+
+    /** Every pressable node in the rendered picker with nothing to call it. */
+    private fun unnamedControls(where: String, seen: MutableList<String>): List<String> {
+        val bare = mutableListOf<String>()
+        fun walk(node: SemanticsNode) {
+            val config = node.config
+            val pressable = config.contains(SemanticsActions.OnClick) ||
+                config.contains(SemanticsProperties.Role)
+            if (pressable) seen += "#${node.id}"
+            if (pressable && !named(node)) {
+                bare += "$where #${node.id} at ${node.positionInRoot}"
+            }
+            node.children.forEach(::walk)
+        }
+        walk(composeRule.onRoot(useUnmergedTree = true).fetchSemanticsNode())
+        return bare
+    }
+
     /** What every live region in the rendered picker currently says. */
     private fun liveRegionSentences(): List<String> {
         val said = mutableListOf<String>()
@@ -467,6 +533,14 @@ public class PickerAccessibilityCrossCutTest {
         }
         walk(root)
         return broken
+    }
+
+    /** Whether this subtree has a NAME — a role alone is not one. */
+    private fun named(node: SemanticsNode): Boolean {
+        val config = node.config
+        val own = config.contains(SemanticsProperties.ContentDescription) ||
+            config.contains(SemanticsProperties.Text)
+        return own || node.children.any(::named)
     }
 
     /** Whether this subtree has anything to say to a screen reader. */
@@ -588,7 +662,11 @@ public class PickerAccessibilityCrossCutTest {
         /** What Android's own `bold text` setting adds to every weight. */
         const val BOLD_TEXT_ADJUSTMENT = 300
 
+        /** Below this a name sweep has not walked a real screen. */
+        const val CONTROLS_PER_SCREEN = 4
+
         /** No weight goes past the heaviest face the platform will make. */
         const val BOLD_TEXT_CEILING = 1000
+
     }
 }
