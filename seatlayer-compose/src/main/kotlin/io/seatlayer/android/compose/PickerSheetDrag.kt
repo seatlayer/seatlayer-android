@@ -167,6 +167,9 @@ internal fun pickerSheetSettleSpec(reducedMotion: Boolean): AnimationSpec<Float>
 @Composable
 internal fun pickerReducedMotion(): Boolean {
     val context = LocalContext.current
+    // A capture is one frame of a moving surface, so it asks for the settled
+    // one. See [LocalSeatLayerPickerCapture].
+    if (LocalSeatLayerPickerCapture.current) return true
     return remember(context) {
         runCatching {
             Settings.Global.getFloat(

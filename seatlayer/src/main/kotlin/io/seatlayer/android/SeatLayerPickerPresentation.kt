@@ -115,6 +115,30 @@ public data class SeatLayerPickerPresentationState(
         pending = candidateSeat.takeIf { cardIntent == SeatLayerPickerCardIntent.Add },
     )
 
+    /**
+     * Whether a checkout the host took still stands between the buyer and
+     * their cart.
+     *
+     * Nothing inside the picker ever answers a handoff the HOST carried away,
+     * so the handoff and the hold it took would otherwise gate the cart for
+     * the rest of the session. `resumeAfterCheckout()` is the host saying the
+     * buyer is back on the map, and it is the only thing that lifts them:
+     * without it Continue is dead on return, and a seat tapped afterwards
+     * cannot be acted on.
+     */
+    public val checkoutHoldsTheCart: Boolean
+        get() = checkoutHandoff != null && !resumeAfterCheckout
+
+    /**
+     * Whether the picker may still add to, or take from, the cart.
+     *
+     * A hold the host owns is not the picker's to change — until the host has
+     * said the checkout came back.
+     */
+    public fun canMutateCart(snapshot: SeatLayerPickerSnapshot?): Boolean =
+        !checkoutHoldsTheCart &&
+            (snapshot?.hold?.owner != "host" || resumeAfterCheckout)
+
     public fun canCheckout(
         snapshot: SeatLayerPickerSnapshot?,
         ready: Boolean,
@@ -124,11 +148,10 @@ public data class SeatLayerPickerPresentationState(
         // Deliberately not gated on actionInFlight: adding a seat to a live
         // hold puts a command in flight, and greying Continue through it tells
         // the buyer their tickets stopped being buyable.
-        checkoutHandoff == null &&
+        canMutateCart(snapshot) &&
         activePrompt == null &&
         candidateSeat == null &&
         confirmedCart(snapshot).items.isNotEmpty() &&
-        snapshot?.hold?.owner != "host" &&
         snapshot?.selectionValidity?.isValid != false
 
     public fun nextBackStep(
@@ -156,14 +179,11 @@ public data class SeatLayerPickerPresentationState(
     public fun canUndoRemoval(snapshot: SeatLayerPickerSnapshot?): Boolean {
         val undo = removalUndo ?: return false
         val sameSession = snapshot?.sessionId == undo.sessionId
-        val identity = SeatLayerPickerProjections.ticketIdentity(undo.line)
+        // Per TICKET, not per line key: `lineKey` is row-scoped, so the row a
+        // removed seat came from is still in the cart while its neighbour is,
+        // and matching on it says the seat came back when it did not.
         val stillAbsent = snapshot?.cartLines.orEmpty().none { line ->
-            val candidate = SeatLayerPickerProjections.ticketIdentity(line)
-            when {
-                identity.lineKey != null -> candidate.lineKey == identity.lineKey
-                identity.seatId != null -> candidate.seatId == identity.seatId
-                else -> candidate.removalLabel == identity.removalLabel
-            }
+            SeatLayerPickerProjections.sameTicket(line, undo.line)
         }
         return SeatLayerPickerProjections.canUndoRemoval(
             phase = undo.phase,
@@ -190,6 +210,48 @@ public object SeatLayerPickerProjections {
         objectId = line.objectId.nonBlank(),
         seatId = line.seatId?.nonBlank(),
     )
+
+    /**
+     * A key that names ONE cart line.
+     *
+     * The runtime's own `lineKey` is ROW-scoped: both seats of row `102-A`
+     * arrive under a single `row_…` key. A list keyed on it draws the first
+     * line twice and never draws the second, so the seat is the identity
+     * wherever the line names one, and the line's own address together with
+     * its position in the list wherever it does not.
+     */
+    public fun cartLineKey(line: SeatLayerPickerCartLine, index: Int): String {
+        line.seatId?.nonBlank()?.let { return it }
+        val address = listOfNotNull(
+            line.sectionLabel?.nonBlank(),
+            line.rowLabel?.nonBlank(),
+            line.seatNumber?.nonBlank(),
+            line.label.nonBlank(),
+        ).joinToString(separator = "/")
+        val base = address.ifEmpty { line.lineKey }
+        return "$base#$index"
+    }
+
+    /**
+     * Whether two cart lines stand for the same ticket.
+     *
+     * The seat decides it wherever either line names one. Only where neither
+     * does — a best-available result, a resumed hold — does the address, and
+     * finally the row-scoped key, get a say.
+     */
+    public fun sameTicket(
+        first: SeatLayerPickerCartLine,
+        second: SeatLayerPickerCartLine,
+    ): Boolean {
+        val left = ticketIdentity(first)
+        val right = ticketIdentity(second)
+        if (left.seatId != null || right.seatId != null) return left.seatId == right.seatId
+        if (left.removalLabel != null || right.removalLabel != null) {
+            return left.removalLabel == right.removalLabel &&
+                first.seatNumber?.nonBlank() == second.seatNumber?.nonBlank()
+        }
+        return left.lineKey == right.lineKey
+    }
 
     public fun confirmedCart(
         items: List<SeatLayerPickerCartLine>,

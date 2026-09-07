@@ -45,7 +45,7 @@ public fun SeatLayerPicker(
     modifier: Modifier = Modifier,
     themeMode: SeatLayerPickerThemeMode = SeatLayerPickerThemeMode.Auto,
     theme: SeatLayerPickerTheme? = null,
-    strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized(),
+    strings: SeatLayerPickerStrings = pickerDefaultStrings(),
     options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
     styles: SeatLayerPickerStyles = SeatLayerPickerStyles(),
     moneyFormatter: SeatLayerMoneyFormatter = SeatLayerMoneyFormatter.localized(),

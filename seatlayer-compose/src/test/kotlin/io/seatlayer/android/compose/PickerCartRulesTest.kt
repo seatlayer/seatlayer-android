@@ -1,6 +1,7 @@
 package io.seatlayer.android.compose
 
 import io.seatlayer.android.SeatLayerPickerCartLine
+import io.seatlayer.android.SeatLayerPickerProjections
 import io.seatlayer.android.SeatLayerPickerSelectedSeat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -194,6 +195,84 @@ public class PickerCartRulesTest {
         val line = cartLine("A-12", row = "A", seat = "12")
         assertEquals("A · 12 · Lower Bowl", pickerCardPositionLine(line, "Lower Bowl", "Section 102"))
         assertEquals("A · 12", pickerCardPositionLine(line, "Lower Bowl", "lower bowl"))
+    }
+
+    @Test
+    public fun twoSeatsOfOneRowAreTwoCards_notOneDrawnTwice() {
+        // The runtime's own key is ROW-scoped: both seats arrive under it.
+        val first = cartLine("102-A-1", row = "102-A", seat = "1")
+            .copy(lineKey = "row_102-A", seatId = "seat-1")
+        val second = cartLine("102-A-2", row = "102-A", seat = "2")
+            .copy(lineKey = "row_102-A", seatId = "seat-2")
+        assertEquals(first.lineKey, second.lineKey)
+        assertEquals(
+            2,
+            listOf(first, second)
+                .mapIndexed { index, line ->
+                    SeatLayerPickerProjections.cartLineKey(line, index)
+                }
+                .toSet()
+                .size,
+        )
+        assertFalse(SeatLayerPickerProjections.sameTicket(first, second))
+        assertTrue(SeatLayerPickerProjections.sameTicket(first, first.copy(unitPrice = 99.0)))
+    }
+
+    @Test
+    public fun aLineWithNoSeatOfItsOwnStillGetsItsOwnKey() {
+        // A best-available result or a resumed hold names no seat at all.
+        val first = cartLine("row_102-A", row = "102-A", seat = null)
+        val second = cartLine("row_102-A", row = "102-A", seat = null)
+        assertEquals(
+            2,
+            listOf(first, second)
+                .mapIndexed { index, line ->
+                    SeatLayerPickerProjections.cartLineKey(line, index)
+                }
+                .toSet()
+                .size,
+        )
+    }
+
+    @Test
+    public fun theCardPrintsTheShortRowWord_notTheQualifiedOne() {
+        val line = cartLine("211-Q-12", row = "211-Q", seat = "12")
+            .copy(sectionLabel = "211")
+        val row = pickerRowLabel(line.rowLabel, line.sectionLabel, null)
+        assertEquals("Q", row)
+        assertEquals(
+            "Q · 12 · Lower Bowl",
+            pickerCardPositionLine(line, "Lower Bowl", "211", row),
+        )
+    }
+
+    @Test
+    public fun theEmptyTrayIsNeverCappedByTheCartsOwnCeiling() {
+        // The best-seats form is taller than three cards, and the empty rest
+        // must offer all of it: the cart ceiling belongs to the card list.
+        val form = SeatLayerSizeTokens.CART_PEEK_MAX_HEIGHT + 100f
+        val foot = 60f
+        val empty = pickerSheetDetents(
+            screenHeight = 844f,
+            footHeight = foot,
+            cartNatural = 0f,
+            extrasNatural = form,
+            hasTickets = false,
+        )
+        assertEquals(form, empty.content, 0.001f)
+        assertTrue(
+            "the cart's own ceiling is not what limits the tray",
+            empty.content > SeatLayerSizeTokens.CART_PEEK_MAX_HEIGHT,
+        )
+        val chrome = SeatLayerSizeTokens.SHEET_HEAD_HEIGHT + foot
+        assertTrue(
+            "the form fits under the empty ceiling",
+            empty.content + chrome <=
+                minOf(
+                    844f * SeatLayerSizeTokens.EMPTY_TRAY_MAX_HEIGHT_FRACTION,
+                    SeatLayerSizeTokens.EMPTY_TRAY_MAX_HEIGHT,
+                ),
+        )
     }
 
     @Test

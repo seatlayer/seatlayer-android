@@ -157,6 +157,45 @@ public class PickerCartSheetTest {
     }
 
     @Test
+    public fun twoSeatsOfOneRowDrawTwoCards() {
+        // The runtime's `lineKey` is ROW-scoped: both seats of 102-A arrive
+        // under one `row_…` string. Keyed on that, the second card was never
+        // drawn and the buyer could not see the seat they had just paid for.
+        val scope = pickerEvidenceScope(
+            PickerEvidenceScenario.Cart,
+            SeatLayerPickerThemeMode.Light,
+        )
+        mutate(scope) { state ->
+            val snapshot = state.snapshot ?: return@mutate state
+            val first = snapshot.cartLines.first()
+            val lines = listOf(
+                first.copy(lineKey = "row_102-A", sectionLabel = "102", rowLabel = "102-A"),
+                first.copy(
+                    lineKey = "row_102-A",
+                    sectionLabel = "102",
+                    rowLabel = "102-A",
+                    label = "A-13",
+                    objectId = "seat-A-13",
+                    seatId = "seat-A-13",
+                    seatNumber = "13",
+                ),
+            )
+            state.copy(
+                snapshot = snapshot.copy(
+                    cartLines = lines,
+                    ticketCount = lines.sumOf(SeatLayerPickerCartLine::quantity),
+                    cartTotal = lines.sumOf(SeatLayerPickerCartLine::total),
+                ),
+            )
+        }
+        render(scope)
+        // The SHORT row word beside each seat, not the chart's qualified one.
+        composeRule.onNodeWithText("A · 12", substring = true).assertIsDisplayed()
+        composeRule.onNodeWithText("A · 13", substring = true).assertIsDisplayed()
+        composeRule.onAllNodesWithText("102-A", substring = true).assertCountEquals(0)
+    }
+
+    @Test
     public fun theCartStopsAtThreeCardsAndTheRestIsScrolledTo() {
         val scope = pickerEvidenceScope(
             PickerEvidenceScenario.Cart,

@@ -79,7 +79,7 @@ public fun SeatLayerPickerScope(
     ),
     themeMode: SeatLayerPickerThemeMode = SeatLayerPickerThemeMode.Auto,
     theme: SeatLayerPickerTheme? = null,
-    strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized(),
+    strings: SeatLayerPickerStrings = pickerDefaultStrings(),
     styles: SeatLayerPickerStyles = SeatLayerPickerStyles(),
     moneyFormatter: SeatLayerMoneyFormatter = SeatLayerMoneyFormatter.localized(),
     callbacks: SeatLayerPickerCallbacks = SeatLayerPickerCallbacks(),

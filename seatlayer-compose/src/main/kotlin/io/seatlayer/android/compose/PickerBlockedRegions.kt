@@ -42,6 +42,16 @@ import kotlinx.coroutines.launch
 internal class PickerBlockedRegionRegistry {
     private val rects = LinkedHashMap<Any, SeatLayerPickerBlockedRegion>()
     private val leaving = LinkedHashMap<Any, Job>()
+    /**
+     * The keys whose owner has said it is not standing on the map.
+     *
+     * The lowering is authoritative: a layout pass that lands mid-take-down —
+     * and one always does, because the cover is still on screen while it fades
+     * — must not put the rectangle back. A cover that re-registered itself as
+     * it left leaves the map inert for the rest of the session, which is the
+     * one failure a buyer cannot work around.
+     */
+    private val lowered = LinkedHashSet<Any>()
     private val reported = MutableStateFlow<List<SeatLayerPickerBlockedRegion>>(emptyList())
     private var map: LayoutCoordinates? = null
 
@@ -64,6 +74,10 @@ internal class PickerBlockedRegionRegistry {
      * mis-measured disc must not drop the guard over everything else.
      */
     fun measure(key: Any, coordinates: LayoutCoordinates?, density: Float) {
+        // Told, never asked: the enabled state is delivered once by [raise] and
+        // [release], and a measurement arriving after a lowering is dropped
+        // rather than allowed to decide for itself.
+        if (key in lowered) return
         val surface = map
         if (
             coordinates == null ||
@@ -95,7 +109,7 @@ internal class PickerBlockedRegionRegistry {
 
     /** Records one rectangle already in the map's coordinates. */
     fun set(key: Any, region: SeatLayerPickerBlockedRegion) {
-        leaving.remove(key)?.cancel()
+        if (key in lowered) return
         if (rects[key] == region) return
         rects[key] = region
         publish()
@@ -104,7 +118,20 @@ internal class PickerBlockedRegionRegistry {
     /** Drops [key] immediately; the control is gone and so is its guard. */
     fun forget(key: Any) {
         leaving.remove(key)?.cancel()
+        lowered.remove(key)
         if (rects.remove(key) != null) publish()
+    }
+
+    /**
+     * [key] is standing on the map again, and may be measured.
+     *
+     * Cancels a lowering still in its linger, so a control raised, lowered and
+     * raised again inside the window settles on ONE registration rather than
+     * losing the one it has to a timer nobody stopped.
+     */
+    fun raise(key: Any) {
+        leaving.remove(key)?.cancel()
+        lowered.remove(key)
     }
 
     /**
@@ -115,6 +142,7 @@ internal class PickerBlockedRegionRegistry {
      * would otherwise take its rectangle away exactly where the finger is.
      */
     fun release(key: Any, scope: CoroutineScope) {
+        lowered.add(key)
         if (!rects.containsKey(key) || leaving.containsKey(key)) return
         leaving[key] = scope.launch {
             delay(PICKER_BLOCKED_REGION_LINGER_MS)
@@ -127,6 +155,7 @@ internal class PickerBlockedRegionRegistry {
     fun clear() {
         leaving.values.forEach(Job::cancel)
         leaving.clear()
+        lowered.clear()
         if (rects.isEmpty()) return
         rects.clear()
         publish()
@@ -191,12 +220,15 @@ internal fun PickerMapChromeRegion(
     DisposableEffect(registry, key) {
         onDispose { registry?.forget(key) }
     }
+    // The ONE place [enabled] is read. The measurement below never asks again:
+    // deriving the reported value from the change being delivered is what stops
+    // a cover re-registering itself on the layout pass that lowers it.
     LaunchedEffect(registry, key, enabled) {
-        if (!enabled) registry?.release(key, coroutineScope)
+        if (enabled) registry?.raise(key) else registry?.release(key, coroutineScope)
     }
     Box(
         modifier = modifier.onGloballyPositioned { coordinates ->
-            if (enabled) registry?.measure(key, coordinates, density)
+            registry?.measure(key, coordinates, density)
         },
         content = content,
     )

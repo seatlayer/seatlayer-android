@@ -189,6 +189,80 @@ class SeatLayerPickerPresentationTest {
         )
     }
 
+    @Test
+    fun `a host owned hold that came back from checkout stops gating the cart`() {
+        val held = heldSnapshot()
+        val inCheckout = SeatLayerPickerPresentationState(
+            checkoutHandoff = handoff(),
+        )
+        // On the way OUT the gate is right: the cart belongs to the checkout.
+        assertFalse(inCheckout.canMutateCart(held))
+        assertFalse(inCheckout.canCheckout(held, ready = true, readOnly = false))
+
+        // On the way BACK nothing inside the picker ever answers the handoff,
+        // so without the excuse Continue is dead for the rest of the session.
+        val resumed = inCheckout.copy(resumeAfterCheckout = true)
+        assertTrue(resumed.canMutateCart(held))
+        assertTrue(resumed.canCheckout(held, ready = true, readOnly = false))
+        assertFalse(resumed.checkoutHoldsTheCart)
+    }
+
+    @Test
+    fun `a seat tapped after the checkout came back still raises its card`() {
+        val held = heldSnapshot()
+        val resumed = SeatLayerPickerPresentationState(
+            checkoutHandoff = handoff(),
+            resumeAfterCheckout = true,
+            candidateSeat = seat(id = "seat-9", label = "same"),
+        )
+        // The card is the only question on the screen while it is up, so
+        // Continue waits for it — but the seat is asked about, not swallowed.
+        assertEquals("seat-9", resumed.candidateSeat?.id)
+        assertFalse(resumed.canCheckout(held, ready = true, readOnly = false))
+        assertTrue(resumed.copy(candidateSeat = null).canCheckout(held, true, readOnly = false))
+    }
+
+    @Test
+    fun `undo matches the ticket, never the row scoped line key`() {
+        // Two seats of one row share the runtime's `lineKey`, so matching on it
+        // reports the removed seat as still in the cart and never offers undo.
+        val removed = line("row_102-A", "102-A-1", "seat-1", 25.0)
+        val neighbour = line("row_102-A", "102-A-2", "seat-2", 25.0)
+        assertFalse(SeatLayerPickerProjections.sameTicket(removed, neighbour))
+        assertEquals(removed.lineKey, neighbour.lineKey)
+    }
+
+    private fun handoff(): SeatLayerPickerCheckoutHandoff = SeatLayerPickerCheckoutHandoff(
+        holdId = "hold-1",
+        expiresAt = 0.0,
+        currency = "EUR",
+        lineItems = emptyList(),
+        total = 25.0,
+    )
+
+    /** A snapshot whose hold the HOST owns, with one line in the cart. */
+    private fun heldSnapshot(): SeatLayerPickerSnapshot = decodeSeatLayerPickerSnapshot(
+        bridgeJson.parseToJsonElement(
+            """
+            {
+              "schema":"$SEATLAYER_PICKER_SNAPSHOT_SCHEMA",
+              "sessionId":"session-a",
+              "revision":1,
+              "event":{"key":"ev"},
+              "map":{},
+              "catalog":{},
+              "hold":{"active":true,"ownership":"host"},
+              "cart":{
+                "items":[
+                  {"label":"A-1","objectId":"seat-1","seatId":"seat-1",
+                   "lineKey":"row_102-A","unitPrice":25.0,"currency":"EUR","quantity":1}
+                ]
+              }
+            }
+            """.trimIndent(),
+        ),
+    )!!
+
     private fun line(
         key: String,
         label: String,

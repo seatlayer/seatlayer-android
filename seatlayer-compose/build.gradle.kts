@@ -70,6 +70,7 @@ dependencies {
     testImplementation("io.github.takahirom.roborazzi:roborazzi-compose:1.73.0")
     testImplementation("io.github.takahirom.roborazzi:roborazzi-junit-rule:1.73.0")
     testImplementation("app.cash.turbine:turbine:1.2.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
     androidTestImplementation(composeBom)
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     androidTestImplementation("androidx.test.ext:junit:1.3.0")
