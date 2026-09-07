@@ -11,6 +11,19 @@ Adding the native picker does not renegotiate or change an existing raw
 integration. Both profiles load the immutable
 `seatlayer-js@0.84.1/mobile.html` runtime.
 
+**Wire names are unchanged in 0.4.0.** The 0.4.0 release renames a number of
+Kotlin symbols to the names every SeatLayer buyer SDK shares, but every
+capability string, command name, event name and snapshot field on this page is
+exactly what it was before. A runtime pinned to an older bridge sees no
+difference, and a proxy or log that matches on these strings needs no change.
+Where a Kotlin name and a wire name now differ — `setLimitedViewHidden` sends
+`picker.setLimitedViewFilter`, `setMapInteractionEnabled` sends
+`picker.setInteractionEnabled`, `set3DNavigationMode` sends
+`picker.setVenue3DNavigationMode`, `setGeneralAdmissionQuantity` sends
+`picker.holdGA`, `rejectCheckoutHandoff` sends `picker.rejectHandoff`,
+`removeObject` sends `picker.removeCartLine`, and `refreshAccess` sends
+`picker.refreshAvailability` — the wire name is the one on this page.
+
 ## Raw lifecycle
 
 1. Create one `SeatLayerView`.
@@ -49,6 +62,94 @@ picker-owned inventory when ready, destroys the controller, and is idempotent.
 `SeatLayerPickerMapView.close()` performs that sequence before destroying the
 WebView.
 
+## Picker capabilities
+
+The handshake splits capabilities into two sets, and the split is the whole
+contract: a required capability the runtime does not advertise fails startup,
+an optional one it does not advertise withholds a surface in silence. A buyer
+never meets a control whose command the runtime cannot answer.
+
+**Required.** Ten are always required, and three more are required only when
+the corresponding option is enabled:
+
+| Capability | Required when |
+| --- | --- |
+| `picker-session-v2` | always |
+| `picker-snapshot-v1` | always |
+| `picker-actions-v1` | always |
+| `native-picker-chrome-v1` | always |
+| `native-chrome-contract-v1` | always |
+| `checkout-handoff-v1` | always |
+| `checkout-handoff-reject-v1` | always |
+| `hold-ownership-v1` | always |
+| `cart-line-remove-v1` | always |
+| `table-quantity-v1` | always |
+| `venue-3d-v1` | `enable3D` |
+| `venue-3d-controls-v1` | `enable3D` |
+| `seat-view-v1` | `enableSeatView` |
+
+Thirty-four commands and the `picker.snapshot` event are required alongside
+them; `enable3D` adds `picker.setBuyerView` and
+`picker.setVenue3DNavigationMode`, and `enableSeatView` adds
+`picker.openSeatView`.
+
+**Optional.** Absent means the surface is not offered:
+
+| Capability | What it unlocks |
+| --- | --- |
+| `native-seat-view-chrome-v1` | native panorama caption/badge instead of the runtime's own |
+| `viewport-insets-v1` | pushing native chrome bounds into the map's camera |
+| `floor-stack-v1` | the floor selector and strip |
+| `chart-load-trace-v1` | typed chart-load traces on `chartLoads` |
+| `availability-refresh-v1` | `refreshAccess()` on foreground |
+| `access-needs-v1` | the runtime-authored accessibility sheet |
+| `hold-selection-v1` | `holdSelection()` |
+| `seat-view-thumbnail-v1` | the seat-view thumbnail and sightline metadata on a seat |
+| `accessibility-focus-v1` | `focusAccessibilityFilter` and `focusNextAccessibleSection` |
+| `section-access-counts-v1` | per-section accessible counts |
+
+**Present-only reads.** Two capabilities gate no command at all. They say only
+that the runtime puts a field in its snapshot, and the SDK decodes that field
+when it arrives:
+
+| Capability | Snapshot field it announces |
+| --- | --- |
+| `category-availability-v1` | `categories[].available` |
+| `seat-screen-point-v1` | `selection[].screenPoint` |
+
+`supportsCapability`, `supportsCommand`, and `supportsEvent` expose all three
+sets to a host that draws its own chrome.
+
+## Command-table-gated commands
+
+Three camera and focus commands are newer than the required contract and are
+gated on the `hello` command table alone, not on a capability string. Each is a
+no-op on a runtime that does not list it: the native chrome still works, it
+simply does not ask the map for the extra move.
+
+| Command | Kotlin | What it does |
+| --- | --- | --- |
+| `picker.setSelectionFocus` | `setSelectionFocus` / `forgetSelectionFocus` | marks the seat a card is asking about as the candidate, and clears the mark with the card |
+| `picker.setBlockedRegions` | `setBlockedRegions` | tells the map which rectangles native chrome covers, so it never parks a seat under them |
+| `picker.frameSeat` | `frameSeat` | brings one seat into the free part of the map, at a given fraction of the visible height |
+
+`picker.closeSeatView`, `picker.focusAccessibilityFilter` and
+`picker.focusNextAccessibleSection` are gated the same way, the last two behind
+`accessibility-focus-v1` as well.
+
+## Picker events
+
+| Event | What it carries |
+| --- | --- |
+| `picker.snapshot` | the authoritative state; required |
+| `seatView.changed` | seat id, title, caption, badge, real/generated flag, drag hint |
+| `seat.retap` | the buyer tapped a seat already in the cart; raises that seat's removal question |
+| `telemetry.chartLoad` | a typed chart-load trace, with `chart-load-trace-v1` |
+
+`seat.retap` is read only when the runtime advertises it. Without it, a tap on
+a seat already in the cart is whatever the runtime does with it, and the SDK
+raises no removal question of its own.
+
 ## Picker snapshots
 
 The accepted schema is `seatlayer.picker.snapshot/1`. Schema, session id,
@@ -59,6 +160,23 @@ one future or corrupt optional value does not erase otherwise valid live state.
 Snapshots include native-chrome truth for event/branding, categories, zones,
 floors, sections, selection, confirmed cart lines, hold status, map rung and
 filters, availability, optional 3D state, and optional seat-view state.
+
+These additive fields are decoded when a runtime sends them and simply absent
+when it does not:
+
+| Field | What the native chrome does with it |
+| --- | --- |
+| `map.atVenueFit` | dims the whole-venue and zoom-out controls at the exact whole-venue pose |
+| `map.canZoomIn` | retires the `+` control at the zoom ceiling |
+| `sections[].accessibleFree` | the accessible count beside a section |
+| `selection[].screenPoint` | where the seat is on screen, so a card can be placed off it |
+| `selection[].accessibility`, `wheelchairSpaceType`, `restrictedView`, `obstructedView`, `premium`, and the organizer's note | the seat-note bands on the seat card, and the same words on the cart card |
+| `selection[].seatViewThumbnail`, `sightlineMetres`, `seatViewConfidence` | the seat-view thumbnail, its distance, and how the view was produced |
+| `cartCompletedFromSelection` | a cart the runtime completed from the current selection |
+| error `code` `hold_selection_mismatch` | the hold no longer matches the cart, so Continue replaces it |
+
+The error `code` is an open set: the API's own 409 reasons are promoted into
+it. Never treat it as a closed enum.
 
 Additive 3D position fields preserve old-runtime compatibility. When all
 target/previous/next/3D-section keys are omitted,
@@ -193,13 +311,14 @@ transport failure instead of a silent blank view.
 
 ## Version pairing
 
-Use matching versions of the Android core and Compose artifacts. This release
-keeps the existing hosted renderer and bridge contracts.
+Use matching versions of the Android core and Compose artifacts. 0.4.0 moves
+the hosted renderer pin from `0.71.5` to `0.84.1` and keeps every bridge
+contract on this page exactly as it was.
 
 | Component | Version |
 | --- | --- |
-| Android core | `0.3.5` |
-| Android Compose | `0.3.5` |
+| Android core | `0.4.0` |
+| Android Compose | `0.4.0` |
 | Hosted SeatLayer mobile runtime | `0.84.1` |
 | Raw bridge protocol | `1` |
 | Native picker bridge protocol | `2` |

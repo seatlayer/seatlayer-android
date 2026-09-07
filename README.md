@@ -13,15 +13,17 @@ through typed Kotlin coroutines while your trusted server completes booking.
 The ready-made picker and public components use Jetpack Compose, with View/XML
 interop for existing Android screens.
 
-Version `0.3.4` adds a complete adaptive Jetpack Compose picker, a
-headless protocol-2 state/controller, reusable native Android components, and
-View/XML interop while preserving the frozen raw `SeatLayerView` API.
+Version `0.4.0` renames the public API to the names every SeatLayer buyer SDK
+shares, moves the picker to the `seatlayer-js@0.84.1` runtime, and generates
+every number and word the native chrome draws from one locked design source.
+The frozen raw `SeatLayerView` API is unchanged.
 
 [SeatLayer Android SDK on Maven Central](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android) ·
 [Kotlin and Jetpack Compose seat-map guide](https://docs.seatlayer.io/buyer-sdk/android/) ·
 [SeatLayer reserved-seating platform](https://seatlayer.io/) ·
 [Buyer seat-map demo (web)](https://app.seatlayer.io/demo/play/grand-theatre) ·
 [Native picker reference](docs/native-picker.md) ·
+[0.3.x migration guide](docs/migration-0.4.md) ·
 [0.2.x migration guide](docs/migration-0.3.md) ·
 [Bridge reference](docs/bridge.md) ·
 [SeatLayer iOS seat map SDK](https://github.com/seatlayer/seatlayer-ios) ·
@@ -31,7 +33,7 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 
 ![Seat map picker running in a native Android app: venue overview, section focus, seat confirmation, cart, 3D venue view and panorama](https://raw.githubusercontent.com/seatlayer/seatlayer-android/main/docs/media/picker-flow.gif)
 
-> **Aligned release:** Use `0.3.5` for both Android artifacts. Pin the exact
+> **Aligned release:** Use `0.4.0` for both Android artifacts. Pin the exact
 > version in production so core and Compose cannot drift.
 
 ## Works as a native Android picker
@@ -93,6 +95,9 @@ flowchart TD
   `0.2.x` applications.
 - Typed immutable snapshots, capability-gated commands, readiness and chart-load
   telemetry, secure holds, and buyer-safe checkout handoff.
+- One locked design source — tokens, the 37 locale dictionaries, the shared
+  part names and the picker specification — generating every number and word
+  the native chrome draws.
 - A hardened, origin-restricted AndroidX WebKit bridge with no unrestricted
   `addJavascriptInterface`.
 - A pinned immutable `seatlayer-js@0.84.1/mobile.html` renderer.
@@ -120,13 +125,13 @@ Both artifacts ship on the same release train.
 
 ## Install
 
-Add both aligned `0.3.5` artifacts for the native picker:
+Add both aligned `0.4.0` artifacts for the native picker:
 
 ```kotlin
 // app/build.gradle.kts
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.5")
-    implementation("io.seatlayer:seatlayer-android-compose:0.3.5")
+    implementation("io.seatlayer:seatlayer-android:0.4.0")
+    implementation("io.seatlayer:seatlayer-android-compose:0.4.0")
 }
 ```
 
@@ -142,9 +147,10 @@ dependencyResolutionManagement {
 
 Raw-only applications can omit `seatlayer-android-compose`.
 
-Releases before `0.2.0` used JitPack coordinates
-(`com.github.seatlayer:seatlayer-android:v0.1.3`). Maven Central is the permanent
-channel. Always pin an exact version; never depend on `main-SNAPSHOT`.
+Maven Central is the only supported channel. Releases before `0.2.0` used
+JitPack coordinates (`com.github.seatlayer:seatlayer-android:v0.1.3`); those are
+not maintained and never carried the Compose artifact. Always pin an exact
+version; never depend on `main-SNAPSHOT`.
 
 ## Ready-made native picker
 
@@ -178,10 +184,10 @@ class CheckoutActivity : ComponentActivity() {
 ```
 
 The default tree includes adaptive compact/wide layouts, native header and
-legend, floors and sections, accessibility filters, confirmation, GA/table
-quantities, dense cart, best available, checkout, 3D/seat-view controls,
-hold-lapse recovery, light/dark branding, 37 locale dictionaries, lifecycle
-reconciliation, and Android predictive back.
+price rail, floors and sections, accessibility filters, seat confirmation,
+GA/table quantities, a ticket sheet of one card per ticket, best available,
+checkout, 3D/seat-view controls, hold-lapse recovery, light/dark branding,
+37 locale dictionaries, lifecycle reconciliation, and Android predictive back.
 
 That is the complete buyer flow: loading and handshake, live inventory,
 category and accessibility filtering, venue and floor navigation, visible
@@ -208,9 +214,11 @@ inventory, and never log the hold id.
 
 Three layers can be mixed without forking the SDK:
 
-1. Pass `SeatLayerPickerOptions`, `SeatLayerPickerTheme`, localized
-   `SeatLayerPickerStrings`, and `SeatLayerPickerStyles` to configure the
-   ready-made picker.
+1. Pass `SeatLayerPickerOptions` (behaviour and the `showX` chrome switches),
+   `SeatLayerPickerTheme` (colour roles, radii, type family, and a composable
+   brand-mark slot), localized `SeatLayerPickerStrings`, and
+   `SeatLayerPickerStyles` (geometry and the per-part style map) to configure
+   the ready-made picker.
 2. Use `SeatLayerPickerBuilders` to decorate or replace any of 25 independent
    parts.
 3. Use `SeatLayerPickerScope` and public components such as
@@ -481,11 +489,11 @@ accessibility groups, hold ownership, retry state, or capability information.
 | --- | --- | --- |
 | Loading and readiness | Branded skeleton, progress hierarchy, retry/error UI | Document load, protocol handshake, ready snapshot |
 | Failure and empty inventory | Actionable messages, retry/close actions, sales-closed and test disclosure | Authoritative failure, sold-out, all-unavailable, and sales state |
-| Venue navigation | Legend, floors, section dock/list, overview/step-out controls | Map geometry, focus, camera, authored floor/section data |
+| Venue navigation | Price rail, floors, section list, whole-venue and step-out controls | Map geometry, focus, camera, authored floor/section data |
 | Filters | Category chips, runtime-authored accessibility sheet, limited-view and colorblind controls | Availability counts and authoritative filtered map |
 | Reserved seats and tiers | Confirmation card, visible tier choices, guidance, enabled/disabled actions | Seat identity, price, tier metadata, selection validity |
 | GA and tables | Quantity prompts, bounds, totals, loading and errors | Capacity, min/max occupancy, hold mutation |
-| Cart and holds | Dense ticket list, remove/undo, countdown, lapse recovery, Continue | Authoritative cart, hold TTL/owner, refresh outcome |
+| Cart and holds | One card per ticket, remove/undo, countdown, lapse recovery, Continue | Authoritative cart, hold TTL/owner, refresh outcome |
 | Checkout | One serialized handoff and host callback | Opaque hold capability and priced line items |
 | Venue 3D | Native mode, target, previous/next, recenter and navigation controls | 3D scene pixels, camera, target and neighbour metadata |
 | Seat-view panorama | Caption, badge, native Back coordination, unavailable state | Panorama pixels, drag gestures, exact target restoration |
@@ -506,9 +514,10 @@ tier choices and buyer guidance stay visible. `confirmPending(tierId)` sends
 briefly confirms the wrong tier.
 
 GA and variable-table prompts validate quantity against runtime capacity and
-occupancy rules. Confirmed seats, GA quantities, and tables all enter one dense
-cart projection. Removing a line opens a session-scoped undo window; undo is
-offered only while that exact line remains absent from the same session.
+occupancy rules. Confirmed seats, GA quantities, and tables all enter one cart
+projection, drawn as one card per ticket. Removing a line opens a
+session-scoped undo window; undo is offered only while that exact line remains
+absent from the same session.
 
 The picker serializes inventory mutations and repeated checkout taps. Checkout
 returns one `SeatLayerPickerCheckoutHandoff` containing the opaque `holdId`,
@@ -599,11 +608,21 @@ part.
 | `Empty` | `SeatLayerPickerEmptyView` |
 
 The test-mode indicator and required attribution intentionally remain outside
-the replacement catalogue. Public standalone controls also include fit,
-overview, step-out, view-mode, 3D navigation, colorblind and limited-view
-actions, plus `SeatLayerPickerUndoNotice`. The detailed
-[native-picker guide](docs/native-picker.md) documents the options, builders,
-headless commands, lifecycle duties, and capability matrix.
+the replacement catalogue. Public standalone controls also include
+`SeatLayerPickerFitControl`, `SeatLayerPickerOverviewControl`,
+`SeatLayerPickerStepOutControl`, `SeatLayerPickerViewModeControl`,
+`SeatLayerPicker3DNavigationControl`, `SeatLayerPickerColorblindControl`,
+`SeatLayerPickerLimitedViewControl`, and `SeatLayerPickerUndoNotice`.
+
+Two of these parts are drawn only on request. The section dock bar is off on
+every width unless `SeatLayerPickerOptions(showDockBar = true)` asks for it,
+because the section it names is already on the map under the buyer's thumb;
+and the built-in layouts no longer draw a fit control, because the whole-venue
+control does the same job without going stale under a pinch. Both composables
+remain public for a host-owned layout that wants them.
+
+The detailed [native-picker guide](docs/native-picker.md) documents the options,
+builders, headless commands, lifecycle duties, and capability matrix.
 
 ## Optional WebView engine prewarm
 
@@ -640,18 +659,27 @@ evidence.
 ## Build locally
 
 ```bash
-./gradlew validate
+./gradlew checkFast        # correctness: what every push runs
+./gradlew validateRelease  # shipping: what a tag runs
+./gradlew validate         # both
 ./gradlew :sample:installDebug
 ```
 
-`validate` runs focused unit tests, compiles the deterministic Compose
-accessibility fixture and release-like Macrobenchmark, checks generated
-locale/token source locks, lints and builds both artifacts, generates both
-Maven POMs, verifies public API/raw ABI, builds the R8-minified consumer sample,
-builds standalone raw Java/Kotlin and Compose apps from temporary Maven
-coordinates on both the oldest and current supported build toolchains, verifies
-that the raw dependency graph contains no Compose, and checks the retained
-fixture checksum.
+`checkFast` runs the unit tests for both artifacts, the Robolectric/Roborazzi
+screenshot comparisons, the design source lock, both generators in `--check`
+mode, the public API and raw `0.2.x` ABI dumps, the public-repository hygiene
+script, and the 800-line source limit.
+
+`validateRelease` lints and builds both artifacts and the sample, compiles the
+deterministic Compose accessibility fixture and the release-like Macrobenchmark,
+generates both Maven POMs and checks their version alignment, builds the
+R8-minified consumer sample, and builds standalone raw Java/Kotlin and Compose
+apps from temporary Maven coordinates on both the oldest and current supported
+build toolchains, including the check that the raw dependency graph contains no
+Compose.
+
+`validate` is the union of the two; `node` 22 is required, because the design
+generators run as part of the gate.
 
 The external-consumer matrix is intentionally frozen rather than implied:
 
@@ -692,7 +720,7 @@ For the complete native flow, add the aligned core and Compose artifacts and
 place `SeatLayerPicker` in a bounded screen with your event configuration. It
 already includes the interactive seating chart, filters, seat confirmation,
 cart, holds, 3D/panorama controls, and checkout handoff. Existing production
-apps on `0.2.x` can continue to use `SeatLayerView` and migrate to `0.3.5`
+apps on `0.2.x` can continue to use `SeatLayerView` and migrate to `0.4.0`
 when ready.
 
 ### Is this a native Android seat map or a WebView?
@@ -782,6 +810,8 @@ host-IME acceptance remain part of the device release gate.
   controller, adaptive UI, and capability behavior.
 - [Read the Android bridge reference](docs/bridge.md) for protocol negotiation,
   snapshots, command gating, lifecycle, checkout ownership, and security.
+- [Migrate from 0.3.x to 0.4.0](docs/migration-0.4.md) for the renamed public
+  API, the removed parts, and the changed defaults.
 - [Migrate from raw Android 0.2.x](docs/migration-0.3.md) without breaking the
   frozen low-level JVM surface.
 - [Connect seat holds to secure server-side checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/)

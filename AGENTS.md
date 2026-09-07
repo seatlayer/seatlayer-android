@@ -24,6 +24,10 @@ This is the public SeatLayer Android SDK.
 3. Keep booking and secret keys on an integrator's trusted backend.
 4. Never reference non-public resources, credentials, or local developer paths
    in public source, history, examples, or artifacts.
-5. The vendored Web SDK must be copied from a verified public release and its
-   version and SHA-256 recorded in the README.
-6. Run `./gradlew validate` before releasing.
+5. The SDK vendors no JavaScript. It loads one pinned, immutable hosted
+   runtime page; changing that pin changes `SEATLAYER_HOSTED_WEB_VERSION` and
+   every version statement in `README.md` and `docs/bridge.md` with it.
+6. Every number and word the native chrome draws comes from `Design/` through
+   the generators in `tool/`. Never hand-edit a `*.g.kt` file.
+7. Run `./gradlew checkFast` while working and `./gradlew validate` before
+   releasing.

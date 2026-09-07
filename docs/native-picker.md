@@ -1,6 +1,6 @@
 # Native Android picker
 
-SeatLayer Android `0.3.5` ships two aligned artifacts with one
+SeatLayer Android `0.4.0` ships two aligned artifacts with one
 release version:
 
 - `seatlayer-android` contains the hardened map host, protocol-1 raw API, and
@@ -45,12 +45,12 @@ The public entry points form a customization ladder:
 
 ## Install
 
-Add the aligned `0.3.5` artifacts:
+Add the aligned `0.4.0` artifacts:
 
 ```kotlin
 dependencies {
-    implementation("io.seatlayer:seatlayer-android:0.3.5")
-    implementation("io.seatlayer:seatlayer-android-compose:0.3.5")
+    implementation("io.seatlayer:seatlayer-android:0.4.0")
+    implementation("io.seatlayer:seatlayer-android-compose:0.4.0")
 }
 ```
 
@@ -119,16 +119,17 @@ SeatLayerPicker(
         layout = SeatLayerPickerLayoutMode.Adaptive,
         confirmSelection = true,
         enableBestAvailable = true,
-        enableVenue3D = true,
+        enable3D = true,
         enableSeatView = true,
-        holdTtlMillis = 10 * 60 * 1_000,
+        holdTtl = 10.minutes, // kotlin.time.Duration.Companion.minutes
         panelInitiallyCollapsed = true,
+        eventName = "Symphony No. 5",
         chrome = SeatLayerPickerChromeOptions(
-            header = true,
-            priceLegend = true,
-            floorStrip = true,
-            accessibility = true,
-            cartSheet = true,
+            showHeader = true,
+            showPriceRail = true,
+            showFloorStrip = true,
+            showAccessibilityControl = true,
+            showTicketPanel = true,
         ),
     ),
     onClose = onClose,
@@ -148,8 +149,8 @@ runtime fails clearly instead of showing controls that cannot work.
 | `readOnly` | Refuses inventory mutation in native controller and renderer |
 | `confirmSelection` | Keeps reserved seats pending until native confirmation |
 | `enableBestAvailable` | Negotiates and exposes the Best Available flow |
-| `enableVenue3D` / `enableSeatView` | Negotiates and exposes supported immersive experiences |
-| `holdTtlMillis` | Requested picker-owned hold duration; server remains authoritative |
+| `enable3D` / `enableSeatView` | Negotiates and exposes supported immersive experiences |
+| `holdTtl` | Requested picker-owned hold duration as a `Duration`. Left unset, the server's own window applies and the SDK never names a number |
 | `initialHoldId` | Restores an opaque host-owned hold into a new session |
 | `max3DSeats` | Caps the selected-seat set offered to venue 3D |
 | `hideEventDetails` | Suppresses duplicate host-provided event details in picker chrome |
@@ -158,13 +159,25 @@ runtime fails clearly instead of showing controls that cannot work.
 | `announceHoldLapse` | Controls native lapse notice; expiry callbacks/state still update |
 | `haptics` | Enables semantic Android haptic cues |
 | `languages` | Advertises the host's preferred language sequence to the runtime |
+| `eventName` | The event's name, where the host would rather say it than the chart |
+| `showBookedOverlay` | Whether a hold that leaves without expiring raises the booked overlay |
+| `showDockBar` | The section dock bar. Unset is off on every width |
+| `showExtendHoldPrompt` | The card offering more time on a hold. Unset is off on a phone |
+| `seatCardGlass` | Whether the seat card is drawn on glass over the map |
+| `persistColorblindPreference` | Whether a colourblind choice outlives the session on this device |
+| `manageSystemOverlays` | Whether the picker takes over the status and navigation bars |
+| `pricing` | Host price overrides per category and tier, and the money formatter |
 
-`SeatLayerPickerChromeOptions` independently controls `header`, `priceLegend`,
-`floorSelector`, `floorStrip`, `mapControls`, `overview`, `zoom`, `colorblind`,
-`fit`, `map3D`, `accessibility`, `cartSheet`, `dock`, `confirmCard`,
-`holdCountdown`, and `attribution`. Hiding a stock surface does not disable the
-underlying controller capability for a custom host. Attribution is still a
-product/legal obligation when the accepted branding state requires it.
+`SeatLayerPickerChromeOptions` independently controls `showHeader`,
+`showPriceRail`, `showFloorSelector`, `showFloorStrip`, `showMapControls`,
+`showOverviewControl`, `showZoomControls`, `showColorblindControl`,
+`showViewModeControl`, `showAccessibilityControl`, `showTicketPanel`,
+`showConfirmCard`, `showVenue3DChrome`, `showSeatViewChrome`, `showHoldPill`,
+and `showAttribution`. These are the names every SeatLayer buyer SDK uses.
+Hiding a stock surface does not disable the underlying controller capability
+for a custom host. Attribution is still a product/legal obligation when the
+accepted branding state requires it; the built-in layouts treat the accepted
+branding state as authoritative and ignore `showAttribution`.
 
 | `SeatLayerPickerCallbacks` | Delivered value |
 | --- | --- |
@@ -176,6 +189,14 @@ product/legal obligation when the accepted branding state requires it.
 | `onCheckout` | One opaque `SeatLayerPickerCheckoutHandoff` |
 | `onError` | Typed bridge, runtime, access, validation, or host-callback error |
 | `onClose` | Host dismissal after orderly picker close |
+
+`SeatLayerPickerCallbacks` additionally declares the rest of the shared
+cross-SDK callback surface — `onSelectionValidityChanged`, `onHoldExpired`,
+`onBooked`, `onAccessExpired`, `onAccessUnavailable`,
+`onSelectedObjectUnavailable`, `onThemeResolved`, `onSectionFocused`,
+`onSeatSelected`, `onSeatRemoved`, `onSeatViewOpened`, `onSeatConfidence`, and
+`onContinue`. A host can wire them today through `SeatLayerPickerScope` without
+a later source change; each has a no-op default.
 
 ## Theme, localized copy, and per-part styles
 
@@ -354,9 +375,10 @@ Custom layouts decide placement but must preserve these product truths:
 
 Public components include the map, header, legend, floor selector/strip,
 section navigator, dock, accessibility filters, map and individual camera/view
-controls, best-available form, seat/tier confirmation, GA/table prompts, dense
-cart/list/sheet, checkout actions, 3D and seat-view chrome, hold countdown and
-lapse recovery, undo/error notices, and all loading/error/empty disclosures.
+controls, best-available form, seat/tier confirmation, GA/table prompts, the
+cart list and ticket sheet, checkout actions, 3D and seat-view chrome, hold
+countdown and lapse recovery, undo/error notices, and all loading/error/empty
+disclosures.
 
 ## View and XML applications
 
@@ -450,8 +472,8 @@ contract does not.
 ### Cart, removal, undo, holds, and checkout
 
 - `SeatLayerPickerProjections.confirmedCart` excludes an unconfirmed pending
-  seat. Dense runs fold only structurally equivalent addressed seats; GA,
-  tables, tiers, and multi-quantity lines remain individually actionable.
+  seat. Every ticket is its own line: GA, tables, tiers, and multi-quantity
+  lines remain individually actionable.
 - Removal targets an authoritative line identity. Undo is session-scoped and is
   offered only after the line is absent; a revision from another session cannot
   restore it.
@@ -550,23 +572,25 @@ the same capability checks but do not pretend to change authoritative inventory.
 
 | Group | Public operations |
 | --- | --- |
-| Synchronization | `synchronize`, `lifecycle`, `setLifecycle`, `refreshAvailability` |
+| Synchronization | `synchronize`, `lifecycle`, `setLifecycle`, `refreshAccess`, `retry` |
 | Reserved selection | `selectObjects`, `deselectObjects`, `clearSelection`, `setSeatTier`, `setSelectableObjects`, `setMaxSelection` |
-| Categories and access | `selectCategories`, `deselectCategories`, `setCategoryFilter`, `setAccessibilityFilter`, `setLimitedViewFilter`, `setColorblindSafe` |
-| Venue navigation | `focusSection`, `overview`, `setRung`, `setFloor`, `showAllFloors`, `setViewMode`, `zoomIn`, `zoomOut`, `zoomToFit` |
-| GA, tables, best available | `holdGeneralAdmission`, `setTableQuantity`, `bestAvailable`, `holdSelection` |
-| Immersive views | `setBuyerView`, `venue3D`, `setVenue3DNavigationMode`, `openSeatView`, `closeSeatView` |
-| Native-overlay coordination | `setThemeMode`, `setInteractionEnabled`, `setViewportInsets` |
-| Cart and holds | `removeCartLine`, `removeWithUndo`, `undoLastRemoval`, `resumeHold`, `extendHold`, `abort`, `reselectLapsedSeats` |
-| Checkout and ownership | `checkout`, `handoffCheckout`, `rejectHandoff` |
-| Native presentation | `confirmPending`, `confirmPendingTable`, `cancelPending`, `cancelPendingTable`, `setCartExpanded`, `dismissActionError`, `dismissRemovalUndo`, `dismissHoldLapse` |
+| Categories and access | `selectCategories`, `deselectCategories`, `setCategoryFilter`, `setAccessibilityFilter`, `setLimitedViewHidden`, `setColorblindSafe`, `focusAccessibilityFilter`, `focusNextAccessibleSection` |
+| Venue navigation | `focusSection`, `overview`, `setRung`, `setFloor`, `showAllFloors`, `setViewMode`, `zoomIn`, `zoomOut`, `zoomToFit`, `frameSeat`, `setSelectionFocus`, `forgetSelectionFocus`, `setBlockedRegions` |
+| GA, tables, best available | `setGeneralAdmissionQuantity`, `setTableQuantity`, `bestAvailable`, `holdSelection` |
+| Immersive views | `setBuyerView`, `showSeatIn3D`, `venue3D`, `set3DNavigationMode`, `openSeatView`, `closeSeatView` |
+| Native-overlay coordination | `setThemeMode`, `setMapInteractionEnabled`, `setViewportInsets` |
+| Cart and holds | `removeObject`, `removeWithUndo`, `undoLastRemoval`, `resumeHold`, `extendHold`, `abort`, `reselectLapsedSeats`, `releasePickerOwnedHold` |
+| Checkout and ownership | `checkout`, `handoffCheckout`, `rejectCheckoutHandoff`, `bookedHandoff`, `dismissBookedOverlay`, `setResumeAfterCheckout` |
+| Native presentation | `confirmPending`, `confirmPendingTable`, `cancelPending`, `cancelPendingTable`, `setCartSheetExpanded`, `setCartSheetDetent`, `setCartLanding`, `openSeatCard`, `closeSeatCard`, `liftSeat`, `restoreSeatLift`, `seatAwaitingRemoval`, `dismissSeatRemoval`, `dismissError`, `dismissRemovalUndo`, `dismissHoldLapse`, `emitHaptic` |
 | Exit | `back`, `close`, `destroy` |
 
 `supportsCapability`, `supportsCommand`, and `supportsEvent` expose the exact
 negotiated surface. Helpers such as `supportsVenue3D`, `supportsSeatView`,
 `supportsSeatViewClose`, `supportsNativeSeatViewChrome`, `supportsFloorStack`,
-`supportsViewportInsets`, `supportsHoldSelection`, and
-`supportsAvailabilityRefresh` combine the required capability and command.
+`supportsViewportInsets`, `supportsHoldSelection`, `supportsAccessNeeds`,
+`supportsAccessibilityFocus`, `supportsSectionAccessCounts`,
+`supportsSeatViewThumbnail`, and `supportsAvailabilityRefresh` combine the
+required capability and command.
 When an optional operation is unavailable, the controller sends no bridge
 message; the ready UI also omits its control.
 
