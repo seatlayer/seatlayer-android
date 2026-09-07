@@ -247,6 +247,35 @@ public class PickerCartRulesTest {
     }
 
     @Test
+    public fun theEmptyTrayIsNeverCappedByTheCartsOwnCeiling() {
+        // The best-seats form is taller than three cards, and the empty rest
+        // must offer all of it: the cart ceiling belongs to the card list.
+        val form = SeatLayerSizeTokens.CART_PEEK_MAX_HEIGHT + 100f
+        val foot = 60f
+        val empty = pickerSheetDetents(
+            screenHeight = 844f,
+            footHeight = foot,
+            cartNatural = 0f,
+            extrasNatural = form,
+            hasTickets = false,
+        )
+        assertEquals(form, empty.content, 0.001f)
+        assertTrue(
+            "the cart's own ceiling is not what limits the tray",
+            empty.content > SeatLayerSizeTokens.CART_PEEK_MAX_HEIGHT,
+        )
+        val chrome = SeatLayerSizeTokens.SHEET_HEAD_HEIGHT + foot
+        assertTrue(
+            "the form fits under the empty ceiling",
+            empty.content + chrome <=
+                minOf(
+                    844f * SeatLayerSizeTokens.EMPTY_TRAY_MAX_HEIGHT_FRACTION,
+                    SeatLayerSizeTokens.EMPTY_TRAY_MAX_HEIGHT,
+                ),
+        )
+    }
+
+    @Test
     public fun aLineFindsItsSeatBySeatId_thenLabel_thenObject() {
         val seat = seat(id = "seat-1", label = "A-12", objectId = "obj-1")
         assertEquals(seat, pickerSeatBehind(cartLine("A-12").copy(seatId = "seat-1"), listOf(seat)))
