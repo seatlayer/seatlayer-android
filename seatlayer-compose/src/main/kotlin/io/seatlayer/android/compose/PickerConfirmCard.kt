@@ -126,7 +126,20 @@ internal fun SeatLayerConfirmCardBody(
     val notes = remember(seat) { seat.seatNotes() }
     val hasSeatView = scope.options.enableSeatView && scope.controller.supportsSeatView
     val hasVenue3D = scope.options.enable3D && scope.controller.supportsVenue3D
-    val confidence = seat.seatViewConfidence
+    // The photograph, the sight line and the disclosure are read only where
+    // the runtime says it reports them. An older runtime that says nothing is
+    // a card with no strip, never a card with an empty frame — and a stand-in
+    // the card could draw for any seat is never offered at all.
+    val thumbnails = scope.controller.supportsSeatViewThumbnail
+    val thumbnail = if (thumbnails) seat.seatViewThumbnail else null
+    // The strip is what `View from here` opens, so it is drawn only where that
+    // action AND an authored photograph both exist.
+    val realPhoto = thumbnail != null && hasSeatView
+    var photoMissed by remember(seat.id, thumbnail?.reference) { mutableStateOf(false) }
+    // The sight line rides the strip. With no photograph the strip leaves the
+    // card, and a lone measured line is not worth a row of its own.
+    val sightlineMetres = if (thumbnails) seat.sightlineMetres else null
+    val confidence = if (thumbnails) seat.seatViewConfidence else null
     val onConfidence = scope.callbacks.onSeatConfidence
     val primaryFocus = remember { FocusRequester() }
     val busy = scope.state.presentation.actionInFlight
@@ -190,7 +203,24 @@ internal fun SeatLayerConfirmCardBody(
     }
     val passportUp = onPassport != null
     val inspectRow = immersive && (passportUp || hasSeatView)
-    val show3DSquare = !immersive && hasVenue3D
+    // No photograph, no strip — so the 3D way in takes its place in the
+    // decision row. It is still one tap away, and it costs no row of its own.
+    val show3DSquare = !immersive && hasVenue3D && !(realPhoto && !photoMissed)
+    val open3D: () -> Unit = {
+        coroutineScope.launch {
+            scope.performAction {
+                scope.controller.setBuyerView(view = "venue3d", flyToSeatId = seat.id)
+            }
+        }
+        Unit
+    }
+    val openSeatView: () -> Unit = {
+        coroutineScope.launch {
+            scope.performAction { scope.controller.openSeatView(seat.id) }
+            scope.callbacks.onSeatViewOpened(seat.id)
+        }
+        Unit
+    }
 
     SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_CARD) {
         Surface(
@@ -250,6 +280,16 @@ internal fun SeatLayerConfirmCardBody(
                         immersive = immersive,
                     )
                 }
+                if (!immersive && realPhoto && thumbnail != null) {
+                    SeatLayerConfirmPhotoSlot(
+                        thumbnail = thumbnail,
+                        missed = photoMissed,
+                        sightlineMetres = sightlineMetres,
+                        onMissed = { photoMissed = true },
+                        onViewFromSeat = openSeatView.takeIf { !busy },
+                        onShow3D = open3D.takeIf { hasVenue3D && !busy },
+                    )
+                }
                 // The notes are BANDS, and they sit directly under the category
                 // band: below the tier chooser they read as a footnote to the
                 // price list rather than as facts about the seat. So the body
@@ -293,17 +333,7 @@ internal fun SeatLayerConfirmCardBody(
                 if (inspectRow) {
                     SeatLayerInspectionRow(
                         onPassport = onPassport,
-                        onViewFromSeat = if (hasSeatView && !busy) {
-                            {
-                                coroutineScope.launch {
-                                    scope.performAction { scope.controller.openSeatView(seat.id) }
-                                    scope.callbacks.onSeatViewOpened(seat.id)
-                                }
-                                Unit
-                            }
-                        } else {
-                            null
-                        },
+                        onViewFromSeat = openSeatView.takeIf { hasSeatView && !busy },
                         modifier = Modifier.padding(
                             start = GUTTER,
                             end = GUTTER,
@@ -354,21 +384,7 @@ internal fun SeatLayerConfirmCardBody(
                         onCancel = onCancelAction,
                         onPrimary = onPrimaryAction,
                         show3DSquare = show3DSquare,
-                        on3D = if (show3DSquare && !busy) {
-                            {
-                                coroutineScope.launch {
-                                    scope.performAction {
-                                        scope.controller.setBuyerView(
-                                            view = "venue3d",
-                                            flyToSeatId = seat.id,
-                                        )
-                                    }
-                                }
-                                Unit
-                            }
-                        } else {
-                            null
-                        },
+                        on3D = open3D.takeIf { show3DSquare && !busy },
                         primaryFocus = primaryFocus,
                     )
                 }

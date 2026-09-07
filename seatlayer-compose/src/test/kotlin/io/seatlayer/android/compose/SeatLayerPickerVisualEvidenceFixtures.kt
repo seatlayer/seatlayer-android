@@ -92,6 +92,8 @@ internal fun pickerEvidenceScope(
     themeMode: SeatLayerPickerThemeMode,
     options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
     callbacks: SeatLayerPickerCallbacks? = null,
+    extraCapabilities: List<String> = emptyList(),
+    presentationOverride: SeatLayerPickerPresentationState? = null,
 ): SeatLayerPickerScope {
     val holder = SeatLayerPickerStateHolder(
         configuration = SeatLayerConfiguration(event = EVIDENCE_EVENT),
@@ -110,7 +112,7 @@ internal fun pickerEvidenceScope(
             "viewport-insets-v1",
             "access-needs-v1",
             "colorblind-safe",
-        ),
+        ) + extraCapabilities,
         events = listOf("picker.snapshot", "seatView.changed"),
         commands = listOf(
             "picker.setViewportInsets",
@@ -150,7 +152,7 @@ internal fun pickerEvidenceScope(
     } else {
         null
     }
-    val presentation = evidencePresentation(scenario)
+    val presentation = presentationOverride ?: evidencePresentation(scenario)
     val state = SeatLayerPickerState(
         phase = when (scenario) {
             PickerEvidenceScenario.Loading -> SeatLayerPickerPhase.Loading

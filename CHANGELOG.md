@@ -61,6 +61,22 @@ now comes from one locked design source.
   offered only where a host can open it, and no card is raised on a seat nobody
   can take. The card is pinned at the foot of the map and the MAP moves to keep
   the seat clear of it.
+- **The seat card shows the view it is selling.** Where the runtime reports
+  authored seat photographs, the card carries the picture full-bleed with the
+  ways into it on its own corners and the measured distance to the stage
+  printed on it; where it reports none, the card is a row shorter and the 3D
+  way in moves into the decision row rather than a placeholder being drawn. The
+  bytes come over a buyer-scoped transport of the SDK's own — the reference is
+  an event-scoped API path, validated against this event before any request is
+  made, cached for the session, shared between cards asking for the same
+  picture, and carried by a bearer that is re-minted before it lapses and never
+  reaches a URL. Every failure is simply "no photograph".
+- **The confirmed ticket flies to the summary that counted it.** A labelled
+  chip in the seat's own category colour leaves the card for the cart's total
+  line, and the chip itself reports its arrival: the count and total swell on
+  the landing, and only then does the map give back the lift it took to keep
+  the seat clear. Under reduced motion no chip is made and nothing waits on
+  one.
 - **The phone map has one anchored control column.** The Map/3D control, the
   floor strip and the test badge each hold their own anchor, the discs are
   drawn from the design tokens, and the whole column crossfades and goes inert

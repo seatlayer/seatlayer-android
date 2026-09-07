@@ -196,8 +196,21 @@ public fun SeatLayerPickerScope(
             if (accessReason in SEATLAYER_ACCESS_EXPIRY_REASONS) callbacks.onAccessExpired()
         }
 
+        // The buyer's own image transport, and the two anchors the flight chip
+        // travels between: both belong to the SESSION rather than to a card,
+        // so a card closing neither drops the small photo cache nor forgets
+        // where the cart is.
+        val assets = remember(stateHolder) {
+            SeatLayerBuyerAssetLoader(stateHolder.configuration)
+        }
+        androidx.compose.runtime.DisposableEffect(assets) {
+            onDispose(assets::clear)
+        }
+        val flight = remember(stateHolder) { SeatLayerPickerFlightState() }
         androidx.compose.runtime.CompositionLocalProvider(
             LocalSeatLayerPickerScope provides scope,
+            LocalSeatLayerBuyerAssets provides assets,
+            LocalSeatLayerPickerFlight provides flight,
         ) {
             scope.content()
         }
