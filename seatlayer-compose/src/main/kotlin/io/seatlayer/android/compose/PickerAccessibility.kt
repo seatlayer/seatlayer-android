@@ -110,7 +110,10 @@ internal fun Modifier.pickerHiddenFromAccessibility(hidden: Boolean): Modifier =
  * platform already hides the window beneath it.
  */
 @Composable
-internal fun SeatLayerPickerScope.pickerDecisionSurfaceUp(): Boolean {
+internal fun pickerDecisionSurfaceUp(): Boolean {
+    val scope = LocalSeatLayerPickerScope.current
+    val state = scope.state
+    val options = scope.options
     val presentation = state.presentation
     val immersive = state.seatView != null || state.snapshot?.map?.isVenue3D == true
     val cardUp = presentation.candidateSeat != null &&

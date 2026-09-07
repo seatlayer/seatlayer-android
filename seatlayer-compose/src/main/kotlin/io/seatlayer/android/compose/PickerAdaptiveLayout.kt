@@ -53,107 +53,115 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
     LaunchedEffect(dockVisible) {
         if (!dockVisible) onBottomMeasured(0)
     }
-    // A tap on the venue is the way an open sheet is put away. The map itself
-    // is already inert while the sheet is open, so the tap has to be caught
-    // here rather than answered by the renderer.
-    if (regularMap && scope.state.presentation.cartExpanded) {
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .pointerInput(Unit) {
-                    detectTapGestures { scope.controller.setCartSheetExpanded(false) }
-                },
-        )
-    }
-    // Only chrome drawn OVER the map is counted here. The header, the price
-    // rail and the cart sheet are rows of the same column as the map surface,
-    // so the map already begins and ends where they do — measuring them again
-    // would frame every section into a band that does not exist.
-    if (regularMap) Column(
-        modifier = Modifier
-            .align(Alignment.TopCenter)
-            .fillMaxWidth()
-            .onGloballyPositioned { onTopMeasured(it.size.height) },
-        horizontalAlignment = Alignment.End,
-    ) {
-        if (scope.options.enable3D && scope.options.chrome.showViewModeControl) {
-            PickerMapChromeRegion(
-                modifier = Modifier.padding(
-                    end = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
-                    top = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
-                ),
-            ) {
-                SeatLayerPickerViewModeControl(compact = true)
-            }
-        }
-        if (
-            scope.options.chrome.showFloorStrip &&
-            snapshot?.map?.floors.orEmpty().pickerAuthoredFloors().size > 1
-        ) {
-            PickerMapChromeRegion(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp),
-            ) {
-                SeatLayerPickerPart(
-                    SeatLayerPickerPart.FloorStrip,
-                    builders[SeatLayerPickerPart.FloorStrip],
-                ) { SeatLayerFloorStrip(compact = true) }
-            }
-        }
-        PickerMapChromeRegion(
-            modifier = Modifier
-                .align(Alignment.Start)
-                .padding(
-                    start = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
-                    top = SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp,
-                ),
-        ) {
-            SeatLayerPickerTestModeIndicator(compact = true)
-        }
-    }
-
-    // The discs step out of the way of a seat card: a column of controls poking
-    // out beside the card asking about a seat read as clutter, and none of them
-    // may be pressed while it asks. They FADE rather than unmount, so nothing
-    // moves under a thumb already reaching for one.
-    val cardUp = scope.state.presentation.candidateSeat != null &&
-        scope.options.chrome.showConfirmCard
-    if (scope.state.isReady && scope.options.chrome.showMapControls) {
-        SeatLayerPickerPart(
-            SeatLayerPickerPart.MapControls,
-            builders[SeatLayerPickerPart.MapControls],
-        ) {
-            SeatLayerPickerMapControls(
+    // Modality is set HERE, at the parent that owns the map and the chrome
+    // standing on it, and never inside a surface: while a decision surface
+    // holds the screen, everything painted before it is inert to assistive
+    // technology. The card below is deliberately outside this band — it is the
+    // surface asking the question.
+    val covered = pickerDecisionSurfaceUp()
+    Box(Modifier.matchParentSize().pickerHiddenFromAccessibility(covered)) {
+        // A tap on the venue is the way an open sheet is put away. The map itself
+        // is already inert while the sheet is open, so the tap has to be caught
+        // here rather than answered by the renderer.
+        if (regularMap && scope.state.presentation.cartExpanded) {
+            Box(
                 modifier = Modifier
                     .matchParentSize()
-                    .pickerFadeUnderCard(cardUp),
-                compact = true,
-                bottomInset = bottomPadding,
-                // The turnkey phone layout draws the Map/3D control on the top
-                // band itself, so the two can never land on top of each other
-                // whatever the translated labels measure.
-                includeViewModeControl = false,
-                accessibilityControl = {
-                    SeatLayerPickerPart(
-                        SeatLayerPickerPart.AccessibilityFilters,
-                        builders[SeatLayerPickerPart.AccessibilityFilters],
-                    ) { SeatLayerPickerAccessibilityFilters(compact = true) }
-                },
+                    .pointerInput(Unit) {
+                        detectTapGestures { scope.controller.setCartSheetExpanded(false) }
+                    },
             )
         }
-    }
-
-    if (dockVisible) {
-        SeatLayerPickerPart(
-            SeatLayerPickerPart.DockBar,
-            builders[SeatLayerPickerPart.DockBar],
+        // Only chrome drawn OVER the map is counted here. The header, the price
+        // rail and the cart sheet are rows of the same column as the map surface,
+        // so the map already begins and ends where they do — measuring them again
+        // would frame every section into a band that does not exist.
+        if (regularMap) Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .onGloballyPositioned { onTopMeasured(it.size.height) },
+            horizontalAlignment = Alignment.End,
         ) {
+            if (scope.options.enable3D && scope.options.chrome.showViewModeControl) {
+                PickerMapChromeRegion(
+                    modifier = Modifier.padding(
+                        end = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                        top = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                    ),
+                ) {
+                    SeatLayerPickerViewModeControl(compact = true)
+                }
+            }
+            if (
+                scope.options.chrome.showFloorStrip &&
+                snapshot?.map?.floors.orEmpty().pickerAuthoredFloors().size > 1
+            ) {
+                PickerMapChromeRegion(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp),
+                ) {
+                    SeatLayerPickerPart(
+                        SeatLayerPickerPart.FloorStrip,
+                        builders[SeatLayerPickerPart.FloorStrip],
+                    ) { SeatLayerFloorStrip(compact = true) }
+                }
+            }
             PickerMapChromeRegion(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .onGloballyPositioned { onBottomMeasured(it.size.height) },
-            ) { SeatLayerDockBar() }
+                    .align(Alignment.Start)
+                    .padding(
+                        start = SeatLayerSizeTokens.MAP_ANCHOR_INSET.dp,
+                        top = SeatLayerSizeTokens.MAP_ANCHOR_GAP.dp,
+                    ),
+            ) {
+                SeatLayerPickerTestModeIndicator(compact = true)
+            }
+        }
+
+        // The discs step out of the way of a seat card: a column of controls poking
+        // out beside the card asking about a seat read as clutter, and none of them
+        // may be pressed while it asks. They FADE rather than unmount, so nothing
+        // moves under a thumb already reaching for one.
+        val cardUp = scope.state.presentation.candidateSeat != null &&
+            scope.options.chrome.showConfirmCard
+        if (scope.state.isReady && scope.options.chrome.showMapControls) {
+            SeatLayerPickerPart(
+                SeatLayerPickerPart.MapControls,
+                builders[SeatLayerPickerPart.MapControls],
+            ) {
+                SeatLayerPickerMapControls(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .pickerFadeUnderCard(cardUp),
+                    compact = true,
+                    bottomInset = bottomPadding,
+                    // The turnkey phone layout draws the Map/3D control on the top
+                    // band itself, so the two can never land on top of each other
+                    // whatever the translated labels measure.
+                    includeViewModeControl = false,
+                    accessibilityControl = {
+                        SeatLayerPickerPart(
+                            SeatLayerPickerPart.AccessibilityFilters,
+                            builders[SeatLayerPickerPart.AccessibilityFilters],
+                        ) { SeatLayerPickerAccessibilityFilters(compact = true) }
+                    },
+                )
+            }
+        }
+
+        if (dockVisible) {
+            SeatLayerPickerPart(
+                SeatLayerPickerPart.DockBar,
+                builders[SeatLayerPickerPart.DockBar],
+            ) {
+                PickerMapChromeRegion(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .onGloballyPositioned { onBottomMeasured(it.size.height) },
+                ) { SeatLayerDockBar() }
+            }
         }
     }
 
