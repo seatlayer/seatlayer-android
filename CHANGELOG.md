@@ -21,8 +21,10 @@ now comes from one locked design source.
 - **No section dock bar by default on any width.** The section it named is
   already on the map, under the buyer's thumb. `showDockBar = true` brings it
   back for a host that wants it.
-- **The built-in layouts no longer draw a fit control.** The whole-venue
-  control does the same job without going stale under a pinch.
+- **The fit control became the whole-venue disc**, at the foot of the map's own
+  control column and always live whatever the camera last reported, so a pinch
+  can never strand a buyer with no way back to the venue.
+  `showZoomToFitControl` is its switch.
 - **`SeatLayerPickerStyles.scrimColor`** names the wash drawn over the map
   while a card is up. Unset, it takes the design source's own confirm scrim
   over the theme's background, so the wash stays in step with a rebranded
@@ -50,6 +52,40 @@ now comes from one locked design source.
   `retry`, `setCartSheetDetent`, the seat-card and seat-lift presentation
   calls, and `supportsAccessNeeds` / `supportsAccessibilityFocus` /
   `supportsSectionAccessCounts` / `supportsSeatViewThumbnail`.
+- **The seat card is rebuilt to the anatomy the design source describes.**
+  Section, row and seat read as one identity line; the category and price sit
+  in a full-bleed band; each accommodation, view restriction and organizer note
+  draws its own mark from one shared per-attribute icon set rather than a
+  wheelchair for everything. Ink is contrast-checked against the ground it
+  actually paints on, the card plays its own haptic cues, the view passport is
+  offered only where a host can open it, and no card is raised on a seat nobody
+  can take. The card is pinned at the foot of the map and the MAP moves to keep
+  the seat clear of it.
+- **The phone map has one anchored control column.** The Map/3D control, the
+  floor strip and the test badge each hold their own anchor, the discs are
+  drawn from the design tokens, and the whole column crossfades and goes inert
+  under a seat card so nothing reflows under a thumb already reaching for it.
+  The header, the price rail and the ticket panel are rows of the map's own
+  column, so the map begins and ends where they do.
+- **The ticket panel is one surface with a footer-only rest.** The checkout
+  footer is drawn in both sheet states — a buyer holding seats could not see
+  the button that takes their money — the sheet can be dragged between its
+  detents, a tap on the venue puts it away, and removing a ticket tells the
+  host which seat it was.
+- **One toast band says every transient sentence**, including the undo window
+  after a removal and the outcome of asking for more time. It sits above the
+  seat card rather than across its buttons.
+- **The buyer-facing states are designed statements**, not a map full of
+  disabled controls: sold out, a completed booking, a lapsed seat session with
+  one way back, a closed sale stated in the ticket panel as well as the wide
+  panel, and an offer of more time inside the last minute of a hold. Each
+  renders nothing at all when its own condition is false.
+- **The accessibility sheet is switch rows that apply live**, each row wearing
+  its own provision's mark with the number of seats free, a sold-out provision
+  going dark rather than disappearing, and the colour choice beside them.
+- **The hold countdown is drawn for a host-owned hold too.** The buyer's time
+  is running whoever holds the seats; only the offer of more time is withheld
+  from a hold the picker cannot mutate.
 - **Tokens, strings and 37 locale dictionaries are generated** from a checked-in
   design source under `Design/`, locked by a four-key SHA-256 file and shared
   with the other SeatLayer buyer SDKs. The generated Kotlin is checked in and
@@ -69,7 +105,7 @@ release and are removed in 0.5.0. See
 [the 0.3.x migration guide](docs/migration-0.4.md) for the full table.
 `SeatLayerPickerOptions.enableVenue3D` becomes `enable3D`; `holdTtlMillis: Int?`
 becomes `holdTtl: Duration?`; all sixteen `SeatLayerPickerChromeOptions` flags
-take their `showX` names; `SeatLayerPickerTheme.onSurface`, `muted` and
+take their `showX` names, and a seventeenth, `showZoomToFitControl`, is new; `SeatLayerPickerTheme.onSurface`, `muted` and
 `cornerRadius` become `text`, `mutedText` and `radius`;
 `SeatLayerPickerMoneyFormatter` becomes `SeatLayerMoneyFormatter`; and eleven
 controller methods take their shared names, including `setLimitedViewFilter` →
@@ -82,8 +118,13 @@ moved.
 `SeatLayerPickerProjections.denseRuns` are removed with the dense ticket list.
 `SeatLayerPickerChromeOptions.dock` and `.fit` no longer control anything: the
 dock bar moved to `SeatLayerPickerOptions.showDockBar` and is off by default on
-every width, and the fit control is no longer drawn by the built-in layouts
+every width, and the fit control's switch is now `showZoomToFitControl`
 (`SeatLayerPickerFitControl` remains public for a host-owned layout).
+`showOverviewControl`, `showZoomControls`, `showZoomToFitControl` and
+`showColorblindControl` read `Boolean?`, where null means "whatever this width
+should do". `SeatLayerPickerZoomControls` is replaced by the individual
+`SeatLayerPickerZoomInButton` and `SeatLayerPickerZoomOutButton`, and
+`SeatLayerPickerUndoNotice` by `SeatLayerPickerToastLayer`.
 `SeatLayerPickerTheme` requires the new field names when constructed
 positionally.
 
