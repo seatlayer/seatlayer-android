@@ -196,8 +196,18 @@ public fun SeatLayerPickerScope(
             if (accessReason in SEATLAYER_ACCESS_EXPIRY_REASONS) callbacks.onAccessExpired()
         }
 
+        // The buyer's own image transport belongs to the SESSION rather than to
+        // a card, so a card closing does not drop the small photo cache and
+        // reopening the same seat is instant.
+        val assets = remember(stateHolder) {
+            SeatLayerBuyerAssetLoader(stateHolder.configuration)
+        }
+        androidx.compose.runtime.DisposableEffect(assets) {
+            onDispose(assets::clear)
+        }
         androidx.compose.runtime.CompositionLocalProvider(
             LocalSeatLayerPickerScope provides scope,
+            LocalSeatLayerBuyerAssets provides assets,
         ) {
             scope.content()
         }
