@@ -40,8 +40,14 @@ public data class SeatLayerPickerTheme(
     /** The typeface the chrome uses; null keeps the platform's own. */
     val fontFamily: androidx.compose.ui.text.font.FontFamily? = null,
     val buttonRadius: Dp = SeatLayerRadiusTokens.BUTTON.dp,
-    /** The brand mark drawn in the header, when a host supplies one. */
-    val logo: Any? = null,
+    /**
+     * The brand mark drawn in the header, when a host supplies one.
+     *
+     * A slot rather than an image, because a mark is a wordmark, a painter or
+     * a whole row depending on the brand, and the picker should not be the one
+     * deciding which of those a host is allowed to have.
+     */
+    val logo: (@Composable () -> Unit)? = null,
 ) {
     @Deprecated("Renamed to text.", ReplaceWith("text"))
     val onSurface: Color get() = text

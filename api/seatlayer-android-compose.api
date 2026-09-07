@@ -2571,8 +2571,8 @@ public final class io.seatlayer.android.compose.SeatLayerPickerTheme {
     descriptor: Lio/seatlayer/android/compose/SeatLayerPickerTheme$Companion;
   public static final int $stable;
     descriptor: I
-  public io.seatlayer.android.compose.SeatLayerPickerTheme(long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, java.lang.Object, int, kotlin.jvm.internal.DefaultConstructorMarker);
-    descriptor: (JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLjava/lang/Object;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public io.seatlayer.android.compose.SeatLayerPickerTheme(long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, kotlin.jvm.functions.Function2, int, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLkotlin/jvm/functions/Function2;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
   public final long getBackground-0d7_KjU();
     descriptor: ()J
   public final long getSurface-0d7_KjU();
@@ -2611,8 +2611,8 @@ public final class io.seatlayer.android.compose.SeatLayerPickerTheme {
     descriptor: ()Landroidx/compose/ui/text/font/FontFamily;
   public final float getButtonRadius-D9Ej5fM();
     descriptor: ()F
-  public final java.lang.Object getLogo();
-    descriptor: ()Ljava/lang/Object;
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> getLogo();
+    descriptor: ()Lkotlin/jvm/functions/Function2;
   public final long getOnSurface-0d7_KjU();
     descriptor: ()J
   public static void getOnSurface-0d7_KjU$annotations();
@@ -2663,20 +2663,20 @@ public final class io.seatlayer.android.compose.SeatLayerPickerTheme {
     descriptor: ()Landroidx/compose/ui/text/font/FontFamily;
   public final float component19-D9Ej5fM();
     descriptor: ()F
-  public final java.lang.Object component20();
-    descriptor: ()Ljava/lang/Object;
-  public final io.seatlayer.android.compose.SeatLayerPickerTheme copy-HI81SAk(long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, java.lang.Object);
-    descriptor: (JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerTheme;
-  public static io.seatlayer.android.compose.SeatLayerPickerTheme copy-HI81SAk$default(io.seatlayer.android.compose.SeatLayerPickerTheme, long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, java.lang.Object, int, java.lang.Object);
-    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerTheme;JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLjava/lang/Object;ILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerTheme;
+  public final kotlin.jvm.functions.Function2<androidx.compose.runtime.Composer, java.lang.Integer, kotlin.Unit> component20();
+    descriptor: ()Lkotlin/jvm/functions/Function2;
+  public final io.seatlayer.android.compose.SeatLayerPickerTheme copy-HI81SAk(long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, kotlin.jvm.functions.Function2<? super androidx.compose.runtime.Composer, ? super java.lang.Integer, kotlin.Unit>);
+    descriptor: (JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLkotlin/jvm/functions/Function2;)Lio/seatlayer/android/compose/SeatLayerPickerTheme;
+  public static io.seatlayer.android.compose.SeatLayerPickerTheme copy-HI81SAk$default(io.seatlayer.android.compose.SeatLayerPickerTheme, long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, kotlin.jvm.functions.Function2, int, java.lang.Object);
+    descriptor: (Lio/seatlayer/android/compose/SeatLayerPickerTheme;JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLkotlin/jvm/functions/Function2;ILjava/lang/Object;)Lio/seatlayer/android/compose/SeatLayerPickerTheme;
   public java.lang.String toString();
     descriptor: ()Ljava/lang/String;
   public int hashCode();
     descriptor: ()I
   public boolean equals(java.lang.Object);
     descriptor: (Ljava/lang/Object;)Z
-  public io.seatlayer.android.compose.SeatLayerPickerTheme(long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, java.lang.Object, kotlin.jvm.internal.DefaultConstructorMarker);
-    descriptor: (JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLjava/lang/Object;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+  public io.seatlayer.android.compose.SeatLayerPickerTheme(long, long, long, long, long, long, long, long, long, long, long, long, io.seatlayer.android.SeatLayerPickerMapTheme, float, long, long, long, androidx.compose.ui.text.font.FontFamily, float, kotlin.jvm.functions.Function2, kotlin.jvm.internal.DefaultConstructorMarker);
+    descriptor: (JJJJJJJJJJJJLio/seatlayer/android/SeatLayerPickerMapTheme;FJJJLandroidx/compose/ui/text/font/FontFamily;FLkotlin/jvm/functions/Function2;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 public final class io.seatlayer.android.compose.SeatLayerPickerThemeKt {
   public static final androidx.compose.runtime.ProvidableCompositionLocal<io.seatlayer.android.compose.SeatLayerPickerTheme> getLocalSeatLayerPickerTheme();
