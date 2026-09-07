@@ -27,12 +27,19 @@ public class SeatLayerPickerStateHolder(
     private val mutableChartLoads = MutableSharedFlow<SeatLayerChartLoad>(
         extraBufferCapacity = 1,
     )
+    private val mutableHapticCues = MutableSharedFlow<SeatLayerPickerHapticCue>(
+        extraBufferCapacity = 8,
+    )
+    private val mutableReloadRequests = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     private val answeredSeatIdentities = linkedSetOf<String>()
     private var presentationSessionId: String? = null
 
+    @Volatile
+    private var holdExpiredReported = false
+
     internal val bridgeProfile: SeatLayerPickerBridgeProfile =
         SeatLayerPickerBridgeProfile.create(
-            enable3D = behavior.enableVenue3D,
+            enable3D = behavior.enable3D,
             enableSeatView = behavior.enableSeatView,
             config = behavior.bridgeConfig(),
         )
@@ -40,6 +47,13 @@ public class SeatLayerPickerStateHolder(
     public val state: StateFlow<SeatLayerPickerState> = mutableState.asStateFlow()
     /** Runtime-authored load records; late collectors do not receive old attempts. */
     public val chartLoads: SharedFlow<SeatLayerChartLoad> = mutableChartLoads.asSharedFlow()
+
+    /** Cues the chrome plays; a late collector never feels an old moment. */
+    public val hapticCues: SharedFlow<SeatLayerPickerHapticCue> =
+        mutableHapticCues.asSharedFlow()
+
+    /** Requests to load the map again after a failure. */
+    public val reloadRequests: SharedFlow<Unit> = mutableReloadRequests.asSharedFlow()
     public val controller: SeatLayerPickerController = SeatLayerPickerController(this)
 
     public suspend fun close() {
@@ -92,6 +106,14 @@ public class SeatLayerPickerStateHolder(
         mutableChartLoads.tryEmit(load)
     }
 
+    internal fun emitHaptic(cue: SeatLayerPickerHapticCue) {
+        mutableHapticCues.tryEmit(cue)
+    }
+
+    internal fun requestReload() {
+        mutableReloadRequests.tryEmit(Unit)
+    }
+
     internal fun acceptSnapshot(value: JsonElement?): SeatLayerPickerSnapshot? =
         decodeSeatLayerPickerSnapshot(value)?.takeIf(::acceptSnapshot)
 
@@ -116,6 +138,33 @@ public class SeatLayerPickerStateHolder(
             )
             true
         }
+
+    /**
+     * A second tap on a seat the buyer already has.
+     *
+     * The same card comes back with the opposite question. Dropping the seat
+     * silently is how a held seat gets released by a stray thumb.
+     */
+    internal fun acceptSeatRetap(value: JsonElement?) {
+        if (!controller.supportsEvent("seat.retap")) return
+        if (behavior.readOnly || !state.value.isReady) return
+        val root = value as? kotlinx.serialization.json.JsonObject
+        val seat = decodeSeatLayerPickerRetappedSeat(root?.get("seat") ?: value) ?: return
+        update { current ->
+            if (current.presentation.candidateSeat != null) current
+            else current.copy(
+                presentation = current.presentation.copy(
+                    candidateSeat = seat,
+                    cardIntent = SeatLayerPickerCardIntent.Remove,
+                ),
+            )
+        }
+    }
+
+    /** An expiry the buyer was told about; a hold that just leaves is a sale. */
+    internal fun acceptHoldExpired() {
+        holdExpiredReported = true
+    }
 
     internal fun acceptSeatView(value: JsonElement?) {
         if (!controller.supportsNativeSeatViewChrome) return
@@ -202,17 +251,19 @@ public class SeatLayerPickerStateHolder(
                 availabilityOutcome = null,
                 holdLapse = null,
                 presentation = it.presentation.copy(
-                    pendingSeat = null,
+                    candidateSeat = null,
                     pendingTable = null,
                     activePrompt = null,
                     actionInFlight = false,
+                    seatLift = null,
+                    cartLanding = SeatLayerPickerCartLanding.Idle,
                 ),
             )
         }
     }
 
     internal fun confirmPendingSeat() {
-        val pending = state.value.presentation.pendingSeat ?: return
+        val pending = state.value.presentation.candidateSeat ?: return
         answer(pending)
     }
 
@@ -232,7 +283,7 @@ public class SeatLayerPickerStateHolder(
         }
     }
 
-    internal fun setCartExpanded(expanded: Boolean) {
+    internal fun setCartSheetExpanded(expanded: Boolean) {
         update { it.copy(presentation = it.presentation.copy(cartExpanded = expanded)) }
     }
 
@@ -257,6 +308,37 @@ public class SeatLayerPickerStateHolder(
         }
     }
 
+    internal fun setCardIntent(
+        seat: SeatLayerPickerSelectedSeat?,
+        intent: SeatLayerPickerCardIntent,
+    ) {
+        update {
+            it.copy(
+                presentation = it.presentation.copy(candidateSeat = seat, cardIntent = intent),
+            )
+        }
+    }
+
+    internal fun setCartLanding(landing: SeatLayerPickerCartLanding) {
+        update { it.copy(presentation = it.presentation.copy(cartLanding = landing)) }
+    }
+
+    internal fun setSeatLift(lift: SeatLayerPickerSeatLift?) {
+        update { it.copy(presentation = it.presentation.copy(seatLift = lift)) }
+    }
+
+    internal fun setBlockedRegions(regions: List<SeatLayerPickerBlockedRegion>) {
+        update { it.copy(presentation = it.presentation.copy(blockedRegions = regions)) }
+    }
+
+    internal fun setResumeAfterCheckout(resume: Boolean) {
+        update { it.copy(presentation = it.presentation.copy(resumeAfterCheckout = resume)) }
+    }
+
+    internal fun clearBookedHandoff() {
+        update { it.copy(presentation = it.presentation.copy(bookedHandoff = null)) }
+    }
+
     internal fun setRemovalUndo(removal: SeatLayerPickerRemovalUndo?) {
         update {
             it.copy(presentation = it.presentation.copy(removalUndo = removal))
@@ -279,14 +361,24 @@ public class SeatLayerPickerStateHolder(
         val sameSession = presentationSessionId == snapshot.sessionId
         if (!sameSession) {
             presentationSessionId = snapshot.sessionId
+            holdExpiredReported = false
             answeredSeatIdentities.clear()
+            if (snapshot.hold.active) {
+                snapshot.selection.mapTo(answeredSeatIdentities) {
+                    SeatLayerPickerProjections.seatIdentity(it)
+                }
+            }
         }
         val present = snapshot.selection
             .map(SeatLayerPickerProjections::seatIdentity)
             .toSet()
         answeredSeatIdentities.retainAll(present)
 
-        val mayPrompt = !behavior.readOnly && !snapshot.hold.active
+        // A hold the session arrives with was answered before this screen
+        // existed — a resumed hold, or one the host passed in. Its seats count
+        // as answered, and every tap after that is asked about, including the
+        // ones that join a live hold.
+        val mayPrompt = !behavior.readOnly
         val pendingTable = if (mayPrompt) {
             snapshot.selection.asReversed().firstOrNull { seat ->
                 seat.isVariableTable &&
@@ -295,7 +387,7 @@ public class SeatLayerPickerStateHolder(
         } else {
             null
         }
-        val pendingSeat = if (mayPrompt && behavior.confirmSelection) {
+        val unanswered = if (mayPrompt && behavior.confirmSelection) {
             snapshot.selection.asReversed().firstOrNull { seat ->
                 !seat.isVariableTable &&
                     SeatLayerPickerProjections.seatIdentity(seat) !in answeredSeatIdentities
@@ -305,8 +397,29 @@ public class SeatLayerPickerStateHolder(
         }
         val retainedPrompt = current.activePrompt
             .takeIf { it is SeatLayerPickerPrompt.GeneralAdmission }
+        // A hold the host took to checkout, gone without an expiry, is a sale.
+        val booked = current.checkoutHandoff
+            ?.takeIf { sameSession && !snapshot.hold.active && !holdExpiredReported }
+        val removalCandidate = current.candidateSeat
+            ?.takeIf { current.cardIntent == SeatLayerPickerCardIntent.Remove }
+            ?.takeIf { seat ->
+                sameSession &&
+                    snapshot.selection.any { it.id == seat.id || it.label == seat.label }
+            }
         return current.copy(
-            pendingSeat = pendingSeat,
+            candidateSeat = removalCandidate ?: unanswered,
+            cardIntent = if (removalCandidate != null) {
+                SeatLayerPickerCardIntent.Remove
+            } else {
+                SeatLayerPickerCardIntent.Add
+            },
+            bookedHandoff = booked ?: current.bookedHandoff.takeIf { sameSession },
+            seatLift = current.seatLift.takeIf { sameSession },
+            cartLanding = if (sameSession) {
+                current.cartLanding
+            } else {
+                SeatLayerPickerCartLanding.Idle
+            },
             pendingTable = pendingTable,
             activePrompt = retainedPrompt
                 ?: pendingTable?.let(SeatLayerPickerPrompt::Table),
@@ -334,7 +447,7 @@ private fun SeatLayerPickerBehavior.bridgeConfig(): kotlinx.serialization.json.J
         "readOnly" to kotlinx.serialization.json.JsonPrimitive(readOnly),
         "confirmSelection" to kotlinx.serialization.json.JsonPrimitive(confirmSelection),
         "enableBestAvailable" to kotlinx.serialization.json.JsonPrimitive(enableBestAvailable),
-        "enable3D" to kotlinx.serialization.json.JsonPrimitive(enableVenue3D),
+        "enable3D" to kotlinx.serialization.json.JsonPrimitive(enable3D),
         "enableSeatView" to kotlinx.serialization.json.JsonPrimitive(enableSeatView),
         "holdTtlMs" to jsonNumber(holdTtlMillis),
         "initialHoldId" to jsonString(initialHoldId),

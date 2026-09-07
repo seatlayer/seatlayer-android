@@ -45,7 +45,7 @@ public fun SeatLayerPickerHeader(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         tonalElevation = resolvedStyle.elevation ?: 0.dp,
         shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: 0.dp),
     ) {
@@ -54,9 +54,9 @@ public fun SeatLayerPickerHeader(
                 .fillMaxWidth()
                 .then(
                     if (compact) {
-                        Modifier.height(SeatLayerPickerTokens.SIZE_HEADER_HEIGHT.dp)
+                        Modifier.height(SeatLayerSizeTokens.HEADER_HEIGHT.dp)
                     } else {
-                        Modifier.heightIn(min = SeatLayerPickerTokens.SIZE_HEADER_HEIGHT.dp)
+                        Modifier.heightIn(min = SeatLayerSizeTokens.HEADER_HEIGHT.dp)
                     },
                 )
                 .padding(
@@ -69,7 +69,7 @@ public fun SeatLayerPickerHeader(
         ) {
             val brandLabel = branding?.brandName?.trim()?.takeIf(String::isNotEmpty)
             val brandSize = if (compact) {
-                SeatLayerPickerTokens.SIZE_HEADER_LOGO_SIZE.dp
+                SeatLayerSizeTokens.HEADER_LOGO_SIZE.dp
             } else {
                 36.dp
             }
@@ -111,7 +111,7 @@ public fun SeatLayerPickerHeader(
                     Text(
                         text = venue,
                         style = MaterialTheme.typography.bodySmall,
-                        color = scope.theme.muted,
+                        color = scope.theme.mutedText,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -128,12 +128,12 @@ public fun SeatLayerPickerHeader(
                     },
                 shape = CircleShape,
                 color = Color.Transparent,
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     SeatLayerPickerIcon(
                         glyph = SeatLayerPickerGlyph.Close,
-                        color = scope.theme.onSurface,
+                        color = scope.theme.text,
                         modifier = Modifier.size(if (compact) 20.dp else 22.dp),
                     )
                 }

@@ -35,18 +35,16 @@ public fun SeatLayerPickerMapControls(
         return
     }
     val controls: @Composable () -> Unit = {
-        if (scope.options.chrome.zoom) {
+        if (scope.options.chrome.showZoomControls) {
             SeatLayerPickerZoomControls(layout = layout)
         }
         if (
-            scope.options.chrome.overview &&
+            scope.options.chrome.showOverviewControl &&
             scope.state.snapshot?.map?.canZoomOut == true
         ) {
             SeatLayerPickerStepOutControl()
-        } else if (scope.options.chrome.fit) {
-            SeatLayerPickerFitControl()
         }
-        if (scope.options.chrome.colorblind) {
+        if (scope.options.chrome.showColorblindControl) {
             SeatLayerPickerColorblindControl()
         }
     }
@@ -117,21 +115,21 @@ private fun MapControl(
             },
         shape = CircleShape,
         color = Color.Transparent,
-        contentColor = theme.onSurface,
+        contentColor = theme.text,
     ) {
         Box(contentAlignment = Alignment.Center) {
             Surface(
                 modifier = Modifier.size(40.dp),
                 shape = CircleShape,
                 color = theme.surface.copy(alpha = 0.94f),
-                contentColor = theme.onSurface,
+                contentColor = theme.text,
                 border = androidx.compose.foundation.BorderStroke(1.dp, theme.divider),
                 shadowElevation = 3.dp,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     SeatLayerPickerIcon(
                         glyph = glyph,
-                        color = theme.onSurface,
+                        color = theme.text,
                         modifier = Modifier
                             .size(DefaultPickerIconSize)
                             .clearAndSetSemantics { },

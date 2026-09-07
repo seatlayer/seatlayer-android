@@ -33,7 +33,7 @@ public fun SeatLayerPickerAttribution(
     Surface(
         modifier = modifier,
         color = if (compact) Color.Transparent else scope.theme.surface.copy(alpha = 0.94f),
-        contentColor = scope.theme.muted,
+        contentColor = scope.theme.mutedText,
         shape = RoundedCornerShape(if (compact) 0.dp else 8.dp),
     ) {
         Row(
@@ -46,7 +46,7 @@ public fun SeatLayerPickerAttribution(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             SeatLayerPickerPoweredMark(
-                background = scope.theme.muted,
+                background = scope.theme.mutedText,
                 ink = scope.theme.surface,
             )
             Spacer(Modifier.width(4.dp))

@@ -84,7 +84,7 @@ public fun SeatLayerConfirmCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: scope.styles.cardRadius),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         shadowElevation = resolvedStyle.elevation ?: 8.dp,
     ) {
         Column(
@@ -164,12 +164,12 @@ private fun CompactSeatConfirmation(
         ?.firstOrNull { it.key == seat.categoryKey }
     val dotColor = parseColor(category?.color.orEmpty()) ?: scope.theme.accent
     val hasSeatView = scope.options.enableSeatView && scope.controller.supportsSeatView
-    val hasVenue3D = scope.options.enableVenue3D && scope.controller.supportsVenue3D
+    val hasVenue3D = scope.options.enable3D && scope.controller.supportsVenue3D
     Surface(
         modifier = modifier.fillMaxWidth().widthIn(max = 360.dp),
         shape = RoundedCornerShape(style.cornerRadius ?: 18.dp),
         color = style.containerColor ?: scope.theme.surface,
-        contentColor = style.contentColor ?: scope.theme.onSurface,
+        contentColor = style.contentColor ?: scope.theme.text,
         border = BorderStroke(1.dp, scope.theme.divider),
         shadowElevation = style.elevation ?: 10.dp,
     ) {
@@ -264,7 +264,7 @@ private fun CompactSeatConfirmation(
                     },
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     color = Color.Transparent,
-                    contentColor = scope.theme.onSurface,
+                    contentColor = scope.theme.text,
                 ) {
                     Box(contentAlignment = Alignment.Center) {
                         Text(

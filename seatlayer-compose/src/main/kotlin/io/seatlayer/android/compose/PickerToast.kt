@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 @Composable
 public fun SeatLayerPickerUndoNotice(
     modifier: Modifier = Modifier,
-    durationMillis: Long = SeatLayerPickerTokens.MOTION_UNDO_WINDOW_MILLIS.toLong(),
+    durationMillis: Long = SeatLayerMotionTokens.UNDO_WINDOW.toLong(),
 ) {
     val scope = LocalSeatLayerPickerScope.current
     val undo = scope.state.presentation.removalUndo ?: return
@@ -31,7 +31,7 @@ public fun SeatLayerPickerUndoNotice(
     }
     Surface(
         modifier = modifier,
-        color = scope.theme.onSurface,
+        color = scope.theme.text,
         contentColor = scope.theme.surface,
         shape = RoundedCornerShape(scope.styles.cardRadius),
         shadowElevation = 8.dp,

@@ -146,8 +146,8 @@ public class SeatLayerPickerAccessibilityEvidenceTest {
             override val strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized("en")
             override val options: SeatLayerPickerOptions = SeatLayerPickerOptions()
             override val styles: SeatLayerPickerStyles = SeatLayerPickerStyles()
-            override val moneyFormatter: SeatLayerPickerMoneyFormatter =
-                SeatLayerPickerMoneyFormatter { amount, currency ->
+            override val moneyFormatter: SeatLayerMoneyFormatter =
+                SeatLayerMoneyFormatter { amount, currency ->
                     "$currency ${amount.toInt()}"
                 }
             override val callbacks: SeatLayerPickerCallbacks = SeatLayerPickerCallbacks()

@@ -19,18 +19,6 @@ public data class SeatLayerPickerConfirmedCartProjection(
     val totals: SeatLayerPickerCartTotals,
 )
 
-public data class SeatLayerPickerDenseRun(
-    /** Source order remains available for stable UI identity and removal. */
-    val memberLineKeys: List<String>,
-    /** Display order follows the seat numbers used by [seatsLabel]. */
-    val orderedMemberLineKeys: List<String>,
-    val items: List<SeatLayerPickerCartLine>,
-    val seatsLabel: String,
-    val quantity: Int,
-    val total: Double,
-    val currency: String?,
-)
-
 public data class SeatLayerPickerRemovalUndo(
     val line: SeatLayerPickerCartLine,
     val sessionId: String,
@@ -74,7 +62,13 @@ public value class SeatLayerPickerBackStep(public val raw: String) {
 }
 
 public data class SeatLayerPickerPresentationState(
-    val pendingSeat: SeatLayerPickerSelectedSeat? = null,
+    /**
+     * The seat a card is asking about.
+     *
+     * It is a candidate, not a purchase: it is in no cart line the buyer sees,
+     * in no ticket count and in no total until the card is answered.
+     */
+    val candidateSeat: SeatLayerPickerSelectedSeat? = null,
     val pendingTable: SeatLayerPickerSelectedSeat? = null,
     val activePrompt: SeatLayerPickerPrompt? = null,
     val actionInFlight: Boolean = false,
@@ -82,11 +76,43 @@ public data class SeatLayerPickerPresentationState(
     val lastActionError: SeatLayerException? = null,
     val cartExpanded: Boolean = false,
     val removalUndo: SeatLayerPickerRemovalUndo? = null,
+    /** Which question the card over [candidateSeat] is asking. */
+    val cardIntent: SeatLayerPickerCardIntent = SeatLayerPickerCardIntent.Add,
+    val cartLanding: SeatLayerPickerCartLanding = SeatLayerPickerCartLanding.Idle,
+    val seatLift: SeatLayerPickerSeatLift? = null,
+    /** The chrome rectangles the map must not answer taps through. */
+    val blockedRegions: List<SeatLayerPickerBlockedRegion> = emptyList(),
+    /** True while a checkout the host took is expected to come back. */
+    val resumeAfterCheckout: Boolean = false,
+    /**
+     * The handoff whose hold left without expiring.
+     *
+     * A hold the host took to checkout and that then vanishes without an expiry
+     * is a sale, not a timeout. Reading it as a timeout tells a buyer who has
+     * just paid that their seats were released.
+     */
+    val bookedHandoff: SeatLayerPickerCheckoutHandoff? = null,
 ) {
+    /** The seat a card is asking about. */
+    @Deprecated("Renamed to candidateSeat.", ReplaceWith("candidateSeat"))
+    public val pendingSeat: SeatLayerPickerSelectedSeat?
+        get() = candidateSeat
+
+    /** The seat a Remove card is asking about, if that is the question. */
+    public val seatAwaitingRemoval: SeatLayerPickerSelectedSeat?
+        get() = candidateSeat.takeIf { cardIntent == SeatLayerPickerCardIntent.Remove }
+
+    public val sheetDetent: SeatLayerPickerSheetDetent
+        get() = if (cartExpanded) {
+            SeatLayerPickerSheetDetent.Open
+        } else {
+            SeatLayerPickerSheetDetent.Collapsed
+        }
+
     public fun confirmedCart(snapshot: SeatLayerPickerSnapshot?):
         SeatLayerPickerConfirmedCartProjection = SeatLayerPickerProjections.confirmedCart(
         items = snapshot?.cartLines.orEmpty(),
-        pending = pendingSeat,
+        pending = candidateSeat.takeIf { cardIntent == SeatLayerPickerCardIntent.Add },
     )
 
     public fun canCheckout(
@@ -95,10 +121,12 @@ public data class SeatLayerPickerPresentationState(
         readOnly: Boolean,
     ): Boolean = ready &&
         !readOnly &&
-        !actionInFlight &&
+        // Deliberately not gated on actionInFlight: adding a seat to a live
+        // hold puts a command in flight, and greying Continue through it tells
+        // the buyer their tickets stopped being buyable.
         checkoutHandoff == null &&
         activePrompt == null &&
-        pendingSeat == null &&
+        candidateSeat == null &&
         confirmedCart(snapshot).items.isNotEmpty() &&
         snapshot?.hold?.owner != "host" &&
         snapshot?.selectionValidity?.isValid != false
@@ -112,7 +140,7 @@ public data class SeatLayerPickerPresentationState(
             cartExpanded -> SeatLayerPickerBackStep.Cart
             seatView != null -> SeatLayerPickerBackStep.Panorama
             snapshot?.map?.buyerView == "venue3d" -> SeatLayerPickerBackStep.Venue3D
-            pendingSeat != null -> SeatLayerPickerBackStep.Confirmation
+            candidateSeat != null -> SeatLayerPickerBackStep.Confirmation
             snapshot?.map?.buyerView != null && snapshot.map.buyerView != "map" ->
                 SeatLayerPickerBackStep.Venue
             snapshot?.map?.canZoomOut == true &&
@@ -194,56 +222,6 @@ public object SeatLayerPickerProjections {
         )
     }
 
-    /**
-     * Groups only structurally equivalent addressed seats. Tables, GA lines,
-     * tier-controlled lines and multi-quantity lines remain individually
-     * actionable, so dense display never changes buyer semantics.
-     */
-    public fun denseRuns(
-        items: List<SeatLayerPickerCartLine>,
-    ): List<SeatLayerPickerDenseRun> {
-        val groups = linkedMapOf<DenseRunKey, MutableList<SeatLayerPickerCartLine>>()
-        items.forEach { line ->
-            val foldable = line.objectType == "seat" &&
-                line.quantity == 1 &&
-                line.tierId == null &&
-                line.seatNumber?.isNotBlank() == true
-            val key = if (foldable) {
-                DenseRunKey(
-                    section = line.sectionLabel,
-                    row = line.rowLabel,
-                    category = line.categoryKey,
-                    unitPrice = line.unitPrice,
-                    currency = line.currency,
-                    unique = null,
-                )
-            } else {
-                DenseRunKey(
-                    section = line.sectionLabel,
-                    row = line.rowLabel,
-                    category = line.categoryKey,
-                    unitPrice = line.unitPrice,
-                    currency = line.currency,
-                    unique = line.lineKey,
-                )
-            }
-            groups.getOrPut(key) { mutableListOf() } += line
-        }
-        return groups.values.map { members ->
-            val ordered = members.sortedWith(SEAT_LINE_ORDER)
-            val totals = totals(members)
-            SeatLayerPickerDenseRun(
-                memberLineKeys = members.map(SeatLayerPickerCartLine::lineKey),
-                orderedMemberLineKeys = ordered.map(SeatLayerPickerCartLine::lineKey),
-                items = ordered,
-                seatsLabel = seatRunLabel(ordered.map { it.seatNumber ?: it.label }),
-                quantity = totals.quantity,
-                total = totals.total,
-                currency = totals.currency,
-            )
-        }
-    }
-
     public fun canUndoRemoval(
         phase: SeatLayerPickerRemovalPhase,
         sameSession: Boolean,
@@ -293,21 +271,7 @@ public object SeatLayerPickerProjections {
 
     private val SEAT_NUMBER = Regex("^[0-9]{1,4}$")
 
-    private val SEAT_LINE_ORDER = compareBy<SeatLayerPickerCartLine>(
-        { it.seatNumber?.trim()?.toIntOrNull() ?: Int.MAX_VALUE },
-        { it.seatNumber.orEmpty() },
-        { it.lineKey },
-    )
 }
-
-private data class DenseRunKey(
-    val section: String?,
-    val row: String?,
-    val category: String,
-    val unitPrice: Double,
-    val currency: String,
-    val unique: String?,
-)
 
 private fun String.nonBlank(): String? = trim().takeIf(String::isNotEmpty)
 

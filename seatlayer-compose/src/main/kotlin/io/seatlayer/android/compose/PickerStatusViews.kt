@@ -62,7 +62,7 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         shape = RoundedCornerShape(scope.styles.cardRadius),
         shadowElevation = 8.dp,
     ) {
@@ -71,7 +71,7 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
             if (lapse.lapsedLabels.isNotEmpty()) {
                 Text(
                     lapse.lapsedLabels.joinToString(),
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                     style = MaterialTheme.typography.bodySmall,
                 )
             }
@@ -82,7 +82,7 @@ public fun SeatLayerHoldLapseNotice(modifier: Modifier = Modifier) {
                             coroutineScope.launch {
                                 scope.performAction {
                                     scope.controller.reselectLapsedSeats(
-                                        scope.options.holdTtlMillis,
+                                        scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                                     )
                                 }
                             }
@@ -120,7 +120,7 @@ public fun SeatLayerPickerActionError(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.bodySmall,
             )
             TextButton(
-                onClick = scope.controller::dismissActionError,
+                onClick = scope.controller::dismissError,
                 modifier = Modifier.sizeIn(minHeight = 48.dp),
                 colors = ButtonDefaults.textButtonColors(
                     contentColor = scope.theme.onAccent,
@@ -233,16 +233,16 @@ public fun SeatLayerPickerErrorView(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = scope.strings.unavailable,
+                text = scope.strings.errorMessage,
                 style = MaterialTheme.typography.titleMedium,
-                color = scope.theme.onSurface,
+                color = scope.theme.text,
             )
             failure?.message?.takeIf(String::isNotBlank)?.let { message ->
                 Spacer(Modifier.height(8.dp))
                 Text(
                     text = message,
                     style = MaterialTheme.typography.bodySmall,
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                 )
             }
             Spacer(Modifier.height(20.dp))
@@ -268,9 +268,9 @@ public fun SeatLayerPickerEmptyView(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = scope.strings.soldOut,
+            text = scope.strings.soldOutTitle,
             style = MaterialTheme.typography.titleMedium,
-            color = scope.theme.onSurface,
+            color = scope.theme.text,
             modifier = Modifier.padding(28.dp),
         )
     }

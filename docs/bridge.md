@@ -9,7 +9,7 @@ SeatLayer Android exposes two intentionally separate hosted bridge profiles:
 
 Adding the native picker does not renegotiate or change an existing raw
 integration. Both profiles load the immutable
-`seatlayer-js@0.71.5/mobile.html` runtime.
+`seatlayer-js@0.84.1/mobile.html` runtime.
 
 ## Raw lifecycle
 
@@ -178,7 +178,7 @@ timeout, reload, or destroyed session are discarded.
 The exact production page is:
 
 ```text
-https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html
+https://cdn.seatlayer.io/seatlayer-js@0.84.1/mobile.html
 ```
 
 The AndroidX WebKit listener accepts only main-frame messages from the exact
@@ -200,8 +200,7 @@ keeps the existing hosted renderer and bridge contracts.
 | --- | --- |
 | Android core | `0.3.5` |
 | Android Compose | `0.3.5` |
-| Hosted SeatLayer mobile runtime | `0.71.5` |
-| Retained legacy fixture | `0.59.0` |
+| Hosted SeatLayer mobile runtime | `0.84.1` |
 | Raw bridge protocol | `1` |
 | Native picker bridge protocol | `2` |
 | Picker snapshot schema | `seatlayer.picker.snapshot/1` |

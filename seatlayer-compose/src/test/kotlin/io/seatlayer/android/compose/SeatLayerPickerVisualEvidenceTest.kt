@@ -12,8 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.Density
@@ -39,7 +43,9 @@ public class SeatLayerPickerVisualEvidenceTest {
         render(PickerEvidenceScenario.Overview)
         composeRule.onNodeWithText("Fixture Arena").assertIsDisplayed()
         composeRule.onNodeWithText("TEST MODE").assertIsDisplayed()
-        composeRule.onNodeWithContentDescription("Fit to screen").assertIsDisplayed()
+        // The zoom-to-fit control is retired from the built-in layouts; the
+        // whole-venue control does the same job without going stale.
+        composeRule.onAllNodesWithContentDescription("Fit to screen").assertCountEquals(0)
     }
 
     @Test
@@ -72,20 +78,23 @@ public class SeatLayerPickerVisualEvidenceTest {
             themeMode = SeatLayerPickerThemeMode.Dark,
         )
         composeRule.onNodeWithText("Terrace table 7").assertIsDisplayed()
-        composeRule.onNodeWithText("Guests at this table").assertIsDisplayed()
+        composeRule.onNodeWithText("Choose the number of guests for this table")
+            .assertIsDisplayed()
     }
 
     @Test
-    public fun expandedDenseCartWithHold() {
+    public fun expandedCartWithHold() {
         render(PickerEvidenceScenario.Cart)
-        composeRule.onNodeWithText("12–14", substring = true).assertIsDisplayed()
+        // Every held seat is its own line: the collapsed run is retired.
+        listOf("Section 102 · A · 12", "Section 102 · A · 13", "Section 102 · A · 14")
+            .forEach { composeRule.onNodeWithText(it).assertIsDisplayed() }
         composeRule.onNodeWithText("Hold seats & checkout").assertIsDisplayed()
     }
 
     @Test
     public fun holdLapseAndUndoNotices() {
         render(PickerEvidenceScenario.Recovery)
-        composeRule.onNodeWithText("Your hold expired.").assertIsDisplayed()
+        composeRule.onNodeWithText("Your hold expired", substring = true).assertIsDisplayed()
         composeRule.onNodeWithText("Undo").assertIsDisplayed()
     }
 
@@ -190,7 +199,10 @@ public class SeatLayerPickerVisualEvidenceTest {
             PickerEvidenceScenario.Cart,
             options = SeatLayerPickerOptions(layout = SeatLayerPickerLayoutMode.Wide),
         )
-        composeRule.onNodeWithText("Section 102", substring = true).assertIsDisplayed()
+        // Each cart line names its own section now, so the label repeats.
+        composeRule.onAllNodesWithText("Section 102", substring = true)
+            .onFirst()
+            .assertIsDisplayed()
         composeRule.onNodeWithText("Continue").assertIsDisplayed()
     }
 

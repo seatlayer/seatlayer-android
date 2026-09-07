@@ -111,6 +111,6 @@ class SeatLayerPickerNeutralProtocolTest {
         const val FIXTURE_RESOURCE =
             "/io/seatlayer/android/seatlayer-picker-protocol-v2.json"
         const val FIXTURE_SHA256 =
-            "0a86939e08d8e8eba35bc7660a20ea8d15200099faba2b16395d303e2df991b6"
+            "0e80543a787dc5c72d904a633a3d3a469bad7dd18d6ee46fdc814fa4b282fd5b"
     }
 }

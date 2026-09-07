@@ -66,17 +66,17 @@ public fun SeatLayerPickerCartSheet(
             topEnd = resolvedStyle.cornerRadius ?: scope.styles.sheetRadius,
         ),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         shadowElevation = resolvedStyle.elevation ?: 10.dp,
     ) {
         Column {
             TextButton(
-                onClick = { scope.controller.setCartExpanded(!presentation.cartExpanded) },
+                onClick = { scope.controller.setCartSheetExpanded(!presentation.cartExpanded) },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
             ) {
                 Text(
-                    if (presentation.cartExpanded) scope.strings.hideCart
-                    else "${scope.strings.showCart} · " +
+                    if (presentation.cartExpanded) scope.strings.collapseCart
+                    else "${scope.strings.expandCart} · " +
                         scope.strings.ticketCount(confirmed.totals.quantity),
                 )
             }
@@ -113,7 +113,7 @@ private fun CompactCartSheet(
     val emptyLabel = minimum?.let { price ->
         val currency = scope.state.snapshot?.currency.orEmpty()
         scope.strings.fromPrice(scope.moneyFormatter.format(price, currency))
-    } ?: scope.strings.noTickets
+    } ?: scope.strings.emptyTrayHint
 
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -124,25 +124,25 @@ private fun CompactCartSheet(
             topEnd = style.cornerRadius ?: 0.dp,
         ),
         color = style.containerColor ?: scope.theme.surface,
-        contentColor = style.contentColor ?: scope.theme.onSurface,
+        contentColor = style.contentColor ?: scope.theme.text,
         shadowElevation = style.elevation ?: 10.dp,
     ) {
         Column {
             Surface(
-                onClick = { scope.controller.setCartExpanded(!presentation.cartExpanded) },
+                onClick = { scope.controller.setCartSheetExpanded(!presentation.cartExpanded) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(44.dp)
                     .semantics {
                         role = Role.Button
                         contentDescription = if (presentation.cartExpanded) {
-                            scope.strings.hideCart
+                            scope.strings.collapseCart
                         } else {
-                            scope.strings.showCart
+                            scope.strings.expandCart
                         }
                     },
                 color = Color.Transparent,
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
             ) {
                 Box {
                     Box(
@@ -151,7 +151,7 @@ private fun CompactCartSheet(
                             .padding(top = 4.dp)
                             .width(32.dp)
                             .height(3.dp)
-                            .background(scope.theme.muted.copy(alpha = 0.62f), RoundedCornerShape(99.dp)),
+                            .background(scope.theme.mutedText.copy(alpha = 0.62f), RoundedCornerShape(99.dp)),
                     )
                     Row(
                         modifier = Modifier
@@ -212,7 +212,7 @@ private fun CompactCartSheet(
                             } else {
                                 SeatLayerPickerGlyph.ChevronUp
                             },
-                            color = scope.theme.muted,
+                            color = scope.theme.mutedText,
                             modifier = Modifier
                                 .size(20.dp)
                                 .rotate(if (presentation.cartExpanded) 180f else 0f),

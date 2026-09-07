@@ -21,12 +21,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,8 +35,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.seatlayer.android.SeatLayerPickerCartLine
-import io.seatlayer.android.SeatLayerPickerDenseRun
-import io.seatlayer.android.SeatLayerPickerProjections
 import kotlinx.coroutines.launch
 
 @Composable
@@ -50,30 +44,21 @@ public fun SeatLayerPickerCartList(
 ) {
     val scope = LocalSeatLayerPickerScope.current
     val confirmed = scope.state.presentation.confirmedCart(scope.state.snapshot)
-    val runs = remember(confirmed.items) { SeatLayerPickerProjections.denseRuns(confirmed.items) }
-    var expandedRun by remember { mutableStateOf<String?>(null) }
-    if (runs.isEmpty()) {
+    if (confirmed.items.isEmpty()) {
         Text(
-            scope.strings.noTickets,
+            scope.strings.emptyTrayHint,
             modifier = modifier.padding(20.dp),
-            color = scope.theme.muted,
+            color = scope.theme.mutedText,
             style = MaterialTheme.typography.bodyMedium,
         )
         return
     }
+    // Every held seat is its own line. The collapsed run this list used to
+    // draw hid the seat a buyer was looking for behind a summary they then had
+    // to open, and a row they cannot act on directly is not a shorter list.
     LazyColumn(modifier = modifier) {
-        items(runs, key = { it.memberLineKeys.joinToString("|") }) { run ->
-            if (run.items.size == 1 || expandedRun == run.memberLineKeys.first()) {
-                run.items.forEach { line -> CartLineRow(line, compact) }
-                if (run.items.size > 1) {
-                    TextButton(
-                        onClick = { expandedRun = null },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
-                    ) { Text(scope.strings.showLess) }
-                }
-            } else {
-                DenseRunRow(run) { expandedRun = run.memberLineKeys.first() }
-            }
+        items(confirmed.items, key = SeatLayerPickerCartLine::lineKey) { line ->
+            CartLineRow(line, compact)
             PickerDivider()
         }
     }
@@ -125,15 +110,15 @@ private fun CartLineRow(
                     .size(48.dp)
                     .semantics {
                         role = Role.Button
-                        contentDescription = scope.strings.remove
+                        contentDescription = scope.strings.removeWord
                     },
                 color = Color.Transparent,
-                contentColor = scope.theme.muted,
+                contentColor = scope.theme.mutedText,
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     SeatLayerPickerIcon(
                         SeatLayerPickerGlyph.Close,
-                        scope.theme.muted,
+                        scope.theme.mutedText,
                         Modifier.size(16.dp),
                     )
                 }
@@ -155,7 +140,7 @@ private fun CartLineRow(
             val place = listOfNotNull(line.sectionLabel, line.rowLabel, line.seatNumber)
                 .joinToString(" · ")
             if (place.isNotEmpty()) {
-                Text(place, style = MaterialTheme.typography.bodySmall, color = scope.theme.muted)
+                Text(place, style = MaterialTheme.typography.bodySmall, color = scope.theme.mutedText)
             }
         }
         Text(
@@ -167,43 +152,7 @@ private fun CartLineRow(
             enabled = !scope.state.presentation.actionInFlight,
             modifier = Modifier.sizeIn(minWidth = 48.dp, minHeight = 48.dp),
         ) {
-            Text(scope.strings.remove)
-        }
-    }
-}
-
-@Composable
-private fun DenseRunRow(run: SeatLayerPickerDenseRun, onOpen: () -> Unit) {
-    val scope = LocalSeatLayerPickerScope.current
-    val first = run.items.first()
-    Surface(
-        onClick = onOpen,
-        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
-        color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(
-                    listOfNotNull(first.sectionLabel, first.rowLabel, run.seatsLabel)
-                        .joinToString(" · "),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    "${run.quantity} × ${scope.moneyFormatter.format(first.unitPrice, first.currency)}",
-                    color = scope.theme.muted,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            }
-            Text(
-                run.currency?.let { scope.moneyFormatter.format(run.total, it) }
-                    ?: run.total.toString(),
-                fontWeight = FontWeight.SemiBold,
-            )
+            Text(scope.strings.removeWord)
         }
     }
 }

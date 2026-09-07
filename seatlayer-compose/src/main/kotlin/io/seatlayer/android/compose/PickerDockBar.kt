@@ -51,7 +51,7 @@ public fun SeatLayerDockBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         shadowElevation = resolvedStyle.elevation ?: 4.dp,
         shape = androidx.compose.foundation.shape.RoundedCornerShape(
             resolvedStyle.cornerRadius ?: 0.dp,
@@ -79,7 +79,7 @@ public fun SeatLayerDockBar(
             focused.seatsLeft?.let { count ->
                 Text(
                     " ·  ${scope.strings.seatsLeft(count)}",
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                     fontSize = 13.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
@@ -119,10 +119,10 @@ public fun SeatLayerDockBar(
                     .height(48.dp)
                     .semantics {
                         role = Role.Button
-                        contentDescription = scope.strings.venue
+                        contentDescription = scope.strings.overview
                     },
                 color = Color.Transparent,
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 5.dp),
@@ -130,12 +130,12 @@ public fun SeatLayerDockBar(
                 ) {
                     SeatLayerPickerIcon(
                         SeatLayerPickerGlyph.Back,
-                        scope.theme.onSurface,
+                        scope.theme.text,
                         Modifier.size(16.dp).clearAndSetSemantics { },
                     )
                     Spacer(Modifier.width(3.dp))
                     Text(
-                        scope.strings.venue,
+                        scope.strings.overview,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.ExtraBold,
                     )
@@ -163,12 +163,12 @@ private fun DockIconButton(
                 contentDescription = label
             },
         color = Color.Transparent,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Box(contentAlignment = Alignment.Center) {
             SeatLayerPickerIcon(
                 glyph,
-                if (enabled) scope.theme.onSurface else scope.theme.muted.copy(alpha = 0.45f),
+                if (enabled) scope.theme.text else scope.theme.mutedText.copy(alpha = 0.45f),
                 Modifier.size(18.dp).clearAndSetSemantics { },
             )
         }

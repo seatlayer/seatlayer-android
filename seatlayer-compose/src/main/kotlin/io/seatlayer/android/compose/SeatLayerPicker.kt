@@ -47,7 +47,7 @@ public fun SeatLayerPicker(
     strings: SeatLayerPickerStrings = SeatLayerPickerStrings.localized(),
     options: SeatLayerPickerOptions = SeatLayerPickerOptions(),
     styles: SeatLayerPickerStyles = SeatLayerPickerStyles(),
-    moneyFormatter: SeatLayerPickerMoneyFormatter = SeatLayerPickerMoneyFormatter.localized(),
+    moneyFormatter: SeatLayerMoneyFormatter = SeatLayerMoneyFormatter.localized(),
     builders: SeatLayerPickerBuilders = SeatLayerPickerBuilders(),
     stateHolder: SeatLayerPickerStateHolder = rememberSeatLayerPickerStateHolder(
         configuration,
@@ -134,11 +134,11 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
     val panorama = state.seatView != null
     val interactionBlocked = state.presentation.cartExpanded ||
         (!immersiveInspection &&
-            (state.presentation.pendingSeat != null ||
+            (state.presentation.candidateSeat != null ||
                 state.presentation.activePrompt != null))
     LaunchedEffect(interactionBlocked, state.isReady) {
         if (state.isReady) {
-            performAction { controller.setInteractionEnabled(!interactionBlocked) }
+            performAction { controller.setMapInteractionEnabled(!interactionBlocked) }
         }
     }
 
@@ -228,7 +228,7 @@ internal fun SeatLayerPickerScope.SeatLayerReadyMadePicker(
                     )
                 }
                 if (
-                    options.chrome.cartSheet &&
+                    options.chrome.showTicketPanel &&
                     state.isReady &&
                     !SeatLayerPickerProjections.isProvenEmpty(state.snapshot)
                 ) {

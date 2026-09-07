@@ -40,7 +40,7 @@ public fun SeatLayerBestSeatsForm(modifier: Modifier = Modifier) {
     var zone by remember(snapshot.sessionId) { mutableStateOf<SeatLayerPickerZone?>(null) }
     val coroutineScope = rememberCoroutineScope()
     Column(modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(scope.strings.bestAvailable, style = MaterialTheme.typography.titleMedium)
+        Text(scope.strings.bestSeats, style = MaterialTheme.typography.titleMedium)
         PickerQuantityRow(
             value = quantity,
             maximum = snapshot.maxSelection.coerceAtLeast(1),
@@ -54,7 +54,7 @@ public fun SeatLayerBestSeatsForm(modifier: Modifier = Modifier) {
         )
         if (snapshot.bestAvailableZones.isNotEmpty()) {
             PickerChoiceMenu(
-                label = zone?.label ?: scope.strings.venue,
+                label = zone?.label ?: scope.strings.overview,
                 choices = snapshot.bestAvailableZones,
                 choiceLabel = SeatLayerPickerZone::label,
                 onSelected = { zone = it },
@@ -68,7 +68,7 @@ public fun SeatLayerBestSeatsForm(modifier: Modifier = Modifier) {
                             quantity = quantity,
                             categoryKey = category?.key,
                             zoneId = zone?.id,
-                            ttlMillis = scope.options.holdTtlMillis,
+                            ttlMillis = scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                         )
                     }
                 }

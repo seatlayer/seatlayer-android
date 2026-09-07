@@ -42,23 +42,6 @@ class SeatLayerPickerPresentationTest {
     }
 
     @Test
-    fun `dense runs order addressed seats without changing source identity`() {
-        val lines = listOf(
-            line("three", "A-3", "seat-3", 25.0, seatNumber = "3"),
-            line("one", "A-1", "seat-1", 25.0, seatNumber = "1"),
-            line("two", "A-2", "seat-2", 25.0, seatNumber = "2"),
-        )
-
-        val run = SeatLayerPickerProjections.denseRuns(lines).single()
-
-        assertEquals(listOf("three", "one", "two"), run.memberLineKeys)
-        assertEquals(listOf("one", "two", "three"), run.orderedMemberLineKeys)
-        assertEquals("1–3", run.seatsLabel)
-        assertEquals(3, run.quantity)
-        assertEquals(75.0, run.total, 0.0)
-    }
-
-    @Test
     fun `seat labels never invent a range across gaps`() {
         assertEquals(
             "1, 2, 4 +2",
@@ -125,19 +108,19 @@ class SeatLayerPickerPresentationTest {
             SeatLayerPickerPresentationState(
                 activePrompt = SeatLayerPickerPrompt.GeneralAdmission(ga),
                 cartExpanded = true,
-                pendingSeat = pending,
+                candidateSeat = pending,
             ).nextBackStep(section),
         )
         assertEquals(
             SeatLayerPickerBackStep.Cart,
             SeatLayerPickerPresentationState(
                 cartExpanded = true,
-                pendingSeat = pending,
+                candidateSeat = pending,
             ).nextBackStep(section),
         )
         assertEquals(
             SeatLayerPickerBackStep.Confirmation,
-            SeatLayerPickerPresentationState(pendingSeat = pending).nextBackStep(section),
+            SeatLayerPickerPresentationState(candidateSeat = pending).nextBackStep(section),
         )
         assertEquals(
             SeatLayerPickerBackStep.Section,
@@ -161,11 +144,11 @@ class SeatLayerPickerPresentationTest {
         )
         assertEquals(
             SeatLayerPickerBackStep.Venue3D,
-            SeatLayerPickerPresentationState(pendingSeat = pending).nextBackStep(venue3D),
+            SeatLayerPickerPresentationState(candidateSeat = pending).nextBackStep(venue3D),
         )
         assertEquals(
             SeatLayerPickerBackStep.Panorama,
-            SeatLayerPickerPresentationState(pendingSeat = pending).nextBackStep(
+            SeatLayerPickerPresentationState(candidateSeat = pending).nextBackStep(
                 venue3D,
                 SeatLayerSeatView(
                     seatId = "seat-2",

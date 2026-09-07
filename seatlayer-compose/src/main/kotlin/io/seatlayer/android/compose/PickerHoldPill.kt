@@ -36,7 +36,7 @@ public fun SeatLayerPickerHoldCountdown(modifier: Modifier = Modifier) {
         modifier = modifier,
         shape = RoundedCornerShape(999.dp),
         color = scope.theme.accent.copy(alpha = 0.12f),
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Text(
             formatCountdown(remainingMillis),

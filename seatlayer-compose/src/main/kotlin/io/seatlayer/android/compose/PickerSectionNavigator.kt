@@ -56,7 +56,7 @@ private fun SectionRow(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp),
@@ -68,7 +68,7 @@ private fun SectionRow(
                     Text(
                         it,
                         style = MaterialTheme.typography.bodySmall,
-                        color = scope.theme.muted,
+                        color = scope.theme.mutedText,
                     )
                 }
             }
@@ -76,7 +76,7 @@ private fun SectionRow(
                 Text(
                     scope.strings.seatsLeft(it),
                     style = MaterialTheme.typography.labelMedium,
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                 )
             }
         }

@@ -97,7 +97,7 @@ public fun SeatLayerPriceLegend(
         Surface(
             modifier = modifier.fillMaxWidth(),
             color = resolvedStyle.containerColor ?: scope.theme.surface,
-            contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+            contentColor = resolvedStyle.contentColor ?: scope.theme.text,
             tonalElevation = resolvedStyle.elevation ?: 1.dp,
             shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: 0.dp),
         ) { content() }
@@ -151,8 +151,8 @@ private fun PickerLegendChip(
                 Spacer(Modifier.width(5.dp))
                 Text(
                     text = price,
-                    color = if (selected) scope.theme.onAccent else scope.theme.onSurface,
-                    fontSize = SeatLayerPickerTokens.SIZE_LEGEND_CHIP_FONT_SIZE.sp,
+                    color = if (selected) scope.theme.onAccent else scope.theme.text,
+                    fontSize = SeatLayerSizeTokens.LEGEND_CHIP_FONT_SIZE.sp,
                     fontWeight = FontWeight.ExtraBold,
                     maxLines = 1,
                 )
@@ -168,7 +168,7 @@ private fun PickerLegendChip(
                 role = Role.Checkbox
                 toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
             },
-        shape = RoundedCornerShape(scope.theme.cornerRadius),
+        shape = RoundedCornerShape(scope.theme.radius),
         color = if (selected) scope.theme.accent.copy(alpha = 0.14f)
         else scope.theme.background,
         border = androidx.compose.foundation.BorderStroke(
@@ -189,7 +189,7 @@ private fun PickerLegendChip(
             Spacer(Modifier.width(8.dp))
             Column {
                 Text(category.label, style = MaterialTheme.typography.labelLarge, maxLines = 1)
-                Text(price, style = MaterialTheme.typography.labelSmall, color = scope.theme.muted)
+                Text(price, style = MaterialTheme.typography.labelSmall, color = scope.theme.mutedText)
             }
         }
     }

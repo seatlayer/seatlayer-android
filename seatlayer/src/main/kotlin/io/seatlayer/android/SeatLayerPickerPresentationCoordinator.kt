@@ -30,10 +30,10 @@ internal class SeatLayerPickerPresentationCoordinator(
             try {
                 handler(handoff)
             } catch (error: CancellationException) {
-                runCatching { controller.rejectHandoff(handoff.holdId) }
+                runCatching { controller.rejectCheckoutHandoff(handoff) }
                 throw error
             } catch (error: Throwable) {
-                runCatching { controller.rejectHandoff(handoff.holdId) }
+                runCatching { controller.rejectCheckoutHandoff(handoff) }
                 throw SeatLayerException.Transport(
                     "The host rejected the SeatLayer checkout handoff.",
                     error,
@@ -57,7 +57,7 @@ internal class SeatLayerPickerPresentationCoordinator(
     fun confirmPending() = stateHolder.confirmPendingSeat()
 
     suspend fun confirmPending(tierId: String?): Boolean {
-        val pending = stateHolder.state.value.presentation.pendingSeat ?: return false
+        val pending = stateHolder.state.value.presentation.candidateSeat ?: return false
         val selectedTier = if (pending.tiers.isEmpty() && tierId == null) {
             null
         } else {
@@ -92,9 +92,10 @@ internal class SeatLayerPickerPresentationCoordinator(
 
     fun confirmPendingTable() = stateHolder.confirmPendingTable()
 
-    fun setCartExpanded(expanded: Boolean) = stateHolder.setCartExpanded(expanded)
+    fun setCartSheetExpanded(expanded: Boolean) =
+        stateHolder.setCartSheetExpanded(expanded)
 
-    fun dismissActionError() = stateHolder.recordActionError(null)
+    fun dismissError() = stateHolder.recordActionError(null)
 
     suspend fun removeWithUndo(line: SeatLayerPickerCartLine): Boolean {
         val presentation = stateHolder.state.value.presentation
@@ -109,7 +110,7 @@ internal class SeatLayerPickerPresentationCoordinator(
             ),
         )
         return try {
-            controller.removeCartLine(line.label)
+            controller.removeObject(line.label)
             stateHolder.setRemovalUndo(
                 SeatLayerPickerRemovalUndo(
                     line = line,
@@ -155,7 +156,7 @@ internal class SeatLayerPickerPresentationCoordinator(
     fun dismissRemovalUndo() = stateHolder.setRemovalUndo(null)
 
     suspend fun cancelPending(): Boolean {
-        val pending = stateHolder.state.value.presentation.pendingSeat ?: return false
+        val pending = stateHolder.state.value.presentation.candidateSeat ?: return false
         return cancelPendingSeat(pending)
     }
 
@@ -203,7 +204,7 @@ internal class SeatLayerPickerPresentationCoordinator(
                 is SeatLayerPickerPrompt.Table -> cancelPendingTable()
                 null -> Unit
             }
-            SeatLayerPickerBackStep.Cart -> setCartExpanded(false)
+            SeatLayerPickerBackStep.Cart -> setCartSheetExpanded(false)
             // New runtimes can expose a close command. Older ones safely no-op,
             // preserving the target/session for the runtime-owned close control.
             SeatLayerPickerBackStep.Panorama -> runAction {

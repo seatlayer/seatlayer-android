@@ -235,7 +235,7 @@ class SeatLayerPickerSessionTest {
 
     private fun hello(holder: SeatLayerPickerStateHolder): JsonObject = JsonObject(
         mapOf(
-            "bundle" to JsonPrimitive("0.71.5"),
+            "bundle" to JsonPrimitive("0.84.1"),
             "protocol" to holder.bridgeProfile.protocolRange.toJson(),
             "capabilities" to JsonArray(
                 holder.bridgeProfile.requiredCapabilities.map(::JsonPrimitive),

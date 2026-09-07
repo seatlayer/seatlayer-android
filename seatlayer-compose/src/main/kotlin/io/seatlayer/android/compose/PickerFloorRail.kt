@@ -122,7 +122,7 @@ public fun SeatLayerFloorStrip(
                     },
                 shape = RoundedCornerShape(999.dp),
                 color = if (selected) scope.theme.accent else scope.theme.surface,
-                contentColor = if (selected) scope.theme.onAccent else scope.theme.onSurface,
+                contentColor = if (selected) scope.theme.onAccent else scope.theme.text,
                 border = BorderStroke(
                     1.dp,
                     if (selected) scope.theme.accent else scope.theme.divider,

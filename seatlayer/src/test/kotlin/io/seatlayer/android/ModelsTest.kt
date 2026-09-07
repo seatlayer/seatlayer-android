@@ -9,9 +9,8 @@ import org.junit.Test
 
 class ModelsTest {
     @Test
-    fun hostedAndFixtureVersionsRemainDistinctAndPinned() {
-        assertEquals("0.71.5", SEATLAYER_HOSTED_WEB_VERSION)
-        assertEquals("0.59.0", SEATLAYER_LEGACY_FIXTURE_WEB_VERSION)
+    fun hostedRuntimeVersionRemainsPinned() {
+        assertEquals("0.84.1", SEATLAYER_HOSTED_WEB_VERSION)
         assertEquals(
             "https://cdn.seatlayer.io/seatlayer-js@$SEATLAYER_HOSTED_WEB_VERSION/mobile.html",
             SEATLAYER_MOBILE_PAGE_URL,

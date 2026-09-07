@@ -1,26 +1,27 @@
 package io.seatlayer.android
 
-import java.util.concurrent.CancellationException
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
 
 /**
  * Typed headless API for one protocol-2 picker.
+ *
+ * Every public entry lives here, so a host reading the class reads the whole
+ * offer in one place; the work behind each one lives in `PickerController*.kt`
+ * beside this file, grouped by what the buyer is doing — picking, holding,
+ * looking, or filtering.
  *
  * Inventory mutations are serialized, optional operations are gated before a
  * bridge message is sent, and overlapping checkout calls share one handoff.
  */
 public class SeatLayerPickerController internal constructor(
-    private val stateHolder: SeatLayerPickerStateHolder,
+    internal val stateHolder: SeatLayerPickerStateHolder,
     private val revisionWaitMillis: Long = 2_000,
 ) {
     private val mutationMutex = Mutex()
@@ -62,18 +63,18 @@ public class SeatLayerPickerController internal constructor(
         get() = presentation.nextBackStep(snapshot, stateHolder.state.value.seatView)
 
     public val supportsFloorStack: Boolean
-        get() = supports("floor-stack-v1", "picker.setFloor")
+        get() = supportsCapabilityAndCommand("floor-stack-v1", "picker.setFloor")
 
     public val supportsViewportInsets: Boolean
-        get() = supports("viewport-insets-v1", "picker.setViewportInsets")
+        get() = supportsCapabilityAndCommand("viewport-insets-v1", "picker.setViewportInsets")
 
     public val supportsVenue3D: Boolean
-        get() = stateHolder.behavior.enableVenue3D &&
-            supports("venue-3d-v1", "picker.setBuyerView")
+        get() = stateHolder.behavior.enable3D &&
+            supportsCapabilityAndCommand("venue-3d-v1", "picker.setBuyerView")
 
     public val supportsSeatView: Boolean
         get() = stateHolder.behavior.enableSeatView &&
-            supports("seat-view-v1", "picker.openSeatView")
+            supportsCapabilityAndCommand("seat-view-v1", "picker.openSeatView")
 
     /** Whether this runtime lets native chrome close the active panorama. */
     public val supportsSeatViewClose: Boolean
@@ -85,10 +86,31 @@ public class SeatLayerPickerController internal constructor(
             supportsEvent("seatView.changed")
 
     public val supportsAvailabilityRefresh: Boolean
-        get() = supports("availability-refresh-v1", "picker.refreshAvailability")
+        get() = supportsCapabilityAndCommand(
+            "availability-refresh-v1",
+            "picker.refreshAvailability",
+        )
 
     public val supportsHoldSelection: Boolean
-        get() = supports("hold-selection-v1", "picker.holdSelection")
+        get() = supportsCapabilityAndCommand("hold-selection-v1", "picker.holdSelection")
+
+    /** Whether the runtime reports the accommodations this event actually has. */
+    public val supportsAccessNeeds: Boolean
+        get() = supportsCapabilityAndCommand("access-needs-v1", "picker.setAccessibilityFilter")
+
+    /** Whether a filter can fly the map, and the accessible-section tour exists. */
+    public val supportsAccessibilityFocus: Boolean
+        get() = isReady && supportsCapability("accessibility-focus-v1")
+
+    /** Whether sections report how many accessible spaces are left. */
+    public val supportsSectionAccessCounts: Boolean
+        get() = isReady && supportsCapability("section-access-counts-v1")
+
+    /** Whether a selected seat may carry a photograph of the view from it. */
+    public val supportsSeatViewThumbnail: Boolean
+        get() = stateHolder.behavior.enableSeatView &&
+            isReady &&
+            supportsCapability("seat-view-thumbnail-v1")
 
     public fun supportsCapability(capability: String): Boolean =
         bundleInfo?.supportsCapability(capability) == true
@@ -102,204 +124,146 @@ public class SeatLayerPickerController internal constructor(
     public suspend fun synchronize(): SeatLayerPickerSnapshot? =
         mutation("picker.getSnapshot")
 
-    public suspend fun selectObjects(objects: List<String>): SeatLayerPickerSnapshot? {
-        requireNonEmpty(objects, "objects")
-        return mutation(
-            "picker.selectObjects",
-            jsonObject("objects" to jsonStrings(objects)),
-        )
-    }
+    public suspend fun selectObjects(objects: List<String>): SeatLayerPickerSnapshot? =
+        performSelectObjects(objects)
 
-    public suspend fun deselectObjects(objects: List<String>): SeatLayerPickerSnapshot? {
-        requireNonEmpty(objects, "objects")
-        return mutation(
-            "picker.deselectObjects",
-            jsonObject("objects" to jsonStrings(objects)),
-        )
-    }
+    public suspend fun deselectObjects(objects: List<String>): SeatLayerPickerSnapshot? =
+        performDeselectObjects(objects)
 
     public suspend fun clearSelection(): SeatLayerPickerSnapshot? =
         mutation("picker.clearSelection")
 
     public suspend fun selectCategories(
         categoryKeys: List<String>,
-    ): SeatLayerPickerSnapshot? {
-        requireNonEmpty(categoryKeys, "categoryKeys")
-        return mutation(
-            "picker.selectCategories",
-            jsonObject("categoryKeys" to jsonStrings(categoryKeys)),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSelectCategories(categoryKeys)
 
     public suspend fun deselectCategories(
         categoryKeys: List<String>,
-    ): SeatLayerPickerSnapshot? {
-        requireNonEmpty(categoryKeys, "categoryKeys")
-        return mutation(
-            "picker.deselectCategories",
-            jsonObject("categoryKeys" to jsonStrings(categoryKeys)),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performDeselectCategories(categoryKeys)
 
     public suspend fun setSeatTier(
         seatId: String,
         tierId: String?,
-    ): SeatLayerPickerSnapshot? {
-        requireNonEmpty(seatId, "seatId")
-        tierId?.let { requireNonEmpty(it, "tierId") }
-        return mutation(
-            "picker.setSeatTier",
-            jsonObject(
-                "seatId" to JsonPrimitive(seatId),
-                "tierId" to (tierId?.let(::JsonPrimitive) ?: JsonNull),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSetSeatTier(seatId, tierId)
 
-    public suspend fun removeCartLine(label: String): SeatLayerPickerSnapshot? {
-        requireNonEmpty(label, "label")
-        return mutation(
-            "picker.removeCartLine",
-            jsonObject("label" to JsonPrimitive(label)),
-        )
-    }
+    /** Gives one cart line back, by the label the runtime knows it as. */
+    public suspend fun removeObject(label: String): SeatLayerPickerSnapshot? =
+        performRemoveObject(label)
+
+    @Deprecated("Renamed to removeObject.", ReplaceWith("removeObject(label)"))
+    public suspend fun removeCartLine(label: String): SeatLayerPickerSnapshot? =
+        removeObject(label)
 
     public suspend fun setTableQuantity(
         label: String,
         quantity: Int,
         ttlMillis: Int? = null,
-    ): SeatLayerPickerSnapshot? {
-        requireNonEmpty(label, "label")
-        requirePositive(quantity, "quantity")
-        ttlMillis?.let { requirePositive(it, "ttlMillis") }
-        return mutation(
-            "picker.setTableQuantity",
-            jsonObject(
-                "label" to JsonPrimitive(label),
-                "quantity" to JsonPrimitive(quantity),
-                "ttlMs" to jsonNumber(ttlMillis),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSetTableQuantity(label, quantity, ttlMillis)
 
     public suspend fun setSelectableObjects(
         objects: List<String>?,
-    ): SeatLayerPickerSnapshot? {
-        objects?.let { requireNonEmpty(it, "objects") }
-        return mutation(
-            "picker.setSelectableObjects",
-            jsonObject(
-                "objects" to (objects?.let(::jsonStrings) ?: JsonNull),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSetSelectableObjects(objects)
 
-    public suspend fun setMaxSelection(maximum: Int): SeatLayerPickerSnapshot? {
-        requirePositive(maximum, "maxSelection")
-        return mutation(
-            "picker.setMaxSelection",
-            jsonObject("maxSelection" to JsonPrimitive(maximum)),
-        )
-    }
+    public suspend fun setMaxSelection(maximum: Int): SeatLayerPickerSnapshot? =
+        performSetMaxSelection(maximum)
 
     public suspend fun setCategoryFilter(
         categoryKeys: List<String>,
         focus: Boolean = false,
-    ): SeatLayerPickerSnapshot? {
-        if (categoryKeys.isNotEmpty()) requireNonEmpty(categoryKeys, "categoryKeys")
-        return mutation(
-            "picker.setCategoryFilter",
-            jsonObject(
-                "categoryKeys" to if (categoryKeys.isEmpty()) {
-                    JsonNull
-                } else {
-                    jsonStrings(categoryKeys)
-                },
-                "focus" to JsonPrimitive(focus),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSetCategoryFilter(categoryKeys, focus)
 
     public suspend fun setAccessibilityFilter(
         types: List<String>,
-    ): SeatLayerPickerSnapshot? {
-        if (types.isNotEmpty()) requireNonEmpty(types, "types")
-        return mutation(
-            "picker.setAccessibilityFilter",
-            jsonObject(
-                "types" to if (types.isEmpty()) JsonNull else jsonStrings(types),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSetAccessibilityFilter(types)
 
+    /** Hides seats the chart marks as limited-view. */
+    public suspend fun setLimitedViewHidden(hidden: Boolean): SeatLayerPickerSnapshot? =
+        performSetLimitedViewHidden(hidden)
+
+    @Deprecated(
+        "Renamed to setLimitedViewHidden.",
+        ReplaceWith("setLimitedViewHidden(enabled)"),
+    )
     public suspend fun setLimitedViewFilter(enabled: Boolean): SeatLayerPickerSnapshot? =
-        mutation(
-            "picker.setLimitedViewFilter",
-            jsonObject("on" to JsonPrimitive(enabled)),
-        )
+        setLimitedViewHidden(enabled)
 
-    public suspend fun focusSection(sectionId: String): SeatLayerPickerSnapshot? {
-        requireNonEmpty(sectionId, "sectionId")
-        return mutation(
-            "picker.focusSection",
-            jsonObject("sectionId" to JsonPrimitive(sectionId)),
-        )
+    /**
+     * Flies the map to the spaces the accommodation filter matches.
+     *
+     * A runtime that does not offer the tour answers nothing and the map stays
+     * where it is.
+     */
+    public suspend fun focusAccessibilityFilter(
+        types: List<String>? = null,
+    ): SeatLayerPickerSnapshot? = performFocusAccessibilityFilter(types)
+
+    /** Steps to the next section holding a matching space, or null if none. */
+    public suspend fun focusNextAccessibleSection(
+        types: List<String>? = null,
+    ): SeatLayerPickerAccessibleStep? = performFocusNextAccessibleSection(types)
+
+    /** Marks the seat a card is asking about; it joins no cart and no total. */
+    public suspend fun setSelectionFocus(seatId: String?): Unit =
+        performSetSelectionFocus(seatId)
+
+    /** Clears the candidate mark left by [setSelectionFocus]. */
+    public suspend fun forgetSelectionFocus(): Unit = performSetSelectionFocus(null)
+
+    /**
+     * Replaces the rectangles the map must not answer taps through.
+     *
+     * Every call carries the whole list, and the list has to be standing before
+     * the finger lands, so it is re-sent whenever the layout moves.
+     */
+    public suspend fun setBlockedRegions(
+        regions: List<SeatLayerPickerBlockedRegion>?,
+    ) {
+        stateHolder.setBlockedRegions(regions.orEmpty())
+        performSetBlockedRegions(regions)
     }
 
-    public suspend fun overview(): SeatLayerPickerSnapshot? =
-        mutation("picker.overview")
+    /**
+     * Lifts the map so [seatId] clears the card standing over it.
+     *
+     * [fraction] is how far down the visible map the seat should land.
+     * [gestures] is the value a previous frame returned; passing it back is
+     * what stops the map from undoing the buyer's own drag.
+     */
+    public suspend fun frameSeat(
+        seatId: String,
+        fraction: Double? = null,
+        animate: Boolean = true,
+        gestures: SeatLayerPickerSeatGestures? = null,
+    ): SeatLayerPickerSeatFrame? = performFrameSeat(seatId, fraction, animate, gestures)
 
-    public suspend fun setRung(rung: String): SeatLayerPickerSnapshot? {
-        if (rung !in setOf("zones", "sections", "seats")) {
-            throw badPayload("rung must be zones, sections, or seats")
-        }
-        return mutation(
-            "picker.setRung",
-            jsonObject("rung" to JsonPrimitive(rung)),
-        )
-    }
+    public suspend fun focusSection(sectionId: String): SeatLayerPickerSnapshot? =
+        performFocusSection(sectionId)
 
-    public suspend fun setFloor(floorId: String): SeatLayerPickerSnapshot? {
-        requireNonEmpty(floorId, "floorId")
-        return mutation(
-            "picker.setFloor",
-            jsonObject("floorId" to JsonPrimitive(floorId)),
-        )
-    }
+    public suspend fun overview(): SeatLayerPickerSnapshot? = mutation("picker.overview")
+
+    public suspend fun setRung(rung: String): SeatLayerPickerSnapshot? = performSetRung(rung)
+
+    public suspend fun setFloor(floorId: String): SeatLayerPickerSnapshot? =
+        performSetFloor(floorId)
 
     public suspend fun showAllFloors(): SeatLayerPickerSnapshot? =
         if (supportsFloorStack) setFloor(SEATLAYER_ALL_FLOORS) else snapshot
 
     public suspend fun setColorblindSafe(enabled: Boolean): SeatLayerPickerSnapshot? =
-        mutation(
-            "picker.setColorblindSafe",
-            jsonObject("on" to JsonPrimitive(enabled)),
-        )
+        performSetColorblindSafe(enabled)
 
-    public suspend fun setViewMode(
-        mode: SeatLayerViewMode,
-    ): SeatLayerPickerSnapshot? = mutation(
-        "picker.setViewMode",
-        jsonObject("mode" to JsonPrimitive(mode.raw)),
-    )
+    public suspend fun setViewMode(mode: SeatLayerViewMode): SeatLayerPickerSnapshot? =
+        performSetViewMode(mode)
 
     public suspend fun setBuyerView(
         view: String,
         flyToSeatId: String? = null,
         resetView: Boolean = false,
-    ): SeatLayerPickerSnapshot? {
-        requireNonEmpty(view, "view")
-        flyToSeatId?.let { requireNonEmpty(it, "flyToSeatId") }
-        if (!supportsVenue3D) return snapshot
-        return mutation(
-            "picker.setBuyerView",
-            jsonObject(
-                "view" to JsonPrimitive(view),
-                "flyToSeatId" to jsonString(flyToSeatId),
-                "resetView" to JsonPrimitive(resetView),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? = performSetBuyerView(view, flyToSeatId, resetView)
+
+    /** Opens the 3D scene looking from one seat. */
+    public suspend fun showSeatIn3D(seatId: String): SeatLayerPickerSnapshot? =
+        setBuyerView(view = "venue3d", flyToSeatId = seatId)
 
     /** Plans and dispatches one exact 3D action; unavailable boundaries are no-ops. */
     public suspend fun venue3D(
@@ -313,14 +277,8 @@ public class SeatLayerPickerController internal constructor(
         )
     }
 
-    public suspend fun openSeatView(seatId: String): SeatLayerPickerSnapshot? {
-        requireNonEmpty(seatId, "seatId")
-        if (!supportsSeatView) return snapshot
-        return mutation(
-            "picker.openSeatView",
-            jsonObject("seatId" to JsonPrimitive(seatId)),
-        )
-    }
+    public suspend fun openSeatView(seatId: String): SeatLayerPickerSnapshot? =
+        performOpenSeatView(seatId)
 
     /**
      * Closes the active panorama when the loaded runtime advertises the
@@ -335,20 +293,15 @@ public class SeatLayerPickerController internal constructor(
         return true
     }
 
-    public suspend fun setVenue3DNavigationMode(
-        mode: String,
-    ): SeatLayerPickerSnapshot? {
-        if (mode !in setOf("orbit", "pan")) {
-            throw badPayload("3D navigation mode must be orbit or pan")
-        }
-        if (!supports("venue-3d-controls-v1", "picker.setVenue3DNavigationMode")) {
-            return snapshot
-        }
-        return mutation(
-            "picker.setVenue3DNavigationMode",
-            jsonObject("mode" to JsonPrimitive(mode)),
-        )
-    }
+    public suspend fun set3DNavigationMode(mode: String): SeatLayerPickerSnapshot? =
+        performSet3DNavigationMode(mode)
+
+    @Deprecated(
+        "Renamed to set3DNavigationMode.",
+        ReplaceWith("set3DNavigationMode(mode)"),
+    )
+    public suspend fun setVenue3DNavigationMode(mode: String): SeatLayerPickerSnapshot? =
+        set3DNavigationMode(mode)
 
     public suspend fun zoomIn() {
         mutation("picker.zoomIn")
@@ -365,78 +318,53 @@ public class SeatLayerPickerController internal constructor(
     public suspend fun setThemeMode(
         mode: SeatLayerPickerThemeMode?,
         mapTheme: SeatLayerPickerMapTheme? = null,
-    ) {
-        presentation(
-            "picker.setThemeMode",
-            jsonObject(
-                "mode" to (mode?.raw?.let(::JsonPrimitive) ?: JsonNull),
-                "mapTheme" to mapTheme?.let {
-                    jsonObject(
-                        "background" to JsonPrimitive(it.background),
-                        "rowLabelColor" to JsonPrimitive(it.rowLabel),
-                        "textColor" to JsonPrimitive(it.text),
-                        "selectionColor" to JsonPrimitive(it.selection),
-                    )
-                },
-            ),
-        )
-    }
+    ): Unit = performSetThemeMode(mode, mapTheme)
 
-    public suspend fun setInteractionEnabled(enabled: Boolean) {
+    /**
+     * Turns the whole map's gestures on or off.
+     *
+     * For chrome drawn over the map, prefer [setBlockedRegions]: this stops the
+     * map, where those stop the rectangles.
+     */
+    public suspend fun setMapInteractionEnabled(enabled: Boolean) {
         presentation(
             "picker.setInteractionEnabled",
-            jsonObject("enabled" to JsonPrimitive(enabled)),
+            jsonObject("enabled" to kotlinx.serialization.json.JsonPrimitive(enabled)),
         )
     }
 
-    public suspend fun setViewportInsets(insets: SeatLayerPickerViewportInsets?) {
-        if (!supportsViewportInsets) return
-        val payload = if (insets == null) {
-            jsonObject("insets" to JsonNull)
-        } else {
-            jsonObject(
-                "top" to JsonPrimitive(insets.top),
-                "right" to JsonPrimitive(insets.right),
-                "bottom" to JsonPrimitive(insets.bottom),
-                "left" to JsonPrimitive(insets.left),
-            )
-        }
-        presentation("picker.setViewportInsets", payload)
-    }
+    @Deprecated(
+        "Renamed to setMapInteractionEnabled.",
+        ReplaceWith("setMapInteractionEnabled(enabled)"),
+    )
+    public suspend fun setInteractionEnabled(enabled: Boolean): Unit =
+        setMapInteractionEnabled(enabled)
 
+    public suspend fun setViewportInsets(insets: SeatLayerPickerViewportInsets?): Unit =
+        performSetViewportInsets(insets)
+
+    public suspend fun setGeneralAdmissionQuantity(
+        areaId: String,
+        quantity: Int,
+        tierId: String? = null,
+        ttlMillis: Int? = null,
+    ): SeatLayerPickerSnapshot? =
+        performSetGeneralAdmissionQuantity(areaId, quantity, tierId, ttlMillis)
+
+    @Deprecated(
+        "Renamed to setGeneralAdmissionQuantity.",
+        ReplaceWith("setGeneralAdmissionQuantity(areaId, quantity, tierId, ttlMillis)"),
+    )
     public suspend fun holdGeneralAdmission(
         areaId: String,
         quantity: Int,
         tierId: String? = null,
         ttlMillis: Int? = null,
-    ): SeatLayerPickerSnapshot? {
-        requireNonEmpty(areaId, "areaId")
-        requirePositive(quantity, "quantity")
-        tierId?.let { requireNonEmpty(it, "tierId") }
-        ttlMillis?.let { requirePositive(it, "ttlMillis") }
-        val updated = mutation(
-            "picker.holdGA",
-            jsonObject(
-                "areaId" to JsonPrimitive(areaId),
-                "qty" to JsonPrimitive(quantity),
-                "tierId" to jsonString(tierId),
-                "ttlMs" to jsonNumber(ttlMillis),
-            ),
-        )
-        stateHolder.dismissGeneralAdmissionCandidate()
-        return updated
-    }
+    ): SeatLayerPickerSnapshot? =
+        setGeneralAdmissionQuantity(areaId, quantity, tierId, ttlMillis)
 
-    public suspend fun holdSelection(
-        ttlMillis: Int? = null,
-    ): SeatLayerPickerSnapshot? {
-        ttlMillis?.let { requirePositive(it, "ttlMillis") }
-        if (!supportsHoldSelection) return snapshot
-        return mutation(
-            "picker.holdSelection",
-            jsonObject("ttlMs" to jsonNumber(ttlMillis)),
-        )
-    }
+    public suspend fun holdSelection(ttlMillis: Int? = null): SeatLayerPickerSnapshot? =
+        performHoldSelection(ttlMillis)
 
     public suspend fun bestAvailable(
         quantity: Int,
@@ -444,53 +372,33 @@ public class SeatLayerPickerController internal constructor(
         zoneId: String? = null,
         preferPremium: Boolean = false,
         ttlMillis: Int? = null,
-    ): SeatLayerPickerSnapshot? {
-        requirePositive(quantity, "quantity")
-        categoryKey?.let { requireNonEmpty(it, "categoryKey") }
-        zoneId?.let { requireNonEmpty(it, "zoneId") }
-        ttlMillis?.let { requirePositive(it, "ttlMillis") }
-        return mutation(
-            "picker.bestAvailable",
-            jsonObject(
-                "qty" to JsonPrimitive(quantity),
-                "categoryKey" to jsonString(categoryKey),
-                "zoneId" to jsonString(zoneId),
-                "preferPremium" to JsonPrimitive(preferPremium),
-                "ttlMs" to jsonNumber(ttlMillis),
-            ),
-        )
-    }
+    ): SeatLayerPickerSnapshot? =
+        performBestAvailable(quantity, categoryKey, zoneId, preferPremium, ttlMillis)
 
-    public suspend fun resumeHold(holdId: String): SeatLayerPickerSnapshot? {
-        requireNonEmpty(holdId, "holdId")
-        return mutation(
-            "picker.resumeHold",
-            jsonObject("holdId" to JsonPrimitive(holdId)),
-        )
-    }
+    public suspend fun resumeHold(holdId: String): SeatLayerPickerSnapshot? =
+        performResumeHold(holdId)
 
-    public suspend fun extendHold(ttlMillis: Int? = null): SeatLayerPickerSnapshot? {
-        ttlMillis?.let { requirePositive(it, "ttlMillis") }
-        return mutation(
-            "picker.extendHold",
-            jsonObject("ttlMs" to jsonNumber(ttlMillis)),
-        )
-    }
+    public suspend fun extendHold(ttlMillis: Int? = null): SeatLayerPickerSnapshot? =
+        performExtendHold(ttlMillis)
 
     public suspend fun abort(): SeatLayerPickerSnapshot? = mutation("picker.abort")
 
-    public suspend fun rejectHandoff(holdId: String): SeatLayerPickerSnapshot? {
-        requireNonEmpty(holdId, "holdId")
-        return mutation(
-            "picker.rejectHandoff",
-            jsonObject("holdId" to JsonPrimitive(holdId)),
-        )
-    }
+    /** Hands a checkout back to the picker, by the handoff the host was given. */
+    public suspend fun rejectCheckoutHandoff(
+        handoff: SeatLayerPickerCheckoutHandoff,
+    ): SeatLayerPickerSnapshot? = performRejectHandoff(handoff.holdId)
+
+    @Deprecated(
+        "Take the handoff itself: rejectCheckoutHandoff(handoff).",
+        ReplaceWith("rejectCheckoutHandoff(handoff)"),
+    )
+    public suspend fun rejectHandoff(holdId: String): SeatLayerPickerSnapshot? =
+        performRejectHandoff(holdId)
 
     public suspend fun checkout(
         ttlMillis: Int? = null,
     ): SeatLayerPickerCheckoutHandoff {
-        ttlMillis?.let { requirePositive(it, "ttlMillis") }
+        ttlMillis?.let { requirePositiveValue(it, "ttlMillis") }
         val (flight, leader) = synchronized(checkoutLock) {
             checkoutFlight?.let { it to false }
                 ?: CompletableDeferred<SeatLayerPickerCheckoutHandoff>().also {
@@ -500,18 +408,7 @@ public class SeatLayerPickerController internal constructor(
         if (!leader) return flight.await()
 
         try {
-            val handoff = mutationMutex.withLock {
-                val result = send(
-                    "picker.continue",
-                    jsonObject("ttlMs" to jsonNumber(ttlMillis)),
-                )
-                applyMutationResult(result)
-                val root = result as? JsonObject
-                decodeSeatLayerPickerCheckoutHandoff(root?.get("handoff"))
-                    ?: throw decodingFailure(
-                        "picker.continue returned no checkout handoff",
-                    )
-            }
+            val handoff = mutationMutex.withLock { performCheckout(ttlMillis) }
             flight.complete(handoff)
             return handoff
         } catch (error: Throwable) {
@@ -540,10 +437,89 @@ public class SeatLayerPickerController internal constructor(
 
     public fun confirmPendingTable(): Unit = presentationCoordinator.confirmPendingTable()
 
-    public fun setCartExpanded(expanded: Boolean): Unit =
-        presentationCoordinator.setCartExpanded(expanded)
+    public fun setCartSheetExpanded(expanded: Boolean): Unit =
+        presentationCoordinator.setCartSheetExpanded(expanded)
 
-    public fun dismissActionError(): Unit = presentationCoordinator.dismissActionError()
+    @Deprecated(
+        "Renamed to setCartSheetExpanded.",
+        ReplaceWith("setCartSheetExpanded(expanded)"),
+    )
+    public fun setCartExpanded(expanded: Boolean): Unit = setCartSheetExpanded(expanded)
+
+    /** Opens the sheet to a named detent rather than to a boolean. */
+    public fun setCartSheetDetent(detent: SeatLayerPickerSheetDetent): Unit =
+        setCartSheetExpanded(detent == SeatLayerPickerSheetDetent.Open)
+
+    /**
+     * Advances the arrival of a seat in the cart.
+     *
+     * The steps are driven by the surfaces that know — the chip that lands, the
+     * tray that finishes swelling — rather than by a clock that decides a
+     * flight has happened before it has.
+     */
+    public fun setCartLanding(landing: SeatLayerPickerCartLanding): Unit =
+        stateHolder.setCartLanding(landing)
+
+    /** Opens the card over a seat and marks it as a candidate on the map. */
+    public suspend fun openSeatCard(
+        seat: SeatLayerPickerSelectedSeat,
+        intent: SeatLayerPickerCardIntent = SeatLayerPickerCardIntent.Add,
+    ): Unit = performOpenSeatCard(seat, intent)
+
+    /** Closes the card, clears the candidate mark and puts the map back. */
+    public suspend fun closeSeatCard(): Unit = performCloseSeatCard()
+
+    /** The seat a Remove card is asking about, if one is up. */
+    public val seatAwaitingRemoval: SeatLayerPickerSelectedSeat?
+        get() = presentation.seatAwaitingRemoval
+
+    /** Closes a Remove card without touching the seat. */
+    public suspend fun dismissSeatRemoval() {
+        if (presentation.cardIntent != SeatLayerPickerCardIntent.Remove) return
+        performCloseSeatCard()
+    }
+
+    /** Lifts the map so a seat clears the card standing over it. */
+    public suspend fun liftSeat(
+        seatId: String,
+        fraction: Double? = null,
+    ): SeatLayerPickerSeatLift? = performLiftSeat(seatId, fraction)
+
+    /** Gives back the lift the card borrowed. */
+    public suspend fun restoreSeatLift(): Unit = performRestoreSeatLift()
+
+    /** The handoff whose hold left without expiring: a sale, not a timeout. */
+    public val bookedHandoff: SeatLayerPickerCheckoutHandoff?
+        get() = presentation.bookedHandoff
+
+    public fun dismissBookedOverlay(): Unit = stateHolder.clearBookedHandoff()
+
+    /** Whether a checkout the host took is expected to come back to the map. */
+    public fun setResumeAfterCheckout(resume: Boolean): Unit =
+        stateHolder.setResumeAfterCheckout(resume)
+
+    /**
+     * Gives back inventory this picker is holding on the buyer's behalf.
+     *
+     * A hold the host owns is left alone: it was not this picker's to release.
+     */
+    public suspend fun releasePickerOwnedHold(): Boolean {
+        val hold = snapshot?.hold ?: return false
+        if (!hold.active || hold.owner == "host") return false
+        abort()
+        return true
+    }
+
+    /** Asks the chrome to play one cue. */
+    public fun emitHaptic(cue: SeatLayerPickerHapticCue): Unit = stateHolder.emitHaptic(cue)
+
+    /** Asks the chrome to load the map again after a failure. */
+    public fun retry(): Unit = stateHolder.requestReload()
+
+    public fun dismissError(): Unit = presentationCoordinator.dismissError()
+
+    @Deprecated("Renamed to dismissError.", ReplaceWith("dismissError()"))
+    public fun dismissActionError(): Unit = dismissError()
 
     /** Removes one authoritative cart line and opens a session-scoped undo window. */
     public suspend fun removeWithUndo(line: SeatLayerPickerCartLine): Boolean =
@@ -566,47 +542,17 @@ public class SeatLayerPickerController internal constructor(
     public suspend fun back(closeHandler: suspend () -> Unit = {}): SeatLayerPickerBackStep =
         presentationCoordinator.back(closeHandler)
 
-    public suspend fun lifecycle(state: String): SeatLayerPickerLifecycleResult? {
-        requireNonEmpty(state, "state")
-        val runtimeState = if (state == "resumed" || state == "foreground") {
-            "foreground"
-        } else {
-            "background"
-        }
-        if (runtimeState == "background" || !stateHolder.behavior.refreshOnResume) {
-            return lifecycleMutation(
-                "picker.lifecycle",
-                jsonObject("state" to JsonPrimitive(runtimeState)),
-            )
-        }
-
-        stateHolder.setActionInFlight(true)
-        return try {
-            val initial = lifecycleMutation(
-                "picker.lifecycle",
-                jsonObject("state" to JsonPrimitive(runtimeState)),
-            )
-            val refreshed = if (
-                initial?.outcome == null && supportsAvailabilityRefresh
-            ) {
-                refreshAvailability()
-            } else {
-                null
-            }
-            val updated = refreshed?.snapshot ?: initial?.snapshot ?: synchronize()
-            SeatLayerPickerLifecycleResult(
-                snapshot = updated,
-                outcome = refreshed?.outcome ?: initial?.outcome,
-            )
-        } finally {
-            stateHolder.setActionInFlight(false)
-        }
-    }
+    public suspend fun lifecycle(state: String): SeatLayerPickerLifecycleResult? =
+        performLifecycle(state)
 
     public suspend fun setLifecycle(state: String): SeatLayerPickerSnapshot? =
         lifecycle(state)?.snapshot ?: snapshot
 
-    public suspend fun refreshAvailability(): SeatLayerPickerLifecycleResult? {
+    @Deprecated("Renamed to refreshAccess.", ReplaceWith("refreshAccess()"))
+    public suspend fun refreshAvailability(): SeatLayerPickerLifecycleResult? = refreshAccess()
+
+    /** Asks the runtime what is still free, and what the hold still covers. */
+    public suspend fun refreshAccess(): SeatLayerPickerLifecycleResult? {
         if (!supportsAvailabilityRefresh) return null
         val (flight, leader) = synchronized(availabilityLock) {
             availabilityFlight?.let { it to false }
@@ -617,25 +563,12 @@ public class SeatLayerPickerController internal constructor(
         if (!leader) return flight.await()
 
         try {
-            val result = lifecycleMutation("picker.refreshAvailability")
+            val result = performRefreshAccess()
             flight.complete(result)
             return result
-        } catch (error: CancellationException) {
+        } catch (error: Throwable) {
             flight.completeExceptionally(error)
             throw error
-        } catch (error: SeatLayerException) {
-            stateHolder.record(error)
-            flight.complete(null)
-            return null
-        } catch (error: Throwable) {
-            stateHolder.record(
-                SeatLayerException.Transport(
-                    "SeatLayer availability refresh failed.",
-                    error,
-                ),
-            )
-            flight.complete(null)
-            return null
         } finally {
             synchronized(availabilityLock) {
                 if (availabilityFlight === flight) availabilityFlight = null
@@ -649,14 +582,7 @@ public class SeatLayerPickerController internal constructor(
 
     public suspend fun reselectLapsedSeats(
         ttlMillis: Int? = null,
-    ): SeatLayerPickerSnapshot? {
-        val lapse = stateHolder.state.value.holdLapse ?: return snapshot
-        if (lapse.recoverableLabels.isEmpty()) return snapshot
-        selectObjects(lapse.recoverableLabels)
-        stateHolder.clearHoldLapse()
-        if (supportsHoldSelection) holdSelection(ttlMillis)
-        return snapshot
-    }
+    ): SeatLayerPickerSnapshot? = performReselectLapsedSeats(ttlMillis)
 
     public suspend fun destroy() {
         if (stateHolder.state.value.phase is SeatLayerPickerPhase.Destroyed) return
@@ -694,21 +620,41 @@ public class SeatLayerPickerController internal constructor(
         disconnect()
     }
 
-    private fun supports(capability: String, command: String): Boolean =
+    internal val holdLapse: SeatLayerPickerHoldLapse?
+        get() = stateHolder.state.value.holdLapse
+
+    internal val refreshesOnResume: Boolean
+        get() = stateHolder.behavior.refreshOnResume
+
+    internal fun setActionInFlight(inFlight: Boolean): Unit =
+        stateHolder.setActionInFlight(inFlight)
+
+    internal fun recordPickerError(error: SeatLayerException): Unit = stateHolder.record(error)
+
+    internal fun dismissGeneralAdmissionCandidate(): Unit =
+        stateHolder.dismissGeneralAdmissionCandidate()
+
+    internal fun supportsCapabilityAndCommand(capability: String, command: String): Boolean =
         isReady && supportsCapability(capability) && supportsCommand(command)
 
-    private suspend fun mutation(
+    internal suspend fun mutation(
         command: String,
         payload: JsonElement? = null,
     ): SeatLayerPickerSnapshot? = mutationMutex.withLock {
         applyMutationResult(send(command, payload))
     }
 
-    private suspend fun presentation(command: String, payload: JsonElement? = null) {
+    internal suspend fun presentation(command: String, payload: JsonElement? = null) {
         mutationMutex.withLock { send(command, payload) }
     }
 
-    private suspend fun lifecycleMutation(
+    /** Sends one command with the mutation lock already held by the caller. */
+    internal suspend fun command(
+        name: String,
+        payload: JsonElement? = null,
+    ): JsonElement? = send(name, payload)
+
+    internal suspend fun lifecycleMutation(
         command: String,
         payload: JsonElement? = null,
     ): SeatLayerPickerLifecycleResult? = mutationMutex.withLock {
@@ -734,12 +680,12 @@ public class SeatLayerPickerController internal constructor(
         val phase = stateHolder.state.value.phase
         if (phase is SeatLayerPickerPhase.Destroyed) throw SeatLayerException.Destroyed()
         if (phase !is SeatLayerPickerPhase.Ready && command != "picker.destroy") {
-            throw bridgeFailure("not_ready", "SeatLayer picker is not ready.")
+            throw pickerBridgeFailure("not_ready", "SeatLayer picker is not ready.")
         }
         val activeTransport = transport
-            ?: throw bridgeFailure("not_ready", "SeatLayer picker is not connected.")
+            ?: throw pickerBridgeFailure("not_ready", "SeatLayer picker is not connected.")
         if (!supportsCommand(command)) {
-            throw bridgeFailure(
+            throw pickerBridgeFailure(
                 "unsupported_command",
                 "The loaded picker does not advertise '$command'.",
             )
@@ -747,7 +693,9 @@ public class SeatLayerPickerController internal constructor(
         return activeTransport.command(command, payload)
     }
 
-    private suspend fun applyMutationResult(result: JsonElement?): SeatLayerPickerSnapshot? {
+    internal suspend fun applyMutationResult(
+        result: JsonElement?,
+    ): SeatLayerPickerSnapshot? {
         val root = result as? JsonObject
         stateHolder.acceptSnapshot(root?.get("snapshot") ?: result)
         val targetRevision = exactPickerInteger(root?.get("revision"))
@@ -765,36 +713,41 @@ public class SeatLayerPickerController internal constructor(
         val refreshedRoot = refreshed as? JsonObject
         stateHolder.acceptSnapshot(refreshedRoot?.get("snapshot") ?: refreshed)
         if ((snapshot?.revision ?: -1) < targetRevision) {
-            throw decodingFailure(
+            throw pickerDecodingFailure(
                 "picker.getSnapshot did not reach revision $targetRevision",
             )
         }
         return snapshot
     }
-
-    private fun requireNonEmpty(value: String, name: String) {
-        if (value.isBlank()) throw badPayload("$name is required")
-    }
-    private fun requireNonEmpty(values: List<String>, name: String) {
-        if (values.any(String::isBlank)) {
-            throw badPayload("$name must contain non-empty strings")
-        }
-    }
-    private fun requirePositive(value: Int, name: String) {
-        if (value <= 0) throw badPayload("$name must be a positive integer")
-    }
-    private fun badPayload(message: String): SeatLayerException.Bridge =
-        bridgeFailure("bad_payload", "SeatLayer $message.")
-    private fun decodingFailure(message: String): SeatLayerException.Bridge =
-        bridgeFailure("decoding", message)
-    private fun bridgeFailure(code: String, message: String): SeatLayerException.Bridge =
-        SeatLayerException.Bridge(
-            BridgeErrorDetails(
-                code = code,
-                message = message,
-                retryable = false,
-                conflicts = emptyList(),
-                metadata = null,
-            ),
-        )
 }
+
+internal fun requireNonEmptyValue(value: String, name: String) {
+    if (value.isBlank()) throw badPickerPayload("$name is required")
+}
+
+internal fun requireNonEmptyValues(values: List<String>, name: String) {
+    if (values.any(String::isBlank)) {
+        throw badPickerPayload("$name must contain non-empty strings")
+    }
+}
+
+internal fun requirePositiveValue(value: Int, name: String) {
+    if (value <= 0) throw badPickerPayload("$name must be a positive integer")
+}
+
+internal fun badPickerPayload(message: String): SeatLayerException.Bridge =
+    pickerBridgeFailure("bad_payload", "SeatLayer $message.")
+
+internal fun pickerDecodingFailure(message: String): SeatLayerException.Bridge =
+    pickerBridgeFailure("decoding", message)
+
+internal fun pickerBridgeFailure(code: String, message: String): SeatLayerException.Bridge =
+    SeatLayerException.Bridge(
+        BridgeErrorDetails(
+            code = code,
+            message = message,
+            retryable = false,
+            conflicts = emptyList(),
+            metadata = null,
+        ),
+    )

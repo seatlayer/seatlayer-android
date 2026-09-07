@@ -86,11 +86,11 @@ private fun GeneralAdmissionDialog(
             onConfirm = {
                 coroutineScope.launch {
                     scope.performAction {
-                        scope.controller.holdGeneralAdmission(
+                        scope.controller.setGeneralAdmissionQuantity(
                             areaId = area.id,
                             quantity = quantity,
                             tierId = tier?.id,
-                            ttlMillis = scope.options.holdTtlMillis,
+                            ttlMillis = scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                         )
                     }
                 }
@@ -142,7 +142,7 @@ private fun TableDialog(
             value = quantity,
             minimum = minimum,
             maximum = maximum,
-            label = scope.strings.tableGuests,
+            label = scope.strings.chooseTableGuests,
             onValue = { quantity = it },
         )
         if (seat.tiers.isNotEmpty()) {
@@ -169,7 +169,7 @@ private fun TableDialog(
                         scope.controller.setTableQuantity(
                             label = seat.label,
                             quantity = quantity,
-                            ttlMillis = scope.options.holdTtlMillis,
+                            ttlMillis = scope.options.holdTtl?.inWholeMilliseconds?.toInt(),
                         )
                         scope.controller.confirmPendingTable()
                     }
@@ -189,7 +189,7 @@ private fun PromptSurface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(scope.styles.cardRadius),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         shadowElevation = 12.dp,
     ) {
         Column(Modifier.padding(20.dp), content = content)

@@ -113,7 +113,7 @@ internal fun TierChoices(
                 } else {
                     Color.Transparent
                 },
-                contentColor = scope.theme.onSurface,
+                contentColor = scope.theme.text,
                 border = BorderStroke(
                     if (selected) 1.5.dp else 1.dp,
                     if (selected) scope.theme.accent else scope.theme.divider,
@@ -129,7 +129,7 @@ internal fun TierChoices(
                         color = Color.Transparent,
                         border = BorderStroke(
                             if (selected) 6.dp else 1.5.dp,
-                            if (selected) scope.theme.accent else scope.theme.muted,
+                            if (selected) scope.theme.accent else scope.theme.mutedText,
                         ),
                     ) { }
                     Spacer(Modifier.size(10.dp))
@@ -138,7 +138,7 @@ internal fun TierChoices(
                         guidance?.let {
                             Text(
                                 it,
-                                color = scope.theme.muted,
+                                color = scope.theme.mutedText,
                                 fontSize = 11.sp,
                                 lineHeight = 14.sp,
                             )

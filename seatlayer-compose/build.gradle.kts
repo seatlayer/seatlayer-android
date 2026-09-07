@@ -122,59 +122,79 @@ mavenPublishing {
     }
 }
 
-val verifyPickerLocales = tasks.register("verifyPickerLocales") {
+val verifyPickerDesign = tasks.register("verifyPickerDesign") {
     group = "verification"
-    description = "Verifies the generated 37-locale picker catalogue source lock."
-    val source = layout.projectDirectory.file(
-        "src/main/resources/io/seatlayer/android/compose/locale_strings.json",
+    description = "Verifies Design/, source-lock.json and the generated Kotlin agree."
+    val designDirectory = rootProject.layout.projectDirectory.dir("Design")
+    val generatedDirectory = layout.projectDirectory.dir(
+        "src/main/kotlin/io/seatlayer/android/compose",
     )
-    val generated = layout.projectDirectory.file(
-        "src/main/kotlin/io/seatlayer/android/compose/SeatLayerPickerLocaleData.kt",
+    val locked = listOf(
+        "tokens.json" to "tokensSha256",
+        "locale_strings.json" to "localeStringsSha256",
+        "components.md" to "componentsSha256",
+        "picker-spec.md" to "pickerSpecSha256",
     )
-    inputs.files(source, generated)
+    val generated = listOf(
+        "SeatLayerPickerTokens.g.kt",
+        "SeatLayerPickerSizeTokens.g.kt",
+        "SeatLayerPickerStringTokens.g.kt",
+        "SeatLayerPickerStrings.g.kt",
+        "SeatLayerPickerLocaleData.g.kt",
+    )
+    inputs.files(
+        locked.map { (file, _) -> designDirectory.file(file) } +
+            designDirectory.file("source-lock.json") +
+            generated.map(generatedDirectory::file),
+    )
     doLast {
-        val digest = MessageDigest.getInstance("SHA-256")
-            .digest(source.asFile.readBytes())
-            .joinToString("") { "%02x".format(it) }
-        val declared = Regex("SOURCE_SHA256: String = \"([a-f0-9]{64})\"")
-            .find(generated.asFile.readText())
-            ?.groupValues
-            ?.get(1)
-        check(declared == digest) {
-            "Picker locale catalogue is stale. Run " +
-                "scripts/generate-picker-locales.py <source.json> <output.kt>."
-        }
-        val lineCount = generated.asFile.useLines { lines -> lines.count() }
-        check(lineCount <= 800) {
-            "Generated picker locale source exceeds the 800-line source limit: $lineCount"
-        }
-    }
-}
+        fun digest(file: java.io.File): String =
+            MessageDigest.getInstance("SHA-256")
+                .digest(file.readBytes())
+                .joinToString("") { "%02x".format(it) }
 
-val verifyPickerTokens = tasks.register("verifyPickerTokens") {
-    group = "verification"
-    description = "Verifies the generated native picker design-token source lock."
-    val source = layout.projectDirectory.file(
-        "src/main/resources/io/seatlayer/android/compose/picker_tokens.json",
-    )
-    val generated = layout.projectDirectory.file(
-        "src/main/kotlin/io/seatlayer/android/compose/SeatLayerPickerTokens.kt",
-    )
-    inputs.files(source, generated)
-    doLast {
-        val digest = MessageDigest.getInstance("SHA-256")
-            .digest(source.asFile.readBytes())
-            .joinToString("") { "%02x".format(it) }
-        val declared = Regex("SOURCE_SHA256: String = \"([a-f0-9]{64})\"")
-            .find(generated.asFile.readText())
-            ?.groupValues
-            ?.get(1)
-        check(declared == digest) {
-            "Picker token catalogue is stale. Run scripts/generate-picker-tokens.py."
+        val lock = designDirectory.file("source-lock.json").asFile.readText()
+        val digests = locked.associate { (file, field) ->
+            val actual = digest(designDirectory.file(file).asFile)
+            val declared = Regex("\"$field\"\\s*:\\s*\"([a-f0-9]{64})\"")
+                .find(lock)
+                ?.groupValues
+                ?.get(1)
+            check(declared == actual) {
+                "Design/$file does not match Design/source-lock.json.$field. " +
+                    "Re-copy the design source, then run the generators."
+            }
+            file to actual
+        }
+
+        // Every generated file repeats the three digests in its header, so a
+        // regeneration that was never run cannot pass as a fresh one.
+        val expected = listOf(
+            "tokens.json" to "tokens.json         SHA-256: ",
+            "locale_strings.json" to "locale_strings.json SHA-256: ",
+            "components.md" to "components.md       SHA-256: ",
+            "picker-spec.md" to "picker-spec.md      SHA-256: ",
+        )
+        generated.forEach { name ->
+            val header = generatedDirectory.file(name).asFile.readText().take(1_024)
+            expected.forEach { (file, marker) ->
+                check("$marker${digests.getValue(file)}" in header) {
+                    "$name was generated from a different design source. " +
+                        "Run node tool/generate-picker-tokens.mjs and " +
+                        "node tool/generate-picker-locales.mjs."
+                }
+            }
         }
     }
 }
 
 tasks.named("check").configure {
-    dependsOn(verifyPickerLocales, verifyPickerTokens, "verifyRoborazziDebug")
+    dependsOn(verifyPickerDesign, "verifyRoborazziDebug")
+}
+
+tasks.withType<Test>().configureEach {
+    systemProperty(
+        "seatlayer.designDirectory",
+        rootProject.layout.projectDirectory.dir("Design").asFile.absolutePath,
+    )
 }

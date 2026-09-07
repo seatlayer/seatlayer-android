@@ -4,7 +4,16 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 
 public const val SEATLAYER_ANDROID_VERSION: String = "0.3.5"
-public const val SEATLAYER_HOSTED_WEB_VERSION: String = "0.71.5"
+public const val SEATLAYER_HOSTED_WEB_VERSION: String = "0.84.1"
+
+/**
+ * The runtime the retired offline JavaScript fixture carried.
+ *
+ * The SDK vendors no JavaScript: it loads the hosted runtime only, and nothing
+ * reads this. It stays because it is part of the frozen `0.2.x` surface, whose
+ * shape may not change, and a consumer compiled against it inlined this value.
+ * Use [SEATLAYER_HOSTED_WEB_VERSION] for diagnostics.
+ */
 public const val SEATLAYER_LEGACY_FIXTURE_WEB_VERSION: String = "0.59.0"
 @Deprecated(
     message = "Production uses the hosted runtime; use SEATLAYER_HOSTED_WEB_VERSION.",

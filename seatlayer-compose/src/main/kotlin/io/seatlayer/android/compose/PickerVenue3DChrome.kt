@@ -88,7 +88,7 @@ public fun SeatLayerVenue3D(modifier: Modifier = Modifier) {
                 accent = true,
                 themeOverride = chromeTheme,
             ) {
-                scope.controller.setVenue3DNavigationMode(
+                scope.controller.set3DNavigationMode(
                     if (map.view3DNavigationMode == "pan") "orbit" else "pan",
                 )
             }
@@ -209,7 +209,7 @@ private fun ImmersiveLabelAction(
             },
         shape = RoundedCornerShape(9.dp),
         color = theme.surface.copy(alpha = 0.9f),
-        contentColor = theme.onSurface,
+        contentColor = theme.text,
         border = BorderStroke(1.dp, theme.divider),
         shadowElevation = 3.dp,
     ) {
@@ -219,7 +219,7 @@ private fun ImmersiveLabelAction(
         ) {
             SeatLayerPickerIcon(
                 glyph = glyph,
-                color = theme.onSurface,
+                color = theme.text,
                 modifier = Modifier.size(16.dp).clearAndSetSemantics { },
             )
             Spacer(Modifier.width(6.dp))
@@ -235,7 +235,7 @@ public fun SeatLayerPickerViewModeControl(
     compact: Boolean = false,
 ) {
     val scope = LocalSeatLayerPickerScope.current
-    if (!scope.controller.supportsVenue3D || !scope.options.enableVenue3D) return
+    if (!scope.controller.supportsVenue3D || !scope.options.enable3D) return
     val snapshot = scope.state.snapshot
     if (snapshot?.capabilities?.contains("venue3d") != true) return
     val is3D = snapshot.map.isVenue3D
@@ -247,7 +247,7 @@ public fun SeatLayerPickerViewModeControl(
         Surface(
             shape = RoundedCornerShape(999.dp),
             color = scope.theme.surface.copy(alpha = 0.94f),
-            contentColor = scope.theme.onSurface,
+            contentColor = scope.theme.text,
             border = BorderStroke(1.dp, scope.theme.divider),
             shadowElevation = 3.dp,
         ) {
@@ -280,14 +280,14 @@ public fun SeatLayerPicker3DNavigationControl(modifier: Modifier = Modifier) {
         border = BorderStroke(1.dp, scope.theme.divider),
     ) {
         Row {
-            ViewSegment(scope.strings.orbit, map.view3DNavigationMode != "pan") {
+            ViewSegment(scope.strings.orbitMode, map.view3DNavigationMode != "pan") {
                 coroutineScope.launch {
-                    scope.performAction { scope.controller.setVenue3DNavigationMode("orbit") }
+                    scope.performAction { scope.controller.set3DNavigationMode("orbit") }
                 }
             }
-            ViewSegment(scope.strings.pan, map.view3DNavigationMode == "pan") {
+            ViewSegment(scope.strings.panMode, map.view3DNavigationMode == "pan") {
                 coroutineScope.launch {
-                    scope.performAction { scope.controller.setVenue3DNavigationMode("pan") }
+                    scope.performAction { scope.controller.set3DNavigationMode("pan") }
                 }
             }
         }
@@ -313,7 +313,7 @@ private fun ViewSegment(
             },
         shape = RoundedCornerShape(999.dp),
         color = if (selected) scope.theme.accent else Color.Transparent,
-        contentColor = if (selected) scope.theme.onAccent else scope.theme.onSurface,
+        contentColor = if (selected) scope.theme.onAccent else scope.theme.text,
     ) {
         Box(
             modifier = Modifier.padding(horizontal = if (compact) 10.dp else 14.dp),
@@ -380,11 +380,11 @@ public fun SeatLayerPickerLimitedViewControl(modifier: Modifier = Modifier) {
     val scope = LocalSeatLayerPickerScope.current
     val enabled = scope.state.snapshot?.map?.hideLimitedView == true
     PickerRoundAction(
-        scopeLabel = scope.strings.limitedView,
+        scopeLabel = scope.strings.hideLimitedView,
         glyph = SeatLayerPickerGlyph.Eye,
         modifier = modifier,
         checked = enabled,
-    ) { scope.controller.setLimitedViewFilter(!enabled) }
+    ) { scope.controller.setLimitedViewHidden(!enabled) }
 }
 
 @Composable

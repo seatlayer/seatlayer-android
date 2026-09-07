@@ -37,7 +37,6 @@ class SeatLayerPickerNeutralFixtureTest {
             "ticketIdentity" -> verifyTicketIdentity(input, expected)
             "confirmedCart" -> verifyConfirmedCart(input, expected)
             "totals" -> verifyTotals(input, expected)
-            "denseRuns" -> verifyDenseRuns(input, expected)
             "seatRunLabel" -> verifySeatRunLabel(input, expected)
             "canUndoRemoval" -> verifyUndo(input, expected)
             "seatIdentity" -> verifySeatIdentity(input, expected)
@@ -69,25 +68,6 @@ class SeatLayerPickerNeutralFixtureTest {
             input.required("items").jsonArray.map { it.jsonObject.toCartLine() },
         )
         assertTotals(expected, actual)
-    }
-
-    private fun verifyDenseRuns(input: JsonObject, expected: JsonObject) {
-        val actual = SeatLayerPickerProjections.denseRuns(
-            input.required("items").jsonArray.map { it.jsonObject.toCartLine() },
-        )
-        val expectedRuns = expected.required("runs").jsonArray
-        assertEquals(expectedRuns.size, actual.size)
-        expectedRuns.zip(actual).forEach { (expectedValue, actualRun) ->
-            val expectedRun = expectedValue.jsonObject
-            assertEquals(expectedRun.stringList("memberLineKeys"), actualRun.memberLineKeys)
-            assertEquals(
-                expectedRun.stringList("orderedMemberLineKeys"),
-                actualRun.orderedMemberLineKeys,
-            )
-            assertEquals(expectedRun.string("seatsLabel"), actualRun.seatsLabel)
-            assertEquals(expectedRun.integer("quantity"), actualRun.quantity)
-            assertEquals(expectedRun.number("total"), actualRun.total, 0.0)
-        }
     }
 
     private fun verifySeatRunLabel(input: JsonObject, expected: JsonObject) {

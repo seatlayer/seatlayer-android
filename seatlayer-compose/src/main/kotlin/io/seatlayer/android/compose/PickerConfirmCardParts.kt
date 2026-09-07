@@ -32,7 +32,7 @@ internal fun CompactInspectionButton(
         modifier = Modifier.height(48.dp),
         shape = RoundedCornerShape(9.dp),
         color = scope.theme.surface.copy(alpha = 0.72f),
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 10.dp),
@@ -40,7 +40,7 @@ internal fun CompactInspectionButton(
         ) {
             SeatLayerPickerIcon(
                 glyph,
-                scope.theme.onSurface,
+                scope.theme.text,
                 Modifier.size(15.dp).clearAndSetSemantics { },
             )
             Spacer(Modifier.size(5.dp))
@@ -54,8 +54,8 @@ internal fun compactSeatLabel(
     strings: SeatLayerPickerStrings,
 ): String = listOfNotNull(
     seat.sectionLabel ?: seat.displayLabel ?: seat.label,
-    seat.rowLabel?.let { "${strings.row} $it" },
-    seat.seatNumber?.let { "${strings.seat} $it" },
+    seat.rowLabel?.let { "${strings.rowWord} $it" },
+    seat.seatNumber?.let { "${strings.seatWord} $it" },
 ).distinct().joinToString(" · ")
 
 @Composable
@@ -76,11 +76,11 @@ internal fun SeatIdentity(
             )
             val details = listOfNotNull(
                 seat.sectionLabel,
-                seat.rowLabel?.let { "${scope.strings.row} $it" },
-                seat.seatNumber?.let { "${scope.strings.seat} $it" },
+                seat.rowLabel?.let { "${scope.strings.rowWord} $it" },
+                seat.seatNumber?.let { "${scope.strings.seatWord} $it" },
             ).joinToString(" · ")
             if (details.isNotEmpty()) {
-                Text(details, style = MaterialTheme.typography.bodySmall, color = scope.theme.muted)
+                Text(details, style = MaterialTheme.typography.bodySmall, color = scope.theme.mutedText)
             }
         }
         Text(

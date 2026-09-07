@@ -184,6 +184,11 @@ internal data class SeatLayerPickerBridgeProfile(
                 requiredCapabilities = capabilities,
                 requiredCommands = commands,
                 requiredEvents = setOf("picker.snapshot"),
+                // Optional throughout: a capability the runtime does not
+                // advertise is a surface this SDK withholds in silence, never
+                // a handshake failure. The last two are read present-only —
+                // their snapshot fields are decoded when they arrive and no
+                // command is gated on the string.
                 optionalCapabilities = setOf(
                     "native-seat-view-chrome-v1",
                     "viewport-insets-v1",
@@ -192,6 +197,11 @@ internal data class SeatLayerPickerBridgeProfile(
                     "availability-refresh-v1",
                     "access-needs-v1",
                     "hold-selection-v1",
+                    "seat-view-thumbnail-v1",
+                    "accessibility-focus-v1",
+                    "section-access-counts-v1",
+                    "category-availability-v1",
+                    "seat-screen-point-v1",
                 ),
                 config = config,
             )

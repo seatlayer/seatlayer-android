@@ -96,10 +96,10 @@ public fun CustomPickerExample(
         val mapControlBottom = if (dockVisible) 60.dp else 8.dp
         val blocked = state.presentation.cartExpanded ||
             (!panorama && !venue3D &&
-                (state.presentation.pendingSeat != null ||
+                (state.presentation.candidateSeat != null ||
                     state.presentation.activePrompt != null))
         LaunchedEffect(blocked, state.isReady) {
-            if (state.isReady) controller.setInteractionEnabled(!blocked)
+            if (state.isReady) controller.setMapInteractionEnabled(!blocked)
         }
 
         Column(
@@ -151,7 +151,7 @@ public fun CustomPickerExample(
                         )
                     }
                     SeatLayerDockBar(Modifier.align(Alignment.BottomCenter))
-                    if (state.presentation.pendingSeat != null) {
+                    if (state.presentation.candidateSeat != null) {
                         Box(
                             Modifier
                                 .fillMaxSize()

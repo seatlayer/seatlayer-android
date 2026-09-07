@@ -51,7 +51,7 @@ internal fun AccessibilityLauncher(
             },
         shape = if (compact) CircleShape else RoundedCornerShape(scope.styles.buttonRadius),
         color = if (compact) Color.Transparent else scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         border = if (compact) null else BorderStroke(1.dp, scope.theme.divider),
     ) {
         Row(
@@ -61,7 +61,7 @@ internal fun AccessibilityLauncher(
         ) {
             SeatLayerPickerIcon(
                 SeatLayerPickerGlyph.Accessibility,
-                if (activeCount > 0) scope.theme.accent else scope.theme.onSurface,
+                if (activeCount > 0) scope.theme.accent else scope.theme.text,
                 Modifier.size(21.dp).clearAndSetSemantics { },
             )
             if (!compact) {
@@ -105,7 +105,7 @@ internal fun AccessibilityNeedChip(
                 toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
             },
         color = if (selected) scope.theme.accent.copy(alpha = 0.12f) else Color.Transparent,
-        contentColor = if (selected) scope.theme.accent else scope.theme.onSurface,
+        contentColor = if (selected) scope.theme.accent else scope.theme.text,
         border = BorderStroke(
             if (selected) 1.5.dp else 1.dp,
             if (selected) scope.theme.accent else scope.theme.divider,
@@ -127,9 +127,9 @@ internal fun AccessibilityNeedChip(
             Text(
                 needLabel(need),
                 color = if (enabled) {
-                    if (selected) scope.theme.accent else scope.theme.onSurface
+                    if (selected) scope.theme.accent else scope.theme.text
                 } else {
-                    scope.theme.muted.copy(alpha = 0.6f)
+                    scope.theme.mutedText.copy(alpha = 0.6f)
                 },
                 fontWeight = FontWeight.SemiBold,
             )
@@ -163,7 +163,7 @@ internal fun AccessibilityToggleOption(
                 toggleableState = if (selected) ToggleableState.On else ToggleableState.Off
             },
         color = Color.Transparent,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 4.dp),
@@ -172,7 +172,7 @@ internal fun AccessibilityToggleOption(
             Text(
                 label,
                 modifier = Modifier.weight(1f),
-                color = if (enabled) scope.theme.onSurface else scope.theme.muted,
+                color = if (enabled) scope.theme.text else scope.theme.mutedText,
                 fontWeight = FontWeight.Medium,
             )
             Switch(

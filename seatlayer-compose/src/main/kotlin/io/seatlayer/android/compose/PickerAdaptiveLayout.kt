@@ -36,8 +36,10 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
     val panorama = scope.state.seatView != null
     val venue3D = snapshot?.map?.isVenue3D == true
     val regularMap = !panorama && !venue3D
+    // The dock bar is off unless a host asks for it: the section it names is
+    // already on the map, under the buyer's thumb.
     val dockVisible = regularMap &&
-        scope.options.chrome.dock &&
+        scope.options.showDockBar == true &&
         snapshot?.map?.rung == "seats" &&
         snapshot.map.focusedSectionId != null
 
@@ -57,7 +59,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
         ) {
-            if (scope.options.chrome.priceLegend) {
+            if (scope.options.chrome.showPriceRail) {
                 Box(Modifier.weight(1f)) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.Legend,
@@ -67,7 +69,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
             } else {
                 Box(Modifier.weight(1f))
             }
-            if (scope.options.enableVenue3D && scope.options.chrome.map3D) {
+            if (scope.options.enable3D && scope.options.chrome.showViewModeControl) {
                 SeatLayerPickerViewModeControl(
                     modifier = Modifier.padding(end = 10.dp),
                     compact = true,
@@ -75,7 +77,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
             }
         }
         if (
-            scope.options.chrome.floorStrip &&
+            scope.options.chrome.showFloorStrip &&
             snapshot?.map?.floors.orEmpty().pickerAuthoredFloors().size > 1
         ) {
             SeatLayerPickerPart(
@@ -89,8 +91,8 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
         )
     }
 
-    if (regularMap && scope.state.isReady && scope.options.chrome.mapControls) {
-        if (scope.options.chrome.accessibility) {
+    if (regularMap && scope.state.isReady && scope.options.chrome.showMapControls) {
+        if (scope.options.chrome.showAccessibilityControl) {
             SeatLayerPickerPart(
                 SeatLayerPickerPart.AccessibilityFilters,
                 builders[SeatLayerPickerPart.AccessibilityFilters],
@@ -112,10 +114,8 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
                     .align(Alignment.BottomEnd)
                     .padding(end = 8.dp, bottom = bottomPadding + 8.dp),
             ) {
-                if (snapshot?.map?.canZoomOut == true && scope.options.chrome.overview) {
+                if (snapshot?.map?.canZoomOut == true && scope.options.chrome.showOverviewControl) {
                     SeatLayerPickerStepOutControl()
-                } else if (scope.options.chrome.fit) {
-                    SeatLayerPickerFitControl()
                 }
             }
         }
@@ -134,13 +134,13 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
         }
     }
 
-    if (regularMap && scope.options.chrome.confirmCard &&
+    if (regularMap && scope.options.chrome.showConfirmCard &&
         scope.state.presentation.pendingSeat != null
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(scope.theme.background.copy(alpha = 0.64f)),
+                .background(scope.confirmScrim()),
             contentAlignment = Alignment.Center,
         ) {
             SeatLayerPickerPart(
@@ -157,10 +157,9 @@ internal fun androidx.compose.foundation.layout.BoxScope.CompactChrome(
 }
 
 internal fun compactMapControlCount(chrome: SeatLayerPickerChromeOptions): Int =
-    (if (chrome.zoom) 2 else 0) +
-        (if (chrome.fit) 1 else 0) +
-        (if (chrome.overview) 1 else 0) +
-        (if (chrome.colorblind) 1 else 0)
+    (if (chrome.showZoomControls) 2 else 0) +
+        (if (chrome.showOverviewControl) 1 else 0) +
+        (if (chrome.showColorblindControl) 1 else 0)
 
 internal fun compactMapControlsRequiredHeight(controlCount: Int): androidx.compose.ui.unit.Dp =
     if (controlCount <= 0) 0.dp else (controlCount * 48 + (controlCount - 1) * 8).dp
@@ -179,7 +178,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
         modifier = Modifier.align(Alignment.TopStart).padding(12.dp),
         compact = false,
     )
-    if (scope.options.chrome.mapControls && scope.state.isReady) {
+    if (scope.options.chrome.showMapControls && scope.state.isReady) {
         SeatLayerPickerPart(
             SeatLayerPickerPart.MapControls,
             builders[SeatLayerPickerPart.MapControls],
@@ -189,13 +188,13 @@ internal fun androidx.compose.foundation.layout.BoxScope.WideMapChrome(
             )
         }
     }
-    if (scope.options.chrome.confirmCard &&
+    if (scope.options.chrome.showConfirmCard &&
         scope.state.presentation.pendingSeat != null
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(scope.theme.background.copy(alpha = 0.64f)),
+                .background(scope.confirmScrim()),
             contentAlignment = Alignment.Center,
         ) {
             SeatLayerPickerPart(
@@ -217,31 +216,31 @@ internal fun WideSidePanel(builders: SeatLayerPickerBuilders) {
     Surface(
         modifier = Modifier.fillMaxHeight().width(scope.styles.panelWidth),
         color = scope.theme.surface,
-        contentColor = scope.theme.onSurface,
+        contentColor = scope.theme.text,
         shadowElevation = 8.dp,
     ) {
         BoxWithConstraints {
             val prioritiseCart = confirmed.items.isNotEmpty() && maxHeight < 520.dp
             Column {
-                if (!immersive && scope.options.enableVenue3D && scope.options.chrome.map3D) {
+                if (!immersive && scope.options.enable3D && scope.options.chrome.showViewModeControl) {
                     SeatLayerPickerViewModeControl(
                         Modifier.align(Alignment.CenterHorizontally).padding(10.dp),
                     )
                 }
-                if (!immersive && !prioritiseCart && scope.options.chrome.priceLegend) {
+                if (!immersive && !prioritiseCart && scope.options.chrome.showPriceRail) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.Legend,
                         builders[SeatLayerPickerPart.Legend],
                     ) { SeatLayerPriceLegend(compact = false) }
                 }
-                if (!immersive && !prioritiseCart && scope.options.chrome.floorStrip &&
+                if (!immersive && !prioritiseCart && scope.options.chrome.showFloorStrip &&
                     snapshot?.map?.floors.orEmpty().pickerAuthoredFloors().size > 1
                 ) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.FloorStrip,
                         builders[SeatLayerPickerPart.FloorStrip],
                     ) { SeatLayerFloorStrip(compact = false) }
-                } else if (!immersive && !prioritiseCart && scope.options.chrome.floorSelector) {
+                } else if (!immersive && !prioritiseCart && scope.options.chrome.showFloorSelector) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.FloorSelector,
                         builders[SeatLayerPickerPart.FloorSelector],
@@ -255,7 +254,7 @@ internal fun WideSidePanel(builders: SeatLayerPickerBuilders) {
                 } else if (immersive) {
                     Spacer(Modifier.weight(1f))
                 }
-                if (!immersive && !prioritiseCart && scope.options.chrome.accessibility) {
+                if (!immersive && !prioritiseCart && scope.options.chrome.showAccessibilityControl) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.AccessibilityFilters,
                         builders[SeatLayerPickerPart.AccessibilityFilters],
@@ -304,7 +303,7 @@ internal fun PickerHeader(
     compact: Boolean = false,
 ) {
     val scope = LocalSeatLayerPickerScope.current
-    if (!scope.options.chrome.header) return
+    if (!scope.options.chrome.showHeader) return
     SeatLayerPickerPart(
         SeatLayerPickerPart.Header,
         builders[SeatLayerPickerPart.Header],
@@ -314,7 +313,7 @@ internal fun PickerHeader(
                 coroutineScope.launch { scope.controller.close { onClose() } }
             },
             holdContent = {
-                if (scope.options.chrome.holdCountdown) {
+                if (scope.options.chrome.showHoldPill) {
                     SeatLayerPickerPart(
                         SeatLayerPickerPart.HoldCountdown,
                         builders[SeatLayerPickerPart.HoldCountdown],
@@ -409,7 +408,7 @@ internal fun androidx.compose.foundation.layout.BoxScope.CommonOverlays(
         SeatLayerPickerUndoNotice(Modifier.align(Alignment.CenterHorizontally))
     }
 
-    if (!wide && !immersive && (!compact || !scope.options.chrome.cartSheet)) {
+    if (!wide && !immersive && (!compact || !scope.options.chrome.showTicketPanel)) {
         SeatLayerPickerAttribution(
             modifier = Modifier
                 .align(Alignment.BottomEnd)

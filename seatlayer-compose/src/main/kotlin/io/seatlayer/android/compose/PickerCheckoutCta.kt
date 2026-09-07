@@ -34,7 +34,7 @@ public fun SeatLayerPickerCheckoutBar(
     Surface(
         modifier = modifier.fillMaxWidth(),
         color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.onSurface,
+        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
         tonalElevation = resolvedStyle.elevation ?: 2.dp,
         shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: 0.dp),
     ) {
@@ -50,7 +50,7 @@ public fun SeatLayerPickerCheckoutBar(
                 Text(
                     scope.strings.ticketCount(totals.quantity),
                     style = MaterialTheme.typography.labelMedium,
-                    color = scope.theme.muted,
+                    color = scope.theme.mutedText,
                 )
                 Text(
                     totals.currency?.let { scope.moneyFormatter.format(totals.total, it) }
