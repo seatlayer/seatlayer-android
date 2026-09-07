@@ -6,9 +6,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.hideFromAccessibility
 import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -111,6 +113,27 @@ internal fun Modifier.pickerReadingOrderGroup(): Modifier = semantics {
  */
 internal fun Modifier.pickerHiddenFromAccessibility(hidden: Boolean): Modifier =
     if (!hidden) this else semantics { hideFromAccessibility() }
+
+/**
+ * Names this subtree as the venue map: one region, honest about being a canvas.
+ *
+ * The runtime does not report seat rectangles or answer a list-seats-in-view
+ * command, so there are no per-seat nodes to publish and none are invented: a
+ * fabricated seat list read over a map that does not match it is worse than a
+ * region that says it cannot be explored. The hint says the seats are picked
+ * with the controls around it.
+ */
+@Composable
+internal fun Modifier.pickerVenueMapRegion(): Modifier {
+    val scope = LocalSeatLayerPickerScope.current
+    val venue = scope.state.snapshot?.event?.venue.orEmpty()
+    val name = scope.strings.venueMap(venue)
+    val hint = scope.strings.venueMapHint
+    return semantics(mergeDescendants = true) {
+        contentDescription = name
+        stateDescription = hint
+    }
+}
 
 /**
  * Whether a surface is holding the screen and everything under it is inert.

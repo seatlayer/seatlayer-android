@@ -18,6 +18,7 @@ import io.seatlayer.android.SeatLayerPickerState
 import io.seatlayer.android.SeatLayerPickerStateHolder
 import io.seatlayer.android.SeatLayerPickerThemeMode
 import kotlinx.coroutines.flow.MutableStateFlow
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -229,6 +230,23 @@ public class PickerAccessibilityCrossCutTest {
         assertFalse(
             "an expired hold has no time left to read",
             seatLayerHoldAnnouncement(0L, strings) != null,
+        )
+    }
+
+    @Test
+    public fun theMapIsOneNamedRegionAndNotAListOfSeats() {
+        val scope = pickerEvidenceScope(PickerEvidenceScenario.Overview, LIGHT)
+        render(scope)
+        val map = described(scope.strings.venueMap("North Hall"))
+        assertEquals(
+            "the region says how the seats ARE picked, since it cannot be explored",
+            scope.strings.venueMapHint,
+            map.config.getOrElseNullable(SemanticsProperties.StateDescription) { null },
+        )
+        assertTrue(
+            "no per-seat node is invented under a canvas the runtime does not " +
+                "describe",
+            map.children.none(::speaks),
         )
     }
 

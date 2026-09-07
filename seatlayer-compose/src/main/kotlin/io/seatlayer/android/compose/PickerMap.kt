@@ -1,5 +1,6 @@
 package io.seatlayer.android.compose
 
+import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +46,14 @@ public fun SeatLayerPickerMap(
                     }
                 },
             factory = { context ->
-                SeatLayerPickerMapView(context).also { mapView = it }
+                SeatLayerPickerMapView(context).also { view ->
+                    // The map is ONE region (see `pickerVenueMapRegion`). The
+                    // surface the runtime draws into publishes no seat nodes of
+                    // its own, so nothing under here is offered as explorable.
+                    view.importantForAccessibility =
+                        View.IMPORTANT_FOR_ACCESSIBILITY_NO_HIDE_DESCENDANTS
+                    mapView = view
+                }
             },
             update = { view ->
                 if (mapView !== view) mapView = view
