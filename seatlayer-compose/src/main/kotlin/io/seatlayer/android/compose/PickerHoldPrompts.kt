@@ -138,7 +138,7 @@ public fun SeatLayerPickerExtendHoldPrompt(
     // A host-owned hold is not this picker's to extend (§4.8).
     if (hold.owner == "host") return
     // A hold the host has taken to checkout is checkout's business now.
-    if (scope.state.presentation.checkoutHandoff != null) return
+    if (scope.state.presentation.checkoutHoldsTheCart) return
     if (spent) return
 
     val expiryMillis = seatLayerHoldExpiryMillis(expiresAt)

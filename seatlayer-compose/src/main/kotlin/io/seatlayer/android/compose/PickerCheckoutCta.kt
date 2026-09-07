@@ -218,7 +218,7 @@ internal fun rememberCheckoutCtaState(
     val presentation = scope.state.presentation
     val confirmed = presentation.confirmedCart(snapshot)
     val busy = when {
-        presentation.checkoutHandoff != null -> SeatLayerPickerCheckoutBusy.OpeningCheckout
+        presentation.checkoutHoldsTheCart -> SeatLayerPickerCheckoutBusy.OpeningCheckout
         securing -> SeatLayerPickerCheckoutBusy.SecuringSeats
         else -> SeatLayerPickerCheckoutBusy.None
     }

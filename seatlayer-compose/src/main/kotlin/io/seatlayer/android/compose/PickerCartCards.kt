@@ -130,7 +130,11 @@ public fun SeatLayerCartCard(
     // measured width and moved by the finger, both of which arrive in pixels.
     var slide by remember(line.lineKey) { mutableFloatStateOf(0f) }
     var width by remember(line.lineKey) { mutableFloatStateOf(0f) }
-    val swipeEnabled = removable && !held && !removing
+    // A host-owned hold is not the picker's to change — unless the host has
+    // said the checkout came back, which is what excuses the whole gate.
+    val swipeEnabled = removable &&
+        scope.state.presentation.canMutateCart(snapshot) &&
+        !removing
     val swipeState = rememberDraggableState { delta ->
         slide = pickerRubberBand(slide - delta, 0f, width)
     }

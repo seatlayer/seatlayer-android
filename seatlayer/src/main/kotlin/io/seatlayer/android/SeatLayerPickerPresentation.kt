@@ -115,6 +115,30 @@ public data class SeatLayerPickerPresentationState(
         pending = candidateSeat.takeIf { cardIntent == SeatLayerPickerCardIntent.Add },
     )
 
+    /**
+     * Whether a checkout the host took still stands between the buyer and
+     * their cart.
+     *
+     * Nothing inside the picker ever answers a handoff the HOST carried away,
+     * so the handoff and the hold it took would otherwise gate the cart for
+     * the rest of the session. `resumeAfterCheckout()` is the host saying the
+     * buyer is back on the map, and it is the only thing that lifts them:
+     * without it Continue is dead on return, and a seat tapped afterwards
+     * cannot be acted on.
+     */
+    public val checkoutHoldsTheCart: Boolean
+        get() = checkoutHandoff != null && !resumeAfterCheckout
+
+    /**
+     * Whether the picker may still add to, or take from, the cart.
+     *
+     * A hold the host owns is not the picker's to change — until the host has
+     * said the checkout came back.
+     */
+    public fun canMutateCart(snapshot: SeatLayerPickerSnapshot?): Boolean =
+        !checkoutHoldsTheCart &&
+            (snapshot?.hold?.owner != "host" || resumeAfterCheckout)
+
     public fun canCheckout(
         snapshot: SeatLayerPickerSnapshot?,
         ready: Boolean,
@@ -124,11 +148,10 @@ public data class SeatLayerPickerPresentationState(
         // Deliberately not gated on actionInFlight: adding a seat to a live
         // hold puts a command in flight, and greying Continue through it tells
         // the buyer their tickets stopped being buyable.
-        checkoutHandoff == null &&
+        canMutateCart(snapshot) &&
         activePrompt == null &&
         candidateSeat == null &&
         confirmedCart(snapshot).items.isNotEmpty() &&
-        snapshot?.hold?.owner != "host" &&
         snapshot?.selectionValidity?.isValid != false
 
     public fun nextBackStep(
