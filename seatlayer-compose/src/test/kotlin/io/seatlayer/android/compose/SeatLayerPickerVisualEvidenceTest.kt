@@ -159,7 +159,9 @@ public class SeatLayerPickerVisualEvidenceTest {
             PickerEvidenceScenario.Confirmation,
             fontScale = 1.5f,
         )
-        composeRule.onNodeWithText("Select").assertIsDisplayed()
+        // A seat is added, not "selected": the generic word is what a booth,
+        // a table or a general-admission unit gets.
+        composeRule.onNodeWithText("Add seat").assertIsDisplayed()
         composeRule.onNodeWithContentDescription("Close").assertIsDisplayed()
     }
 

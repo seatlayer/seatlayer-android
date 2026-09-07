@@ -1,44 +1,58 @@
 package io.seatlayer.android.compose
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.traversalIndex
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import io.seatlayer.android.SeatLayerPickerCardIntent
 import io.seatlayer.android.SeatLayerPickerCategoryTier
 import io.seatlayer.android.SeatLayerPickerSelectedSeat
+import io.seatlayer.android.seatNotes
 import kotlinx.coroutines.launch
 
-/** Compact confirmation card for the newest unconfirmed addressed seat. */
+/**
+ * The phone's one-seat decision surface.
+ *
+ * A buyer who has just tapped a seat is answering one question — this seat,
+ * this price, yes or no — so the card is read top to bottom as that question:
+ * where the seat is, what it costs, what is special about it, and then the two
+ * answers.
+ *
+ * Where it is comes first as a grid rather than a sentence. One long label is
+ * something a buyer has to parse; three labelled cells let the eye land on the
+ * number it came for. The category and the price share the band under it, in
+ * the same colour the seat is painted on the map.
+ *
+ * The same card asks the opposite question about a seat already in the cart
+ * ([SeatLayerPickerCardIntent.Remove]), raised by a second tap on it. Same box,
+ * same identity, same price; only the primary answer changes, and Cancel keeps
+ * the seat rather than dropping it. Two surfaces for one gesture would be a
+ * second thing to learn for no gain.
+ */
 @Composable
 public fun SeatLayerConfirmCard(
     modifier: Modifier = Modifier,
@@ -46,9 +60,53 @@ public fun SeatLayerConfirmCard(
     compact: Boolean = false,
 ) {
     val scope = LocalSeatLayerPickerScope.current
+    val seat = scope.state.presentation.candidateSeat ?: return
+    SeatLayerConfirmCardBody(
+        seat = seat,
+        intent = scope.state.presentation.cardIntent,
+        modifier = modifier,
+        style = style,
+        immersive = false,
+        answered = false,
+        onAnswered = {},
+    )
+}
+
+/** Wide-layout form of the same confirmation state and commands. */
+@Composable
+public fun SeatLayerPickerSeatConfirmation(
+    modifier: Modifier = Modifier,
+    style: SeatLayerPickerPartStyle? = null,
+) {
+    val scope = LocalSeatLayerPickerScope.current
+    SeatLayerConfirmCard(
+        modifier = modifier,
+        style = style ?: scope.styles[SeatLayerPickerPart.SeatConfirmation],
+    )
+}
+
+/**
+ * The card over one named seat.
+ *
+ * [answered] is the card's own latch rather than a snapshot fact: the cart is
+ * told on the press, and only the card's departure waits for the sweep, so the
+ * card has to keep drawing itself for a moment after the seat has stopped being
+ * a candidate.
+ */
+@Composable
+internal fun SeatLayerConfirmCardBody(
+    seat: SeatLayerPickerSelectedSeat,
+    intent: SeatLayerPickerCardIntent,
+    answered: Boolean,
+    onAnswered: (SeatLayerPickerSelectedSeat) -> Unit,
+    modifier: Modifier = Modifier,
+    style: SeatLayerPickerPartStyle? = null,
+    immersive: Boolean = false,
+) {
+    val scope = LocalSeatLayerPickerScope.current
     val resolvedStyle = style ?: scope.styles[SeatLayerPickerPart.ConfirmCard]
-    val seat = scope.state.presentation.pendingSeat ?: return
     val coroutineScope = rememberCoroutineScope()
+    val removing = intent == SeatLayerPickerCardIntent.Remove
     var selectedTierId by remember(
         seat.id,
         seat.label,
@@ -63,256 +121,265 @@ public fun SeatLayerConfirmCard(
     val selectedTier = seat.tiers.firstOrNull { it.id == selectedTierId }
     val shownPrice = selectedTier?.price ?: seat.price
     val shownCurrency = selectedTier?.currency ?: seat.currency
-    val confirm = {
-        coroutineScope.launch { scope.controller.confirmPending(selectedTierId) }
-        Unit
-    }
-    if (compact) {
-        CompactSeatConfirmation(
-            seat = seat,
-            selectedTierId = selectedTierId,
-            shownPrice = shownPrice,
-            shownCurrency = shownCurrency,
-            onTierSelected = { selectedTierId = it },
-            onConfirm = confirm,
-            modifier = modifier,
-            style = resolvedStyle,
-        )
-        return
-    }
-    Surface(
-        modifier = modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(resolvedStyle.cornerRadius ?: scope.styles.cardRadius),
-        color = resolvedStyle.containerColor ?: scope.theme.surface,
-        contentColor = resolvedStyle.contentColor ?: scope.theme.text,
-        shadowElevation = resolvedStyle.elevation ?: 8.dp,
-    ) {
-        Column(
-            Modifier.padding(
-                horizontal = resolvedStyle.horizontalPadding ?: 16.dp,
-                vertical = resolvedStyle.verticalPadding ?: 16.dp,
-            ),
-        ) {
-            SeatIdentity(seat, shownPrice, shownCurrency)
-            if (seat.tiers.size > 1) {
-                Spacer(Modifier.height(10.dp))
-                Text(
-                    scope.strings.ticketType,
-                    style = MaterialTheme.typography.labelLarge,
-                    fontWeight = FontWeight.Bold,
-                )
-                Spacer(Modifier.height(6.dp))
-                SeatLayerPickerTierChoices(
-                    seat = seat,
-                    selectedTierId = selectedTierId,
-                    onTierSelected = { selectedTierId = it },
-                )
-            }
-            if (scope.options.enableSeatView && scope.controller.supportsSeatView) {
-                TextButton(
-                    onClick = {
-                        coroutineScope.launch {
-                            scope.performAction { scope.controller.openSeatView(seat.id) }
-                        }
-                    },
-                    modifier = Modifier.sizeIn(minHeight = 48.dp),
-                    shape = RoundedCornerShape(scope.styles.buttonRadius),
-                ) {
-                    Text(scope.strings.viewFromHere)
-                }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                TextButton(
-                    onClick = {
-                        coroutineScope.launch { scope.controller.cancelPending() }
-                    },
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
-                    shape = RoundedCornerShape(scope.styles.buttonRadius),
-                ) {
-                    Text(scope.strings.cancel)
-                }
-                Button(
-                    onClick = confirm,
-                    enabled = !scope.state.presentation.actionInFlight,
-                    modifier = Modifier.weight(1f).heightIn(min = 48.dp),
-                    shape = RoundedCornerShape(scope.styles.buttonRadius),
-                ) {
-                    Text(scope.strings.select)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun CompactSeatConfirmation(
-    seat: SeatLayerPickerSelectedSeat,
-    selectedTierId: String?,
-    shownPrice: Double,
-    shownCurrency: String,
-    onTierSelected: (String) -> Unit,
-    onConfirm: () -> Unit,
-    modifier: Modifier,
-    style: SeatLayerPickerPartStyle,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    val coroutineScope = rememberCoroutineScope()
-    val category = scope.state.snapshot?.categories
-        ?.firstOrNull { it.key == seat.categoryKey }
-    val dotColor = parseColor(category?.color.orEmpty()) ?: scope.theme.accent
+    val category = scope.state.snapshot?.categories?.firstOrNull { it.key == seat.categoryKey }
+    val categoryColor = parseColor(category?.color.orEmpty()) ?: scope.theme.accent
+    val notes = remember(seat) { seat.seatNotes() }
     val hasSeatView = scope.options.enableSeatView && scope.controller.supportsSeatView
     val hasVenue3D = scope.options.enable3D && scope.controller.supportsVenue3D
-    Surface(
-        modifier = modifier.fillMaxWidth().widthIn(max = 360.dp),
-        shape = RoundedCornerShape(style.cornerRadius ?: 18.dp),
-        color = style.containerColor ?: scope.theme.surface,
-        contentColor = style.contentColor ?: scope.theme.text,
-        border = BorderStroke(1.dp, scope.theme.divider),
-        shadowElevation = style.elevation ?: 10.dp,
-    ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(43.dp)
-                    .padding(horizontal = 11.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Surface(
-                    modifier = Modifier.size(10.dp),
-                    shape = androidx.compose.foundation.shape.CircleShape,
-                    color = dotColor,
-                ) { }
-                Spacer(Modifier.size(7.dp))
-                Text(
-                    compactSeatLabel(seat, scope.strings),
-                    modifier = Modifier.weight(1f),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                )
-                Spacer(Modifier.size(8.dp))
-                Text(
-                    scope.moneyFormatter.format(shownPrice, shownCurrency),
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    maxLines = 1,
-                )
+    val confidence = seat.seatViewConfidence
+    val onConfidence = scope.callbacks.onSeatConfidence
+    val primaryFocus = remember { FocusRequester() }
+    val busy = scope.state.presentation.actionInFlight
+    val sweep = rememberPressSweep(answered, seatLayerAnimationsEnabled())
+    var engaged by remember(seat.id) { mutableStateOf(false) }
+
+    val primaryLabel = when {
+        removing -> scope.strings.removeSeat
+        answered -> scope.strings.added
+        seat.objectType == "seat" || seat.objectType == null -> scope.strings.addSeat
+        else -> scope.strings.select
+    }
+    val onCancelAction = {
+        engaged = true
+        coroutineScope.launch {
+            if (removing) {
+                // Cancel is a way OUT of the question, not an answer to it:
+                // the seat stays.
+                scope.controller.dismissSeatRemoval()
+            } else {
+                scope.controller.cancelPending()
             }
-            if (seat.tiers.size > 1) {
-                Column(Modifier.padding(horizontal = 10.dp, vertical = 8.dp)) {
-                    Text(
-                        scope.strings.ticketType,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.ExtraBold,
+        }
+        Unit
+    }
+    val onPrimaryAction = {
+        engaged = true
+        if (!answered) onAnswered(seat)
+    }
+    // The identity reads as ONE sentence — section, row, seat, category, price
+    // — rather than as six unlabelled cells, and that sentence IS the card's
+    // name to assistive technology.
+    val identity = seatLayerIdentitySentence(
+        seatLayerIdentityCells(
+            seat,
+            scope.strings,
+            pickerSectionCode(scope.state.snapshot, seat.sectionLabel),
+        ),
+        scope.strings,
+    )
+    val spokenName = listOfNotNull(
+        identity,
+        category?.label,
+        scope.moneyFormatter.format(shownPrice, shownCurrency),
+    ).joinToString(separator = " \u00b7 ")
+
+    val loneTierNote = seat.tiers.singleOrNull()?.let { tier ->
+        tier.buyerMessage?.takeIf(String::isNotBlank)
+            ?: scope.strings.tierCompanionGuidance.takeIf { tier.restriction == "companion" }
+    }
+    val tierContent = seat.tiers.size > 1 || loneTierNote != null
+    val bodyContent = notes.isNotEmpty() || tierContent
+    // Inside the scene the passport and the view from the seat are ONE row of
+    // compact chips; the 3D square is never drawn there, because the buyer is
+    // already in the scene it opens.
+    val openPassport = onConfidence
+    val onPassport: (() -> Unit)? = if (immersive && confidence != null && openPassport != null) {
+        { openPassport(confidence) }
+    } else {
+        null
+    }
+    val passportUp = onPassport != null
+    val inspectRow = immersive && (passportUp || hasSeatView)
+    val show3DSquare = !immersive && hasVenue3D
+
+    SeatLayerPickerTypeClamp(SeatLayerTypeTokens.SCALE_CLAMP_CARD) {
+        Surface(
+            modifier = modifier
+                .fillMaxWidth()
+                .widthIn(
+                    max = if (immersive) {
+                        SeatLayerSizeTokens.CONFIRM_CARD_IMMERSIVE_MAX_WIDTH.dp
+                    } else {
+                        SeatLayerSizeTokens.CONFIRM_CARD_MAX_WIDTH.dp
+                    },
+                )
+                // A dialog: it names itself, it is traversed first, and both
+                // answers are also actions a rotor can reach without hunting
+                // for the buttons.
+                .semantics {
+                    isTraversalGroup = true
+                    traversalIndex = -1f
+                    paneTitle = spokenName
+                    customActions = listOf(
+                        CustomAccessibilityAction(primaryLabel) {
+                            onPrimaryAction()
+                            true
+                        },
+                        CustomAccessibilityAction(scope.strings.cancel) {
+                            onCancelAction()
+                            true
+                        },
                     )
-                    Spacer(Modifier.height(6.dp))
-                    SeatLayerPickerTierChoices(
-                        seat = seat,
-                        selectedTierId = selectedTierId,
-                        onTierSelected = onTierSelected,
+                },
+            shape = RoundedCornerShape(
+                resolvedStyle.cornerRadius ?: SeatLayerRadiusTokens.CONFIRM_CARD.dp,
+            ),
+            color = resolvedStyle.containerColor ?: scope.theme.surface,
+            contentColor = resolvedStyle.contentColor ?: scope.theme.text,
+            // The card's edge is the divider pulled toward the ink, so it holds
+            // against a map of any colour behind it.
+            border = BorderStroke(
+                Dp.Hairline,
+                lerp(scope.theme.divider, scope.theme.text, EDGE_TOWARD_INK),
+            ),
+            shadowElevation = resolvedStyle.elevation
+                ?: SeatLayerElevationTokens.CONFIRM_CARD.dp,
+        ) {
+            Column(Modifier.fillMaxWidth()) {
+                SeatLayerConfirmIdentityGrid(seat, immersive)
+                // The band is the category speaking for itself: its colour, its
+                // name and what it costs. Without a category there is nothing
+                // for it to say, and a price with no name beside it belongs
+                // nowhere on this card.
+                if (category != null) {
+                    SeatLayerConfirmCategoryBand(
+                        category = category,
+                        color = categoryColor,
+                        price = shownPrice,
+                        currency = shownCurrency,
+                        immersive = immersive,
                     )
                 }
-            }
-            if (hasSeatView || hasVenue3D) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .background(scope.theme.accent.copy(alpha = 0.13f))
-                        .padding(horizontal = 10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    if (hasSeatView) {
-                        CompactInspectionButton(
-                            label = scope.strings.viewFromHere,
-                            glyph = SeatLayerPickerGlyph.Eye,
-                        ) {
-                            coroutineScope.launch {
-                                scope.performAction { scope.controller.openSeatView(seat.id) }
-                            }
-                        }
-                    } else {
-                        Spacer(Modifier.size(1.dp))
-                    }
-                    if (hasVenue3D) {
-                        CompactInspectionButton(
-                            label = scope.strings.venue3D,
-                            glyph = SeatLayerPickerGlyph.Cube,
-                        ) {
-                            coroutineScope.launch {
-                                scope.performAction {
-                                    scope.controller.setBuyerView(
-                                        view = "venue3d",
-                                        flyToSeatId = seat.id,
+                // The notes are BANDS, and they sit directly under the category
+                // band: below the tier chooser they read as a footnote to the
+                // price list rather than as facts about the seat. So the body
+                // owns no padding of its own — the bands reach both edges and
+                // the tier chooser carries the card's gutter itself.
+                if (bodyContent) {
+                    Column(Modifier.verticalScroll(rememberScrollState())) {
+                        SeatLayerSeatNotes(notes, compact = immersive)
+                        if (tierContent) {
+                            Column(
+                                Modifier.padding(
+                                    start = GUTTER,
+                                    end = GUTTER,
+                                    top = if (notes.isEmpty()) 8.dp else 10.dp,
+                                ),
+                            ) {
+                                if (seat.tiers.size > 1) {
+                                    SeatLayerPickerTierChoices(
+                                        seat = seat,
+                                        selectedTierId = selectedTierId,
+                                        enabled = !busy,
+                                        onTierSelected = { selectedTierId = it },
                                     )
+                                } else {
+                                    SeatLayerConfirmTierNote(loneTierNote.orEmpty())
                                 }
                             }
                         }
                     }
                 }
-            }
-            Row(modifier = Modifier.fillMaxWidth().height(48.dp)) {
-                Surface(
-                    onClick = {
-                        coroutineScope.launch { scope.controller.cancelPending() }
-                    },
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                    color = Color.Transparent,
-                    contentColor = scope.theme.text,
-                ) {
-                    Box(contentAlignment = Alignment.Center) {
-                        Text(
-                            scope.strings.cancel,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                        )
-                    }
+                // A disclosure with nowhere to open stays the teaser it has
+                // always been: the headline and the detail ARE the information,
+                // and a chip saying only one word beside a dead target would
+                // say nothing and do nothing.
+                if (immersive && confidence != null && onConfidence == null) {
+                    SeatLayerConfidenceTeaser(
+                        confidence,
+                        Modifier.padding(horizontal = GUTTER),
+                    )
                 }
-                Surface(
-                    onClick = onConfirm,
-                    enabled = !scope.state.presentation.actionInFlight,
-                    modifier = Modifier.weight(1f).fillMaxWidth(),
-                    color = scope.theme.accent,
-                    contentColor = scope.theme.onAccent,
+                if (inspectRow) {
+                    SeatLayerInspectionRow(
+                        onPassport = onPassport,
+                        onViewFromSeat = if (hasSeatView && !busy) {
+                            {
+                                coroutineScope.launch {
+                                    scope.performAction { scope.controller.openSeatView(seat.id) }
+                                    scope.callbacks.onSeatViewOpened(seat.id)
+                                }
+                                Unit
+                            }
+                        } else {
+                            null
+                        },
+                        modifier = Modifier.padding(
+                            start = GUTTER,
+                            end = GUTTER,
+                            top = if (bodyContent) {
+                                SeatLayerSizeTokens.CONFIRM_IMMERSIVE_INSPECT_GAP.dp
+                            } else {
+                                (
+                                    SeatLayerSizeTokens.CONFIRM_IMMERSIVE_BODY_TOP +
+                                        SeatLayerSizeTokens.CONFIRM_IMMERSIVE_INSPECT_GAP
+                                    ).dp
+                            },
+                        ),
+                    )
+                }
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = GUTTER,
+                            end = GUTTER,
+                            top = when {
+                                immersive && (bodyContent || inspectRow) ->
+                                    SeatLayerSizeTokens.CONFIRM_IMMERSIVE_ACTION_GAP.dp
+                                immersive -> SeatLayerSizeTokens.CONFIRM_IMMERSIVE_BODY_TOP.dp
+                                bodyContent -> 10.dp
+                                else -> 8.dp
+                            },
+                            bottom = if (immersive) {
+                                SeatLayerSizeTokens.CONFIRM_IMMERSIVE_BODY_BOTTOM.dp
+                            } else {
+                                GUTTER
+                            },
+                        )
+                        // The row is a HEIGHT rather than a minimum because the
+                        // primary paints its sweep behind the label; it grows
+                        // with the buyer's type setting up to the card's clamp
+                        // rather than clipping the word it exists to offer.
+                        .height(SeatLayerSizeTokens.CONFIRM_ACTION_HEIGHT.dp),
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        SeatLayerPickerIcon(
-                            SeatLayerPickerGlyph.Check,
-                            scope.theme.onAccent,
-                            Modifier.size(15.dp).clearAndSetSemantics { },
-                        )
-                        Spacer(Modifier.size(5.dp))
-                        Text(
-                            scope.strings.select,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                        )
-                    }
+                    SeatLayerConfirmActions(
+                        primaryLabel = primaryLabel,
+                        cancelLabel = scope.strings.cancel,
+                        destructive = removing,
+                        answered = answered,
+                        sweep = sweep,
+                        invite = !engaged && !answered,
+                        enabled = !answered,
+                        onCancel = onCancelAction,
+                        onPrimary = onPrimaryAction,
+                        show3DSquare = show3DSquare,
+                        on3D = if (show3DSquare && !busy) {
+                            {
+                                coroutineScope.launch {
+                                    scope.performAction {
+                                        scope.controller.setBuyerView(
+                                            view = "venue3d",
+                                            flyToSeatId = seat.id,
+                                        )
+                                    }
+                                }
+                                Unit
+                            }
+                        } else {
+                            null
+                        },
+                        primaryFocus = primaryFocus,
+                    )
                 }
             }
         }
     }
+    SeatLayerFocusPrimaryOnArrival(primaryFocus, seat.id)
 }
 
-/** Wide-layout form of the same confirmation state and commands. */
-@Composable
-public fun SeatLayerPickerSeatConfirmation(
-    modifier: Modifier = Modifier,
-    style: SeatLayerPickerPartStyle? = null,
-) {
-    val scope = LocalSeatLayerPickerScope.current
-    SeatLayerConfirmCard(
-        modifier = modifier,
-        style = style ?: scope.styles[SeatLayerPickerPart.SeatConfirmation],
-        compact = false,
-    )
-}
+/** The card's own gutter: the boxes inside it stand this far from its edge. */
+private val GUTTER: Dp = 10.dp
+
+/** How far the card's hairline is pulled from the divider toward the ink. */
+private const val EDGE_TOWARD_INK = 0.3f

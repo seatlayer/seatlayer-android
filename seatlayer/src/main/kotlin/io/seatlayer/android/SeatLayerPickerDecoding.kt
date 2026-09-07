@@ -132,6 +132,7 @@ private fun decodePickerSelectedSeat(value: JsonElement): SeatLayerPickerSelecte
         minOccupancy = exactPickerInteger(root["minOccupancy"]),
         maxOccupancy = exactPickerInteger(root["maxOccupancy"]),
         screenPoint = decodePickerScreenPoint(root["screenPoint"]),
+        status = root.string("status")?.takeIf(String::isNotEmpty),
         commercial = decodePickerCommercial(root["commercial"]),
         seatViewThumbnail = decodePickerSeatViewThumbnail(root["seatViewThumb"]),
         // A negative distance is a renderer that could not measure, not a seat

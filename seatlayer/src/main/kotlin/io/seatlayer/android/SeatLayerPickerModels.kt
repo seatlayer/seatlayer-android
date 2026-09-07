@@ -132,6 +132,14 @@ public data class SeatLayerPickerSelectedSeat(
     val maxOccupancy: Int?,
     /** Where the seat is on screen, when the runtime reports it. */
     val screenPoint: SeatLayerPickerScreenPoint? = null,
+    /**
+     * What the runtime says can be done with this seat, where it says anything.
+     *
+     * An open string, and absent on every runtime shipped before the field: a
+     * word this build does not recognise is not a reason to swallow a seat the
+     * runtime selected.
+     */
+    val status: String? = null,
     /** The seat's own selling marks and the organizer's sentence. */
     val commercial: SeatLayerPickerSeatCommercial? = null,
     val seatViewThumbnail: SeatLayerPickerSeatViewThumbnail? = null,
