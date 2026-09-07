@@ -181,6 +181,80 @@ class SeatLayerPickerSnapshotFieldsTest {
         )
     }
 
+    @Test
+    fun theCommercialFactsOfASeatArriveNestedNotBesideIt() {
+        val seat = seat(
+            """
+            {"id":"a","label":"A-1",
+             "commercial":{"restrictedView":true,"obstructedView":false,
+                           "premium":true,"note":"  Stage left  "}}
+            """.trimIndent(),
+        )
+        val commercial = requireNotNull(seat.commercial)
+        assertTrue(commercial.restrictedView)
+        assertFalse(commercial.obstructedView)
+        assertTrue(commercial.premium)
+        assertEquals("Stage left", commercial.organizerNote)
+    }
+
+    @Test
+    fun commercialFactsSpeltFlatOnTheSeatAreNotRead() {
+        // The wire nests them. A flat reading would silently mark a fine seat
+        // restricted the day a runtime happens to carry a same-named field.
+        assertNull(
+            seat(
+                """{"id":"a","label":"A-1","restrictedView":true,"premium":true}""",
+            ).commercial,
+        )
+    }
+
+    @Test
+    fun aSeatWithNoCommercialMarkCarriesNoCommercialRow() {
+        assertNull(seat("""{"id":"a","label":"A-1"}""").commercial)
+        assertNull(seat("""{"id":"a","label":"A-1","commercial":{}}""").commercial)
+        assertNull(seat("""{"id":"a","label":"A-1","commercial":"restricted"}""").commercial)
+        assertNull(
+            seat(
+                """{"id":"a","label":"A-1","commercial":{"restrictedView":false}}""",
+            ).commercial,
+        )
+    }
+
+    @Test
+    fun aSeatWithNoAccommodationsIsNotASeatThatFailedToReport() {
+        // Absent is none. Refusing the seat, or reading absence as an error,
+        // would hide every ordinary seat in the venue.
+        assertEquals(emptyList<String>(), seat("""{"id":"a","label":"A-1"}""").accessibility)
+        assertEquals(
+            emptyList<String>(),
+            seat("""{"id":"a","label":"A-1","accessibility":"wheelchair"}""").accessibility,
+        )
+        assertEquals(
+            listOf("wheelchair", "companion"),
+            seat(
+                """
+                {"id":"a","label":"A-1",
+                 "accessibility":["wheelchair","companion","wheelchair",7]}
+                """.trimIndent(),
+            ).accessibility,
+        )
+    }
+
+    @Test
+    fun theWheelchairProvisionIsReadFromTheSeatItselfNotFromItsCommercialFacts() {
+        assertEquals(
+            "space",
+            seat(
+                """
+                {"id":"a","label":"A-1","wheelchairSpaceType":"space",
+                 "commercial":{"premium":true}}
+                """.trimIndent(),
+            ).wheelchairSpaceType,
+        )
+        assertNull(seat("""{"id":"a","label":"A-1"}""").wheelchairSpaceType)
+        assertNull(seat("""{"id":"a","label":"A-1","wheelchairSpaceType":3}""").wheelchairSpaceType)
+    }
+
     private fun seat(raw: String): SeatLayerPickerSelectedSeat =
         snapshot(selection = """[$raw]""").selection.single()
 
