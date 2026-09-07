@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import io.seatlayer.android.SeatLayerPickerHapticCue
 import io.seatlayer.android.SeatLayerPickerSnapshot
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -105,4 +106,37 @@ public fun SeatLayerPickerHapticEffects() {
         }
         previous = current
     }
+
+    // The card's own cues are named moments, not snapshot differences: a
+    // confirm is a press, and no snapshot can say when one happened.
+    LaunchedEffect(scope.stateHolder, scope.options.haptics) {
+        if (!scope.options.haptics) return@LaunchedEffect
+        scope.stateHolder.hapticCues.collect { cue ->
+            haptics.performHapticFeedback(seatLayerHapticFeedback(cue))
+        }
+    }
+}
+
+/**
+ * What each cue feels like on this platform.
+ *
+ * The design source names a weight per cue; the mapping from that weight to a
+ * platform feedback constant is this platform's own, because a cue names what
+ * happened and the chrome decides how that feels here.
+ */
+internal fun seatLayerHapticFeedback(
+    cue: SeatLayerPickerHapticCue,
+): HapticFeedbackType = when (cue) {
+    SeatLayerPickerHapticCue.SelectionAdded,
+    SeatLayerPickerHapticCue.SectionFocused,
+    SeatLayerPickerHapticCue.CardCancelled,
+    -> HapticFeedbackType.TextHandleMove
+    SeatLayerPickerHapticCue.CardArrived,
+    SeatLayerPickerHapticCue.TicketRemoved,
+    -> HapticFeedbackType.TextHandleMove
+    SeatLayerPickerHapticCue.SeatConfirmed,
+    SeatLayerPickerHapticCue.HoldCreated,
+    SeatLayerPickerHapticCue.HoldEnding,
+    SeatLayerPickerHapticCue.HoldExpired,
+    -> HapticFeedbackType.LongPress
 }
