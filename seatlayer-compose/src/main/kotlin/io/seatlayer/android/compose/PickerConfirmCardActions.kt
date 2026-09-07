@@ -1,7 +1,5 @@
 package io.seatlayer.android.compose
 
-import android.animation.ValueAnimator
-import android.os.Build
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.CubicBezierEasing
 import androidx.compose.animation.core.LinearEasing
@@ -71,12 +69,6 @@ private val SQUARE_SIZE: Dp = 44.dp
 
 /** How far the invitation halo reaches beyond the button's own edge. */
 private val INVITE_HALO: Dp = 6.dp
-
-/** Whether this device is playing animations at all. */
-@Composable
-internal fun seatLayerAnimationsEnabled(): Boolean = remember {
-    Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
-}
 
 private val EASE_ENTER = CubicBezierEasing(
     SeatLayerCurveTokens.EASE_ENTER_X1,
@@ -191,7 +183,7 @@ private fun SeatLayerPrimaryAnswerButton(
     val scope = LocalSeatLayerPickerScope.current
     val ground = if (destructive) scope.theme.error else scope.theme.accent
     val ink = if (destructive) Color.White else scope.theme.onAccent
-    val animate = seatLayerAnimationsEnabled()
+    val animate = !pickerReducedMotion()
     // The halo is drawn OUTSIDE the button's own clip: inside it, the growth
     // that is supposed to read as breathing is cut off at the corner radius
     // and never appears at all.

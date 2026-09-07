@@ -360,7 +360,7 @@ private fun AccessBadge(spinning: Boolean) {
     // Progress the buyer asked for is not decoration: a retry that shows
     // nothing is a button that looks broken. It still stops turning for a
     // viewer who asked for less movement, who gets the disabled button.
-    val turning = spinning && seatLayerPickerMotionEnabled()
+    val turning = spinning && !pickerReducedMotion()
     val transition = rememberInfiniteTransition(label = "seatlayer-access-retry")
     val angle by transition.animateFloat(
         initialValue = 0f,

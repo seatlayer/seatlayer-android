@@ -1,7 +1,5 @@
 package io.seatlayer.android.compose
 
-import android.animation.ValueAnimator
-import android.os.Build
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -63,18 +61,6 @@ import io.seatlayer.android.SeatLayerPickerHoldLapse
 import io.seatlayer.android.SeatLayerPickerRecovery
 import io.seatlayer.android.SeatLayerPickerPhase
 import kotlinx.coroutines.launch
-
-/**
- * Whether motion may play at all on this device.
- *
- * One accessor decides for every surface, so none of them can forget: a
- * platform that has turned animations off gets the settled state directly,
- * and anything sequenced behind a skipped animation runs immediately.
- */
-@Composable
-internal fun seatLayerPickerMotionEnabled(): Boolean = remember {
-    Build.VERSION.SDK_INT < Build.VERSION_CODES.O || ValueAnimator.areAnimatorsEnabled()
-}
 
 /**
  * Says, once, that a hold lapsed — and offers the seats back where it can.
@@ -352,7 +338,7 @@ private fun VenueLoadingSilhouette(
     color: Color,
     modifier: Modifier = Modifier,
 ) {
-    val animationsEnabled = seatLayerPickerMotionEnabled()
+    val animationsEnabled = !pickerReducedMotion()
     val transition = rememberInfiniteTransition(label = "seatlayer-venue-loading")
     val sweep by transition.animateFloat(
         initialValue = 0.45f,

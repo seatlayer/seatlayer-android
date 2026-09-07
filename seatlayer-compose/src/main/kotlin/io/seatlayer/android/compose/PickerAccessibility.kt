@@ -1,5 +1,7 @@
 package io.seatlayer.android.compose
 
+import android.animation.ValueAnimator
+import android.os.Build
 import android.provider.Settings
 import androidx.compose.foundation.focusable
 import androidx.compose.runtime.Composable
@@ -236,12 +238,17 @@ internal fun pickerReducedMotion(): Boolean {
     // one. See [LocalSeatLayerPickerCapture].
     if (LocalSeatLayerPickerCapture.current) return true
     return remember(context) {
-        runCatching {
+        val scaleIsZero = runCatching {
             Settings.Global.getFloat(
                 context.contentResolver,
                 Settings.Global.ANIMATOR_DURATION_SCALE,
                 1f,
             ) == 0f
         }.getOrDefault(false)
+        // The platform's own switch as well as the setting behind it: battery
+        // saver turns animators off without moving the duration scale.
+        val animatorsOff = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !ValueAnimator.areAnimatorsEnabled()
+        scaleIsZero || animatorsOff
     }
 }

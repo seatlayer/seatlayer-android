@@ -144,7 +144,7 @@ internal fun SeatLayerConfirmCardBody(
     val onConfidence = scope.callbacks.onSeatConfidence
     val primaryFocus = remember { FocusRequester() }
     val busy = scope.state.presentation.actionInFlight
-    val sweep = rememberPressSweep(answered, seatLayerAnimationsEnabled())
+    val sweep = rememberPressSweep(answered, !pickerReducedMotion())
     var engaged by remember(seat.id) { mutableStateOf(false) }
 
     val primaryLabel = when {
