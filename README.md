@@ -6,6 +6,8 @@
 [![Android](https://img.shields.io/badge/Android-API%2024%2B-3ddc84.svg)](https://developer.android.com/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)
 
+SeatLayer is interactive seating chart software built for stadium scale. Platforms embed the white-label seat picker with their own checkout; organizers sell seated events on their own website with their own payment gateway.
+
 The official SeatLayer Android SDK adds an interactive seating chart and native
 seat picker to Kotlin ticketing apps. It renders live seat availability, creates
 temporary holds, finds best-available seats, and exposes every buyer action
@@ -34,9 +36,13 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 > **Aligned release:** Use `0.3.5` for both Android artifacts. Pin the exact
 > version in production so core and Compose cannot drift.
 
+Two-step shape: the buyer picks and holds seats in the client with your public key, then your server confirms the booking with your secret key while your platform keeps checkout and its own payment provider.
+
+**Start here:** [Quickstart](https://docs.seatlayer.io/start/quickstart/) · [Holds and checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/) · [Android guide](https://docs.seatlayer.io/buyer-sdk/android/) · [SDK catalog](https://docs.seatlayer.io/sdk-catalog.json) · [Pricing](https://seatlayer.io/pricing/): $0 entry, 100 free confirmed-sold-seat credits per organization each month, then $0.10 down to $0.05 a credit, and credits never expire.
+
 ## Scale evidence
 
-SeatLayer is benchmarked on public 100,000-, 150,000- and 200,000-seat venue fixtures: 200,000 seats chart-ready in 1.95 s with 58 FPS zoom and 60 FPS pan in a desktop benchmark (15 September 2026). Fixtures, method, all runs and SHA-256 manifests: https://github.com/seatlayer/seatlayer-performance · Try the 53,018-seat live demo: https://app.seatlayer.io/demo/play/large-stadium
+Benchmarked on public 100,000-, 150,000- and 200,000-seat venue fixtures on 15 September 2026: 200,000 seats chart-ready in 1.95 s, desktop, local production build. Fixtures, method and run logs: https://github.com/seatlayer/seatlayer-performance. Live 200,000-seat stadium demo: https://app.seatlayer.io/demo/play/century-stadium-200k. This is renderer evidence, not a concurrent-buyer claim.
 
 ## Works as a native Android picker
 
