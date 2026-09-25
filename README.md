@@ -6,14 +6,13 @@
 [![Android](https://img.shields.io/badge/Android-API%2024%2B-3ddc84.svg)](https://developer.android.com/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-111827.svg)](LICENSE)
 
-SeatLayer is interactive seating chart software built for stadium scale. Platforms embed the white-label seat picker with their own checkout; organizers sell seated events on their own website with their own payment gateway.
-
-The official SeatLayer Android SDK adds an interactive seating chart and native
-seat picker to Kotlin ticketing apps. It renders live seat availability, creates
-temporary holds, finds best-available seats, and exposes every buyer action
+The official SeatLayer Android seat map SDK adds an interactive seating chart and
+native seat picker to Kotlin and Jetpack Compose ticketing apps. It renders live
+seat availability, creates temporary holds, finds best-available seats, and exposes every buyer action
 through typed Kotlin coroutines while your trusted server completes booking.
 The ready-made picker and public components use Jetpack Compose, with View/XML
-interop for existing Android screens.
+interop for existing Android screens. SeatLayer is seating chart and
+reserved-seat ticketing software built for venues up to stadium scale.
 
 Version `0.3.4` adds a complete adaptive Jetpack Compose picker, a
 headless protocol-2 state/controller, reusable native Android components, and
@@ -527,7 +526,7 @@ offered only while that exact line remains absent from the same session.
 The picker serializes inventory mutations and repeated checkout taps. Checkout
 returns one `SeatLayerPickerCheckoutHandoff` containing the opaque `holdId`,
 server expiry, currency, priced line items, and display total. The ordinary
-snapshot intentionally contains only hold status, expiry, and owner—not the
+snapshot intentionally contains only hold status, expiry, and owner, not the
 hold id. A successful handoff transfers ownership to the host; closing before
 handoff releases picker-owned inventory, while closing afterwards never
 releases the host-owned hold. If the host checkout callback throws, only that
