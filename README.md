@@ -22,7 +22,7 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 [Kotlin and Jetpack Compose seat-map guide](https://docs.seatlayer.io/buyer-sdk/android/) ·
 [SeatLayer reserved-seating platform](https://seatlayer.io/) ·
 [Buyer seat-map demo (web)](https://app.seatlayer.io/demo/play/grand-theatre) ·
-[All live demos](https://docs.seatlayer.io/start/live-demos/) ·
+[All live demos](https://seatlayer.io/demo/) ·
 [Native picker reference](docs/native-picker.md) ·
 [0.2.x migration guide](docs/migration-0.3.md) ·
 [Bridge reference](docs/bridge.md) ·
