@@ -695,13 +695,11 @@ integrations.
 
 ### Can I write the integration in Java instead of Kotlin?
 
-The raw coordinate is verified from both clean Java and Kotlin consumers, and
-`SeatLayerView` is an ordinary Android View. The public API is Kotlin-first,
-however: commands are suspending functions and state uses `StateFlow` and
-`SharedFlow`. Add Kotlin/coroutines to the module hosting the map for idiomatic
-control; the rest of a Java application can remain Java. The Compose picker
-itself is configured from Kotlin; a Java-owned screen can inflate its
-`SeatLayerPickerView` wrapper through a small Kotlin binding adapter.
+Yes, from a Java app with a small Kotlin part. `SeatLayerView` is an ordinary
+Android View, and a Java screen can inflate the ready-made `SeatLayerPickerView`
+through a short Kotlin binding. The API is Kotlin-first (suspending functions,
+`StateFlow` and `SharedFlow`), so keep the code that drives the map in Kotlin;
+the rest of the app can stay Java.
 
 ### Can I restyle the picker without rebuilding it?
 
