@@ -537,8 +537,7 @@ saved state alone is not proof that inventory is still held.
 panel according to the space the picker actually receives, so portrait,
 landscape, tablet, foldable, split-screen, and resizable windows share one
 component tree. Safe-drawing and gesture insets keep stock checkout actions out
-of system UI. Physical cutout and host-IME acceptance remain explicit release
-checks rather than implied by emulator layout evidence.
+of system UI.
 
 `SeatLayerPickerThemeMode.Auto` follows Android system light or dark appearance
 and updates both native chrome and renderer color roles without remounting the
@@ -741,11 +740,10 @@ belongs in a command line, screenshot, tracked file, or app release.
 
 ### Does the Android seat picker support dark mode, RTL, and accessibility?
 
-Yes. The stock UI supports live system light/dark resolution, event or host
-branding, RTL mirroring, large font scale, TalkBack semantics, 48dp minimum
-touch targets, runtime-authored accessibility filters, colorblind-safe
-presentation, and safe-drawing/gesture insets. Physical cutout, TalkBack, and
-host-IME acceptance remain part of the device release gate.
+Yes. The stock UI follows the system light or dark setting live and takes event
+or app branding. It mirrors for RTL, scales with large fonts, carries TalkBack
+labels and 48dp minimum touch targets, offers the event's accessibility filters
+and a colorblind-safe palette, and keeps clear of system bars.
 
 ## Continue your Android integration
 
