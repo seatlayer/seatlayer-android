@@ -14,9 +14,9 @@ The ready-made picker and public components use Jetpack Compose, with View/XML
 interop for existing Android screens. SeatLayer is seating chart and
 reserved-seat ticketing software built for venues up to stadium scale.
 
-Version `0.3.4` adds a complete adaptive Jetpack Compose picker, a
-headless protocol-2 state/controller, reusable native Android components, and
-View/XML interop while preserving the frozen raw `SeatLayerView` API.
+Version 0.3.5 includes a complete adaptive Jetpack Compose picker, reusable
+native Android components and View/XML support, and keeps the `0.2.x`
+`SeatLayerView` API unchanged.
 
 [SeatLayer Android SDK on Maven Central](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android) ·
 [Kotlin and Jetpack Compose seat-map guide](https://docs.seatlayer.io/buyer-sdk/android/) ·
