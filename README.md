@@ -556,8 +556,9 @@ selection, errors, or availability.
 
 Every builder receives `SeatLayerPickerPartContext`: immutable state, the
 accepted snapshot, native presentation state, typed controller, resolved theme,
-strings, options, global styles, and the style for that part. Calling
-`defaultContent()` decorates the stock component; omitting it replaces only that
+strings, options, global styles, and the style for that part. Each builder also
+gets the stock part as its second argument (`defaultContent` in the examples):
+call it to decorate the stock component, or leave it out to replace only that
 part.
 
 | Builder part | Stock public component |
