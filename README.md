@@ -670,13 +670,14 @@ cart, holds, 3D/panorama controls for venues up to 60,000 seats, and checkout
 handoff. Existing production apps on `0.2.x` can continue to use `SeatLayerView`
 and migrate to `0.3.5` when ready.
 
-### Is this a native Android seat map or a WebView?
+### What is native in the SeatLayer Android SDK?
 
-It is a native Android buyer flow with a hardened WebView used only as the venue
-renderer. All surrounding chrome and state presentation are Compose components
-or host-owned Views; seats, venue geometry, authored 3D, and panorama pixels and
-gestures remain renderer-owned. Application code interacts through typed Kotlin
-models and controllers rather than JavaScript or DOM APIs.
+Everything around the seat map: the header, filters, seat card, cart, hold timer
+and checkout hand-off are Jetpack Compose components or Views you own, and your
+code works with typed Kotlin models and controllers, never JavaScript. The seat
+map itself is the SeatLayer map from the web, shown inside your app, so seats,
+prices, 3D (for venues up to 60,000 seats) and the view from a seat match on
+every platform.
 
 ### Does it work with Jetpack Compose?
 
