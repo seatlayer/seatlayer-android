@@ -31,8 +31,6 @@ View/XML interop while preserving the frozen raw `SeatLayerView` API.
 [SeatLayer React Native SDK](https://github.com/seatlayer/seatlayer-react-native) ·
 [SeatLayer AI Toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit)
 
-![Seat map picker running in a native Android app: venue overview, section focus, seat confirmation, cart, 3D venue view and panorama](https://raw.githubusercontent.com/seatlayer/seatlayer-android/main/docs/media/picker-flow.gif)
-
 > **Aligned release:** Use `0.3.5` for both Android artifacts. Pin the exact
 > version in production so core and Compose cannot drift.
 
