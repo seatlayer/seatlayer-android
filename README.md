@@ -69,8 +69,8 @@ handoff used by the ready-made picker.
 | **4** | A View/XML screen | `SeatLayerPickerView` | The same ready-made native picker without a Compose host screen |
 | **5** | Your own Android Views | `SeatLayerPickerStateHolder` plus `SeatLayerPickerMapView` | The complete headless contract and map renderer |
 
-`SeatLayerView` remains the low-level protocol-1 map for existing `0.2.x`
-integrations that deliberately own all buyer chrome and hold orchestration.
+`SeatLayerView` remains the low-level map for existing `0.2.x` integrations that
+own every buyer control and the hold themselves.
 
 ```mermaid
 flowchart TD
@@ -109,7 +109,7 @@ flowchart TD
 
 | Artifact | Use it for |
 | --- | --- |
-| `io.seatlayer:seatlayer-android` | Raw protocol-1 API plus protocol-2 headless state, controller, and map View. No Compose dependency. |
+| `io.seatlayer:seatlayer-android` | The low-level map API, plus the picker's state, controller and map View. No Compose dependency. |
 | `io.seatlayer:seatlayer-android-compose` | Ready-made picker, all native components, themes/styles/builders, and View/XML host. Strictly version-aligned with core. |
 
 Both artifacts ship on the same release train.
@@ -309,13 +309,13 @@ class RawMapActivity : ComponentActivity() {
 
 `load` is a suspending function returning `ReadyInfo`: negotiated protocol,
 event mode (`live` or `test`), transport, and event key. Await it before sending
-commands. The SDK moves WebView work to the Android main thread internally.
+commands. You can call the controller from any thread; the SDK moves the work
+to the main thread itself.
 Collect `controller.events` inside `repeatOnLifecycle` when a raw screen should
 stop observation outside its active lifecycle.
 
-`SeatLayerView` continues to negotiate protocol 1. The native picker uses a
-separate protocol-2 profile, so adding Compose does not silently change an
-existing raw integration. See the [Android 0.3 migration guide](docs/migration-0.3.md)
+`SeatLayerView` keeps its `0.2.x` behavior, so adding the Compose picker never
+changes an existing raw integration. See the [Android 0.3 migration guide](docs/migration-0.3.md)
 for dependency choices, lifecycle differences, and an adoption checklist.
 
 ### Hold seats with the raw API
