@@ -247,8 +247,8 @@ SeatLayerPickerScope(
 ```
 
 See the [native picker reference](docs/native-picker.md) for the full component
-catalogue, builder context, per-part styling, localization fallback, mandatory
-test/attribution disclosure, headless state guarantees, and custom View setup.
+catalogue, builder context, per-part styling, localization fallback, the
+mandatory test-mode label, headless state guarantees, and custom View setup.
 
 ## View and XML applications
 
@@ -589,10 +589,9 @@ part.
 | `Error` | `SeatLayerPickerErrorView` |
 | `Empty` | `SeatLayerPickerEmptyView` |
 
-The test-mode indicator and required attribution intentionally remain outside
-the replacement catalogue. Public standalone controls also include fit,
-overview, step-out, view-mode, 3D navigation, colorblind and limited-view
-actions, plus `SeatLayerPickerUndoNotice`. The detailed
+The test-mode label stays outside the replacement catalogue. Public standalone
+controls also include fit, overview, step-out, view-mode, 3D navigation,
+colorblind and limited-view actions, plus `SeatLayerPickerUndoNotice`. The detailed
 [native-picker guide](docs/native-picker.md) documents the options, builders,
 headless commands, lifecycle duties, and capability matrix.
 
@@ -705,11 +704,10 @@ itself is configured from Kotlin; a Java-owned screen can inflate its
 
 ### Can I restyle the picker without rebuilding it?
 
-Yes. Use theme and theme mode for color/type roles, localized strings for all
-buyer copy, global and per-part styles for geometry and surfaces, chrome/options
-for behavior and visibility, and one of 25 builders to replace a whole part.
-Required test disclosure and attribution cannot be removed by returning an
-empty builder.
+Yes. Use theme and theme mode for colors and type, localized strings for all
+buyer copy, global and per-part styles for shapes and surfaces, options for
+behavior and visibility, and one of 25 builders to replace a whole part. A
+builder cannot remove the test-mode label, so a test event always says so.
 
 ### Can I build a completely different seat-picker layout?
 
