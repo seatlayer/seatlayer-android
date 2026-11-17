@@ -596,10 +596,11 @@ actions, plus `SeatLayerPickerUndoNotice`. The detailed
 [native-picker guide](docs/native-picker.md) documents the options, builders,
 headless commands, lifecycle duties, and capability matrix.
 
-## Optional WebView engine prewarm
+## Prepare the picker in advance (optional)
 
-For the best BOOK NOW latency, start the Android System WebView engine and warm
-the immutable mobile runtime while the host's Event Details screen is visible:
+Call `SeatLayerPickerPrewarmer.prewarm(applicationContext)` while the event
+details screen is visible. It never creates a picker session and never receives
+an Activity, event key, public key, buyer token or hold.
 
 ```kotlin
 lifecycleScope.launch {
@@ -608,25 +609,9 @@ lifecycleScope.launch {
 }
 ```
 
-The prewarmer loads only the pinned credential-free runtime page in a temporary
-hardened WebView and destroys that WebView when the main document finishes or
-times out. It never creates a picker session or receives an Activity, event
-key, public key, buyer token, or hold. `rendererPageLoaded` reports whether the
-document warm completed; a `false` value is a graceful page-warm fallback after
-the engine itself started. Concurrent callers share one operation, cancelling
-one coroutine cancels only that caller's wait, and a later raw or picker load
-waits for any operation already in flight.
-
-The `benchmark` module measures cold, warm, and prewarmed picker startup with a
-release-like, non-debuggable sample. Record release evidence on physical
-Android hardware with a current System WebView:
-
-```bash
-./gradlew :benchmark:connectedBenchmarkAndroidTest
-```
-
-Emulator runs are useful for functional checks but are not release timing
-evidence.
+`result.rendererPageLoaded` is `false` when only part of the preparation
+finished; the picker still opens normally. Several callers share one call, and a
+picker opened meanwhile waits for it.
 
 ## Build locally
 
