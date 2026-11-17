@@ -25,7 +25,7 @@ native Android components and View/XML support, and keeps the `0.2.x`
 [All live demos](https://seatlayer.io/demo/) ·
 [Native picker reference](docs/native-picker.md) ·
 [0.2.x migration guide](docs/migration-0.3.md) ·
-[Bridge reference](docs/bridge.md) ·
+[Commands and events](docs/bridge.md) ·
 [SeatLayer iOS seat map SDK](https://github.com/seatlayer/seatlayer-ios) ·
 [SeatLayer Flutter seat map SDK](https://github.com/seatlayer/seatlayer-flutter) ·
 [SeatLayer React Native SDK](https://github.com/seatlayer/seatlayer-react-native) ·
@@ -387,8 +387,8 @@ if (controller.bundle.value?.supportsCommand("bestAvailable") == true) {
 `BuyerAccessExpired` · `BuyerAccessUnavailable` ·
 `SelectedObjectsUnavailable` · `HoldChanged` · `HoldRestored` · `HoldExpired` ·
 `GeneralAdmissionClicked` · `Hint` · `Error` · `SeatHovered` · `DeckTapped` ·
-`Checkout` · `Unknown`. See the [bridge reference](docs/bridge.md) for the exact
-command and event contract.
+`Checkout` · `Unknown`. See the [command and event reference](docs/bridge.md) for
+the exact contract.
 
 `SeatLayerConfiguration` accepts:
 
@@ -771,8 +771,8 @@ host-IME acceptance remain part of the device release gate.
 - [Read the native Android picker guide](docs/native-picker.md) for the ready
   widget, customization ladder, all 25 builders, public components, headless
   controller, adaptive UI, and capability behavior.
-- [Read the Android bridge reference](docs/bridge.md) for protocol negotiation,
-  snapshots, command gating, lifecycle, checkout ownership, and security.
+- [Read the command and event reference](docs/bridge.md) for snapshots, command
+  availability, lifecycle, checkout ownership and security.
 - [Migrate from raw Android 0.2.x](docs/migration-0.3.md) without breaking the
   frozen low-level JVM surface.
 - [Connect seat holds to secure server-side checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/)
