@@ -729,13 +729,12 @@ Yes. Nothing in the app takes a payment. Your server reads the held seats and
 their prices, charges through the provider you already use, and books the hold
 with a stable booking reference.
 
-### Can I evaluate the Android SDK without a SeatLayer account or exposing a key?
+### Can I try the Android SDK without an account?
 
-Unit, component, accessibility, API/ABI, and consumer builds require no hosted
-credential. A real hosted inventory run needs an authorized development client
-key entered through an ignored local environment file. The sample never renders
-or logs it, release/benchmark builds compile it to an empty value, and no key
-belongs in a command line, screenshot, tracked file, or app release.
+You can see the SeatLayer picker in the live browser demo with no account. To
+run the Android sample on live seats, create a test event and start the sample
+with `--es seatlayerEvent <your event key>`. Test mode is free, with no time
+limit and no card, and it uses no credits.
 
 ### Does the Android seat picker support dark mode, RTL, and accessibility?
 
