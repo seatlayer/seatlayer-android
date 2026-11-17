@@ -666,9 +666,9 @@ or raw `0.2.x` ABI drift.
 For the complete native flow, add the aligned core and Compose artifacts and
 place `SeatLayerPicker` in a bounded screen with your event configuration. It
 already includes the interactive seating chart, filters, seat confirmation,
-cart, holds, 3D/panorama controls, and checkout handoff. Existing production
-apps on `0.2.x` can continue to use `SeatLayerView` and migrate to `0.3.5`
-when ready.
+cart, holds, 3D/panorama controls for venues up to 60,000 seats, and checkout
+handoff. Existing production apps on `0.2.x` can continue to use `SeatLayerView`
+and migrate to `0.3.5` when ready.
 
 ### Is this a native Android seat map or a WebView?
 
