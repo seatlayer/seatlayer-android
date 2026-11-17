@@ -725,10 +725,9 @@ process.
 
 ### Can I use my own payment provider?
 
-Yes. SeatLayer does not process payment inside the seat map. Send the opaque
-handoff `holdId` to your trusted backend, inspect the hold and calculate the
-charge there, pay through Stripe, Adyen, Razorpay, or your own provider, then
-book with a stable idempotent booking reference.
+Yes. Nothing in the app takes a payment. Your server reads the held seats and
+their prices, charges through the provider you already use, and books the hold
+with a stable booking reference.
 
 ### Can I evaluate the Android SDK without a SeatLayer account or exposing a key?
 
