@@ -51,12 +51,11 @@ error states, plus the controls around 3D and panorama are Jetpack Compose
 components. `SeatLayerPickerView` hosts that same native tree in a View/XML
 screen, and the headless API also supports an entirely host-owned View layout.
 
-The pinned SeatLayer renderer owns the pixels and gestures that only the venue
-knows how to draw: seats, labels, section geometry, real venue 3D, and the
-seat-view panorama. It knows native chrome owns the buyer journey, so it does
-not place a second tooltip, cart, test badge, or checkout button underneath the
-Android UI. This keeps chart behavior identical across SeatLayer platforms
-without making the surrounding application feel like a generic web page.
+The seat map itself (seats, labels, sections, the 3D venue and the view from a
+seat) is the SeatLayer map from the web, shown inside your app, so a seat looks
+and behaves the same on Android, iOS, Flutter and the web. The map leaves the
+tooltip, cart, test label and checkout button to the native controls, so nothing
+is drawn twice.
 
 The integration paths form a ladder. A more custom level keeps the same
 inventory, snapshots, holds, lifecycle reconciliation, and secure checkout
@@ -101,9 +100,8 @@ flowchart TD
   `0.2.x` applications.
 - Typed immutable snapshots, capability-gated commands, readiness and chart-load
   telemetry, secure holds, and buyer-safe checkout handoff.
-- A hardened, origin-restricted AndroidX WebKit bridge with no unrestricted
-  `addJavascriptInterface`.
-- A pinned immutable `seatlayer-js@0.71.5/mobile.html` renderer.
+- The SeatLayer map from the web, shown inside your app. Each SDK release uses
+  one matching map version.
 - A generic sample covering ready Compose, branded/custom Compose, ready/custom
   View, and raw integrations.
 
@@ -190,12 +188,11 @@ quantities, dense cart, best available, checkout, 3D/seat-view controls,
 hold-lapse recovery, light/dark branding, 37 locale dictionaries, lifecycle
 reconciliation, and Android predictive back.
 
-That is the complete buyer flow: loading and handshake, live inventory,
-category and accessibility filtering, venue and floor navigation, visible
-Adult/Child or other runtime-authored tier selection, reserved seats, general
-admission and tables, cart and holds, expiry recovery, immersive views, and a
-buyer-safe checkout handoff. Optional controls appear only when the negotiated
-runtime advertises the capability they drive.
+That is the complete buyer flow: live inventory, category and accessibility
+filters, venue and floor navigation, Adult/Child and other ticket types,
+reserved seats, general admission and tables, cart and holds, expiry recovery,
+3D and the view from a seat (for venues up to 60,000 seats), and the checkout
+hand-off. A control appears only when the event's map supports it.
 
 Register the exact renderer origin `https://cdn.seatlayer.io` on the publishable
 key. For login-gated, presale, partner, channel, or other private inventory,
@@ -408,7 +405,7 @@ command and event contract.
 | `currency` | Buyer-facing currency. |
 | `colorblindSafe` | Accessible palette preference. |
 | `initialView` | Flat, isometric, or perspective view. |
-| `showsWebSeatTooltip` | Enables the raw web-rendered tooltip; off by default. |
+| `showsWebSeatTooltip` | Shows the map's own seat tooltip; off by default. |
 | `commandTimeoutMillis` | Per-command timeout; defaults to 15 seconds. |
 | `handshakeTimeoutMillis` | Initial ready timeout; defaults to 30 seconds. |
 | `hostInfo` | Extra host identification sent with the handshake. |
@@ -418,34 +415,20 @@ or emitted through public diagnostics. The provider is called with a typed
 reason (`initial`, `expiring`, `expired`, `unauthorized`, `reconnect`, or
 `manual`); a provider failure is reported without leaking its exception message.
 
-### Runtime and layout boundary
-
-Both raw and native-picker integrations load the pinned
-`https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html` document. Native and
-web communicate through AndroidX WebKit messages restricted to the exact HTTPS
-origin and main frame. File/content access, mixed content, popups, multiple
-windows, automatic external navigation, and third-party cookies are disabled.
-Renderer termination becomes a typed transport failure instead of a silent
-blank screen.
-
-The production path is the hosted `0.71.5` page. The
-repository retains a verified `seatlayer-js@0.59.0` JavaScript fixture only for
-deterministic legacy tests: `seatlayer/src/main/assets/seatlayer.js`, SHA-256
-`89bc29fbccad5d3c30e52cf5381c974b95ac034b32c28b400248b4ebb4ee22a9`. The
-fixture is not loaded by the production picker.
+### Layout
 
 Give the map a definite height or make it full-screen. Do not place it in a
 `ScrollView`, `NestedScrollView`, lazy list item, or another gesture-driven
 container. The venue canvas owns tap, pan, pinch, panorama drag, and immersive
-camera gestures; the SDK disables browser scrollbars, over-scroll, and built-in
-WebView zoom controls that would compete with it.
+camera gestures; the SDK turns off the scrollbars, over-scroll and zoom controls
+that would compete with it.
 
 ## Checkout and security boundary
 
 The app selects and holds inventory. A trusted backend inspects and books the
 hold after payment or order validation.
 
-- Never ship a SeatLayer secret key in the APK, WebView, or configuration.
+- Never ship a SeatLayer secret key in the APK or its configuration.
 - Pass only the opaque checkout `holdId` and normal order context to the backend.
 - Calculate payable totals from server-inspected hold items, not app input.
 - Reuse a stable order id as the booking reference for safe retries.
@@ -461,11 +444,8 @@ SeatLayerConfiguration(
 )
 ```
 
-The SDK loads only the immutable
-`https://cdn.seatlayer.io/seatlayer-js@0.71.5/mobile.html` page. Web messages are
-restricted to the exact HTTPS origin and main frame; external navigation,
-file/content access, mixed content, popups, multiple windows, and third-party
-cookies are blocked. The bridge does not use `addJavascriptInterface`.
+The map accepts messages only from SeatLayer's own HTTPS address. The SDK blocks
+navigation away from it, file access, pop-ups and third-party cookies.
 
 ## Headless picker behavior
 
