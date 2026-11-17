@@ -6,6 +6,10 @@ Use JDK 17 and an Android SDK containing platform 36.
 ./gradlew validate
 ```
 
+The `benchmark` module measures picker start-up on a release-like build. Record
+numbers on a physical device:
+`./gradlew :benchmark:connectedBenchmarkAndroidTest`.
+
 Keep public API additions source-compatible where possible. New bridge fields
 must decode loss-tolerantly because the native package and vendored Web SDK can
 be upgraded independently.
