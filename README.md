@@ -121,8 +121,7 @@ Both artifacts ship on the same release train.
 - Android API 24 or newer; compile SDK 36
 - JDK 17 for local builds
 - AndroidX
-- Android System WebView support for secure WebKit message listeners
-- Document-start JavaScript support when using the protocol-2 native picker
+- An up-to-date Android System WebView on the device (Google Play keeps it current)
 - `android:enableOnBackInvokedCallback="true"` on picker activities when
   targeting Android 15 or lower and predictive-back animation is required
 
