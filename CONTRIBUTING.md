@@ -17,12 +17,12 @@ fixture checksum.
 
 The external-consumer matrix is intentionally frozen rather than implied:
 
-| Lane | JDK | Gradle | AGP | Kotlin/Compose plugin |
+| Setup | JDK | Gradle | AGP | Kotlin/Compose plugin |
 | --- | --- | --- | --- | --- |
 | Oldest supported | 17 | 8.13 | 8.12.0 | 2.3.10 |
 | Current | 17 | 9.6.1 | 9.2.1 built-in Kotlin | 2.3.10 |
 
-Both lanes compile SDK `minSdk 24` raw Java/Kotlin and ready-made/custom
+Both setups compile SDK `minSdk 24` raw Java/Kotlin and ready-made/custom
 Compose/View consumers against `compileSdk 36`. The SDK itself uses Compose BOM
 `2026.06.00`, Activity Compose `1.13.0`, Lifecycle `2.10.0`, and AndroidX
 WebKit `1.16.0`.

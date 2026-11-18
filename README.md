@@ -57,6 +57,7 @@ Both artifacts ship on the same release train.
 
 - Android API 24 or newer; compile SDK 36
 - JDK 17 for local builds
+- Oldest supported build tools: Gradle 8.13, Android Gradle Plugin 8.12.0 and Kotlin 2.3.10
 - AndroidX
 - Android System WebView with the `WEB_MESSAGE_LISTENER` feature, plus `DOCUMENT_START_SCRIPT` for the
   picker. Without them `SeatLayerView` or the picker stops with a transport error that asks for a WebView update.
@@ -224,7 +225,7 @@ Three layers can be mixed without forking the SDK:
 
 1. Pass `SeatLayerPickerOptions`, `SeatLayerPickerTheme`, localized
    `SeatLayerPickerStrings`, and `SeatLayerPickerStyles` to configure the
-   ready-made picker.
+   ready-made picker. `SeatLayerPickerOptions(max3DSeats = ...)`: 3D opens for venues up to 60,000 seats; on a touch screen the default is 30,000 unless you set this option.
 2. Use `SeatLayerPickerBuilders` to decorate or replace any of 25 independent
    parts.
 3. Use `SeatLayerPickerScope` and public components such as
@@ -646,6 +647,13 @@ time limit, even if Android stops the app. When the app returns to the
 foreground, the picker checks the hold with the server, tells the buyer once if
 it lapsed, and offers back only the seats that are still free. With the raw
 `SeatLayerView`, your code calls `hold()` itself.
+
+### Can I write the integration in Java instead of Kotlin?
+
+Yes, from a Java app with a small Kotlin part. `SeatLayerView` is an ordinary
+Android View, and a Java screen can inflate the ready-made `SeatLayerPickerView`
+through a short Kotlin binding. The API is Kotlin-first, so keep the code that
+drives the map in Kotlin; the rest of the app can stay Java.
 
 ### Can I try the Android SDK without an account?
 
