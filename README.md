@@ -689,6 +689,8 @@ and a colorblind-safe palette, and keeps clear of system bars.
 | --- | --- |
 | JavaScript | [`@seatlayer/js`](https://www.npmjs.com/package/@seatlayer/js) |
 | React | [`@seatlayer/react`](https://www.npmjs.com/package/@seatlayer/react) |
+| Vue | [`@seatlayer/vue`](https://www.npmjs.com/package/@seatlayer/vue) |
+| Angular | [`@seatlayer/angular`](https://www.npmjs.com/package/@seatlayer/angular) |
 | React Native | [`@seatlayer/react-native`](https://www.npmjs.com/package/@seatlayer/react-native) |
 | Flutter | [`seatlayer`](https://pub.dev/packages/seatlayer) |
 | iOS | [`seatlayer-ios`](https://github.com/seatlayer/seatlayer-ios) |
