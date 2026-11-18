@@ -579,33 +579,11 @@ lifecycleScope.launch {
 finished; the picker still opens normally. Several callers share one call, and a
 picker opened meanwhile waits for it.
 
-## Build locally
+## Run the sample
 
 ```bash
-./gradlew validate
 ./gradlew :sample:installDebug
 ```
-
-`validate` runs focused unit tests, compiles the deterministic Compose
-accessibility fixture and release-like Macrobenchmark, checks generated
-locale/token source locks, lints and builds both artifacts, generates both
-Maven POMs, verifies public API/raw ABI, builds the R8-minified consumer sample,
-builds standalone raw Java/Kotlin and Compose apps from temporary Maven
-coordinates on both the oldest and current supported build toolchains, verifies
-that the raw dependency graph contains no Compose, and checks the retained
-fixture checksum.
-
-The external-consumer matrix is intentionally frozen rather than implied:
-
-| Lane | JDK | Gradle | AGP | Kotlin/Compose plugin |
-| --- | --- | --- | --- | --- |
-| Oldest supported | 17 | 8.13 | 8.12.0 | 2.3.10 |
-| Current | 17 | 9.6.1 | 9.2.1 built-in Kotlin | 2.3.10 |
-
-Both lanes compile SDK `minSdk 24` raw Java/Kotlin and ready-made/custom
-Compose/View consumers against `compileSdk 36`. The SDK itself uses Compose BOM
-`2026.06.00`, Activity Compose `1.13.0`, Lifecycle `2.10.0`, and AndroidX
-WebKit `1.16.0`.
 
 The sample launches the ready-made Compose picker by default. Every supported
 integration path remains runnable through the `MainActivity` intent:
@@ -617,14 +595,9 @@ adb shell am start -n io.seatlayer.sample/.MainActivity \
 ```
 
 Supported values are `ready-compose`, `branded-compose`, `custom-compose`,
-`ready-view`, `custom-view`, and `raw-view`. The Java/Kotlin source examples
-therefore compile the default widget, full branding/part replacement, a custom
-Compose composition, the ready-made View host, a pure Android View composition
-over the headless controller/map, and the retained raw protocol-1 view.
+`ready-view`, `custom-view`, and `raw-view`.
 
-When intentionally changing public API, review and refresh the checked-in dumps
-with `scripts/verify-public-api.sh --write`; `validate` rejects accidental API
-or raw `0.2.x` ABI drift.
+To build and test the SDK itself, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Frequently asked questions
 
