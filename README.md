@@ -27,29 +27,22 @@ view from each seat (3D for venues up to 60,000 seats; the 2D map benchmarked at
 
 Season tickets are in the web and server SDKs today, not in this SDK.
 
-Version 0.3.5 includes a complete adaptive Jetpack Compose picker, reusable
-native Android components and View/XML support, and keeps the `0.2.x`
-`SeatLayerView` API unchanged.
+## Try it
 
-[SeatLayer Android SDK on Maven Central](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android) ·
-[Kotlin and Jetpack Compose seat-map guide](https://docs.seatlayer.io/buyer-sdk/android/) ·
+- [Buyer seat-map demo](https://app.seatlayer.io/demo/play/grand-theatre) in your browser, no account needed · [All live demos](https://seatlayer.io/demo/)
+- [Quickstart](https://docs.seatlayer.io/start/quickstart/): your first event and keys
+- [Kotlin and Jetpack Compose seat-map guide](https://docs.seatlayer.io/buyer-sdk/android/) · [Holds and checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/) · [SDK catalog](https://docs.seatlayer.io/sdk-catalog.json)
+- [SeatLayer Android SDK on Maven Central](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android) · [Native picker reference](docs/native-picker.md) · [0.2.x migration guide](docs/migration-0.3.md) · [Commands and events](docs/bridge.md)
+- [Pricing](https://seatlayer.io/pricing/): test mode is free; live, the first 100 sold seats each month are free, then 10¢ down to 5¢ per sold seat, with no subscription, and purchased credits never expire.
+
+Two-step shape: the buyer picks and holds seats in the client with your public key, then your server confirms the booking with your secret key while your platform keeps checkout and its own payment provider.
+
+More from SeatLayer:
 [SeatLayer reserved-seating platform](https://seatlayer.io/) ·
-[Buyer seat-map demo (web)](https://app.seatlayer.io/demo/play/grand-theatre) ·
-[All live demos](https://seatlayer.io/demo/) ·
-[Native picker reference](docs/native-picker.md) ·
-[0.2.x migration guide](docs/migration-0.3.md) ·
-[Commands and events](docs/bridge.md) ·
 [SeatLayer iOS seat map SDK](https://github.com/seatlayer/seatlayer-ios) ·
 [SeatLayer Flutter seat map SDK](https://github.com/seatlayer/seatlayer-flutter) ·
 [SeatLayer React Native SDK](https://github.com/seatlayer/seatlayer-react-native) ·
 [SeatLayer AI Toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit)
-
-> **Aligned release:** Use `0.3.5` for both Android artifacts. Pin the exact
-> version in production so core and Compose cannot drift.
-
-Two-step shape: the buyer picks and holds seats in the client with your public key, then your server confirms the booking with your secret key while your platform keeps checkout and its own payment provider.
-
-**Start here:** [Quickstart](https://docs.seatlayer.io/start/quickstart/) · [Holds and checkout](https://docs.seatlayer.io/buyer-sdk/holds-and-checkout/) · [Android guide](https://docs.seatlayer.io/buyer-sdk/android/) · [SDK catalog](https://docs.seatlayer.io/sdk-catalog.json) · [Pricing](https://seatlayer.io/pricing/): test mode is free; live, the first 100 sold seats each month are free, then 10¢ down to 5¢ per sold seat, with no subscription, and purchased credits never expire.
 
 ## Scale evidence
 
@@ -138,6 +131,13 @@ Both artifacts ship on the same release train.
   targeting Android 15 or lower and predictive-back animation is required
 
 ## Install
+
+Version 0.3.5 includes a complete adaptive Jetpack Compose picker, reusable
+native Android components and View/XML support, and keeps the `0.2.x`
+`SeatLayerView` API unchanged.
+
+> **Aligned release:** Use `0.3.5` for both Android artifacts. Pin the exact
+> version in production so core and Compose cannot drift.
 
 Add both aligned `0.3.5` artifacts for the native picker:
 
