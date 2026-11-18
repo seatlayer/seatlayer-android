@@ -138,8 +138,8 @@ reconciliation, and Android predictive back.
 That is the complete buyer flow: live inventory, category and accessibility
 filters, venue and floor navigation, Adult/Child and other ticket types,
 reserved seats, general admission and tables, cart and holds, expiry recovery,
-3D and the view from a seat, and the checkout hand-off. A control appears only when the event's map supports it.
-3D is offered for venues up to 30,000 seats on phones and 60,000 on desktop by default; set `max3DSeats` to change it.
+3D and the view from a seat (for venues up to 60,000 seats), and the checkout
+hand-off. A control appears only when the event's map supports it.
 
 Register the exact renderer origin `https://cdn.seatlayer.io` on the publishable
 key. For login-gated, presale, partner, channel, or other private inventory,
@@ -606,15 +606,18 @@ To build and test the SDK itself, see [CONTRIBUTING.md](CONTRIBUTING.md).
 For the complete native flow, add the aligned core and Compose artifacts and
 place `SeatLayerPicker` in a bounded screen with your event configuration. It
 already includes the interactive seating chart, filters, seat confirmation,
-cart, holds, 3D/panorama controls and checkout handoff. 3D is offered for venues up to 30,000 seats on phones and 60,000 on desktop by default; set `max3DSeats` to change it. Existing production apps on `0.2.x` can continue to use `SeatLayerView`
-and migrate to `0.3.5` when ready.
+cart, holds, 3D/panorama controls for venues up to 60,000 seats, and checkout
+handoff. Existing production apps on `0.2.x` can continue to use
+`SeatLayerView` and migrate to `0.3.5` when ready.
 
 ### What is native in the SeatLayer Android SDK?
 
 Everything around the seat map: the header, filters, seat card, cart, hold timer
 and checkout hand-off are Jetpack Compose components or Views you own, and your
 code works with typed Kotlin models and controllers, never JavaScript. The seat
-map itself is the SeatLayer map from the web, shown inside your app, so seats, prices, 3D and the view from a seat match on every platform. 3D is offered for venues up to 30,000 seats on phones and 60,000 on desktop by default; set `max3DSeats` to change it.
+map itself is the SeatLayer map from the web, shown inside your app, so seats,
+prices, 3D (for venues up to 60,000 seats) and the view from a seat match on
+every platform.
 
 ### Does it work with Jetpack Compose?
 
