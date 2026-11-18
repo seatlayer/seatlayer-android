@@ -44,73 +44,6 @@ More from SeatLayer:
 [SeatLayer React Native SDK](https://github.com/seatlayer/seatlayer-react-native) ·
 [SeatLayer AI Toolkit](https://github.com/seatlayer/seatlayer-ai-toolkit)
 
-## Scale evidence
-
-Benchmarked on public 100,000-, 150,000- and 200,000-seat venue fixtures on 15 September 2026: 200,000 seats chart-ready in 1.95 s, desktop, local production build. Tested at 10,000 simulated concurrent buyers on one 12,000-seat event (18 September 2026): engine-side hold latency p99 9 ms, zero server errors. Method, fixtures and run files: https://github.com/seatlayer/seatlayer-performance. Live 200,000-seat stadium demo: https://app.seatlayer.io/demo/play/century-stadium-200k.
-
-## Works as a native Android picker
-
-**Every piece of buyer chrome is native Android UI.** The header, price legend,
-floor and section navigation, accessibility filters, seat confirmation, tier
-choices, quantity prompts, cart, hold countdown, checkout action, loading and
-error states, plus the controls around 3D and panorama are Jetpack Compose
-components. `SeatLayerPickerView` hosts that same native tree in a View/XML
-screen, and the headless API also supports an entirely host-owned View layout.
-
-The seat map itself (seats, labels, sections, the 3D venue and the view from a
-seat) is the SeatLayer map from the web, shown inside your app, so a seat looks
-and behaves the same on Android, iOS, Flutter and the web. The map leaves the
-tooltip, cart, test label and checkout button to the native controls, so nothing
-is drawn twice.
-
-The integration paths form a ladder. A more custom level keeps the same
-inventory, snapshots, holds, lifecycle reconciliation, and secure checkout
-handoff used by the ready-made picker.
-
-| Level | You want | You use | You keep |
-| --- | --- | --- | --- |
-| **1** | The complete buyer flow | `SeatLayerPicker` | Adaptive Compose UI and everything below |
-| **2** | The flow in your brand | Theme, strings, styles, options, or one of 25 builders | Stock layout, state, and hold ownership |
-| **3** | Your own Compose screen | `SeatLayerPickerScope` plus public components | Inventory, controller, snapshots, lifecycle, checkout |
-| **4** | A View/XML screen | `SeatLayerPickerView` | The same ready-made native picker without a Compose host screen |
-| **5** | Your own Android Views | `SeatLayerPickerStateHolder` plus `SeatLayerPickerMapView` | The complete headless contract and map renderer |
-
-`SeatLayerView` remains the low-level map for existing `0.2.x` integrations that
-own every buyer control and the hold themselves.
-
-```mermaid
-flowchart TD
-  A["SeatLayerConfiguration<br/>event + publishable access"] --> B{"How much UI<br/>do you own?"}
-  B -->|"Nothing"| C["SeatLayerPicker"]
-  B -->|"The look"| D["theme · strings · styles<br/>options · builders"]
-  B -->|"A Compose screen"| E["SeatLayerPickerScope<br/>+ components"]
-  B -->|"A View screen"| F["SeatLayerPickerView<br/>or headless Views"]
-  C --> G["SeatLayerPickerCheckoutHandoff"]
-  D --> G
-  E --> G
-  F --> G
-  G --> H["Your backend inspects<br/>and books the hold"]
-```
-
-## What is included
-
-- `SeatLayerPicker`, the complete adaptive Jetpack Compose seat-booking flow.
-- `SeatLayerPickerBuilders`, themes, strings, options, and per-part styles for
-  changing the product without forking it.
-- `SeatLayerPickerScope` and every stock component for a host-owned Compose
-  hierarchy.
-- `SeatLayerPickerView` for the same ready-made picker in View/XML apps.
-- `SeatLayerPickerStateHolder`, `SeatLayerPickerController`, and
-  `SeatLayerPickerMapView` for a fully headless or custom-View integration.
-- The frozen `SeatLayerView` and raw coroutine controller used by existing
-  `0.2.x` applications.
-- Typed immutable snapshots, capability-gated commands, readiness and chart-load
-  telemetry, secure holds, and buyer-safe checkout handoff.
-- The SeatLayer map from the web, shown inside your app. Each SDK release uses
-  one matching map version.
-- A generic sample covering ready Compose, branded/custom Compose, ready/custom
-  View, and raw integrations.
-
 ## Packages
 
 | Artifact | Use it for |
@@ -221,6 +154,69 @@ a new session; recover an existing hold by restoring its opaque id through
 `SeatLayerPickerOptions(initialHoldId = ...)` and the same renewable
 buyer-access provider. Verify that runtime-owned resume path with real
 inventory, and never log the hold id.
+
+## Works as a native Android picker
+
+**Every piece of buyer chrome is native Android UI.** The header, price legend,
+floor and section navigation, accessibility filters, seat confirmation, tier
+choices, quantity prompts, cart, hold countdown, checkout action, loading and
+error states, plus the controls around 3D and panorama are Jetpack Compose
+components. `SeatLayerPickerView` hosts that same native tree in a View/XML
+screen, and the headless API also supports an entirely host-owned View layout.
+
+The seat map itself (seats, labels, sections, the 3D venue and the view from a
+seat) is the SeatLayer map from the web, shown inside your app, so a seat looks
+and behaves the same on Android, iOS, Flutter and the web. The map leaves the
+tooltip, cart, test label and checkout button to the native controls, so nothing
+is drawn twice.
+
+The integration paths form a ladder. A more custom level keeps the same
+inventory, snapshots, holds, lifecycle reconciliation, and secure checkout
+handoff used by the ready-made picker.
+
+| Level | You want | You use | You keep |
+| --- | --- | --- | --- |
+| **1** | The complete buyer flow | `SeatLayerPicker` | Adaptive Compose UI and everything below |
+| **2** | The flow in your brand | Theme, strings, styles, options, or one of 25 builders | Stock layout, state, and hold ownership |
+| **3** | Your own Compose screen | `SeatLayerPickerScope` plus public components | Inventory, controller, snapshots, lifecycle, checkout |
+| **4** | A View/XML screen | `SeatLayerPickerView` | The same ready-made native picker without a Compose host screen |
+| **5** | Your own Android Views | `SeatLayerPickerStateHolder` plus `SeatLayerPickerMapView` | The complete headless contract and map renderer |
+
+`SeatLayerView` remains the low-level map for existing `0.2.x` integrations that
+own every buyer control and the hold themselves.
+
+```mermaid
+flowchart TD
+  A["SeatLayerConfiguration<br/>event + publishable access"] --> B{"How much UI<br/>do you own?"}
+  B -->|"Nothing"| C["SeatLayerPicker"]
+  B -->|"The look"| D["theme · strings · styles<br/>options · builders"]
+  B -->|"A Compose screen"| E["SeatLayerPickerScope<br/>+ components"]
+  B -->|"A View screen"| F["SeatLayerPickerView<br/>or headless Views"]
+  C --> G["SeatLayerPickerCheckoutHandoff"]
+  D --> G
+  E --> G
+  F --> G
+  G --> H["Your backend inspects<br/>and books the hold"]
+```
+
+## What is included
+
+- `SeatLayerPicker`, the complete adaptive Jetpack Compose seat-booking flow.
+- `SeatLayerPickerBuilders`, themes, strings, options, and per-part styles for
+  changing the product without forking it.
+- `SeatLayerPickerScope` and every stock component for a host-owned Compose
+  hierarchy.
+- `SeatLayerPickerView` for the same ready-made picker in View/XML apps.
+- `SeatLayerPickerStateHolder`, `SeatLayerPickerController`, and
+  `SeatLayerPickerMapView` for a fully headless or custom-View integration.
+- The frozen `SeatLayerView` and raw coroutine controller used by existing
+  `0.2.x` applications.
+- Typed immutable snapshots, capability-gated commands, readiness and chart-load
+  telemetry, secure holds, and buyer-safe checkout handoff.
+- The SeatLayer map from the web, shown inside your app. Each SDK release uses
+  one matching map version.
+- A generic sample covering ready Compose, branded/custom Compose, ready/custom
+  View, and raw integrations.
 
 ## Customize or build your own UI
 
@@ -787,6 +783,12 @@ and a colorblind-safe palette, and keeps clear of system bars.
 | iOS | [`seatlayer-ios`](https://github.com/seatlayer/seatlayer-ios) |
 | Android | [`seatlayer-android`](https://github.com/seatlayer/seatlayer-android) (this package) |
 | Server SDKs | [Node.js, Python, PHP, Ruby, .NET, Java, and Go](https://docs.seatlayer.io/server-sdk/install/) |
+
+## Scale evidence
+
+Benchmarked on public 100,000-, 150,000- and 200,000-seat venue fixtures on 15 September 2026: 200,000 seats chart-ready in 1.95 s, desktop, local production build. Tested at 10,000 simulated concurrent buyers on one 12,000-seat event (18 September 2026): engine-side hold latency p99 9 ms, zero server errors. Method, fixtures and run files: https://github.com/seatlayer/seatlayer-performance. Live 200,000-seat stadium demo: https://app.seatlayer.io/demo/play/century-stadium-200k.
+
+## Versions and support
 
 See [CHANGELOG.md](CHANGELOG.md). Releases follow semantic versioning.
 
