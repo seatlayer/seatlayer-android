@@ -260,6 +260,11 @@ See the [native picker reference](docs/native-picker.md) for the full component
 catalogue, builder context, per-part styling, localization fallback, the
 mandatory test-mode label, headless state guarantees, and custom View setup.
 
+Custom View integrations get the same state guarantees as the ready-made picker:
+[headless state guarantees](https://docs.seatlayer.io/buyer-sdk/android/native-picker/#headless-state-guarantees).
+Which parts your app owns and which the SeatLayer SDK owns is listed in
+[application and SDK ownership](https://docs.seatlayer.io/buyer-sdk/android/native-picker/#application-and-sdk-ownership).
+
 ## View and XML applications
 
 Use `SeatLayerPickerView` for the exact ready-made tree in an existing View
@@ -457,59 +462,11 @@ SeatLayerConfiguration(
 The map accepts messages only from SeatLayer's own HTTPS address. The SDK blocks
 navigation away from it, file access, pop-ups and third-party cookies.
 
-## Headless picker behavior
-
-`SeatLayerPickerStateHolder.state` is a `StateFlow` of immutable snapshots and
-native presentation state. `SeatLayerPickerController` provides serialized
-suspending commands for selection, filters, floors/sections, view modes,
-camera, GA/tables, holds, best available, lifecycle refresh, checkout handoff,
-undo, back, and close.
-
-Snapshots are accepted only for the configured event and current session, and
-only at increasing revisions. Optional malformed fields are ignored without
-discarding a valid snapshot; invalid schema/session/revision/event identity is
-rejected. Empty UI appears only when the runtime gives affirmative sold-out or
-all-unavailable evidence.
-
-## Buyer journey and capability ownership
-
-The ready picker and the public building blocks consume the same semantic
-state. Custom hosts therefore do not lose typed tiers, immersive targets,
-accessibility groups, hold ownership, retry state, or capability information.
-
-| Buyer capability | Native Android owns | SeatLayer renderer/runtime owns |
-| --- | --- | --- |
-| Loading and readiness | Branded skeleton, progress hierarchy, retry/error UI | Document load, protocol handshake, ready snapshot |
-| Failure and empty inventory | Actionable messages, retry/close actions, sales-closed and test disclosure | Authoritative failure, sold-out, all-unavailable, and sales state |
-| Venue navigation | Legend, floors, section dock/list, overview/step-out controls | Map geometry, focus, camera, authored floor/section data |
-| Filters | Category chips, runtime-authored accessibility sheet, limited-view and colorblind controls | Availability counts and authoritative filtered map |
-| Reserved seats and tiers | Confirmation card, visible tier choices, guidance, enabled/disabled actions | Seat identity, price, tier metadata, selection validity |
-| GA and tables | Quantity prompts, bounds, totals, loading and errors | Capacity, min/max occupancy, hold mutation |
-| Cart and holds | Dense ticket list, remove/undo, countdown, lapse recovery, Continue | Authoritative cart, hold TTL/owner, refresh outcome |
-| Checkout | One serialized handoff and host callback | Opaque hold capability and priced line items |
-| Venue 3D | Native mode, target, previous/next, recenter and navigation controls | 3D scene pixels, camera, target and neighbour metadata |
-| Seat-view panorama | Caption, badge, native Back coordination, unavailable state | Panorama pixels, drag gestures, exact target restoration |
-| Responsive/system UI | Compact/wide composition, safe drawing, gesture insets and Android Back | Viewport inset application inside the map |
-
-Optional operations are exact capability-gated. An older runtime never receives
-a command it did not advertise. In particular, native panorama Back sends
-`picker.closeSeatView` only when that exact command is present. The pinned
-hosted `0.71.5` runtime does not advertise it, so its own panorama close control
-remains authoritative; this README does not claim hosted native-Back support
-for that path.
-
 ## Selection, cart, holds, and checkout
 
-The confirmation card keeps a seat pending until the buyer accepts it. When a
-seat has Adult, Child, guided, restricted, or other runtime-authored tiers, the
-tier choices and buyer guidance stay visible. `confirmPending(tierId)` sends
-`picker.setSeatTier` before accepting the pending seat, so the cart never
-briefly confirms the wrong tier.
-
-GA and variable-table prompts validate quantity against runtime capacity and
-occupancy rules. Confirmed seats, GA quantities, and tables all enter one dense
-cart projection. Removing a line opens a session-scoped undo window; undo is
-offered only while that exact line remains absent from the same session.
+Seat confirmation with ticket types, general admission and table prompts, and
+cart undo are described in
+[selection, cart and checkout](https://docs.seatlayer.io/buyer-sdk/android/native-picker/#selection-cart-and-checkout).
 
 The picker serializes inventory mutations and repeated checkout taps. Checkout
 returns one `SeatLayerPickerCheckoutHandoff` containing the opaque `holdId`,
