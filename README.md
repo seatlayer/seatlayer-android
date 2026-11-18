@@ -675,11 +675,13 @@ and checkout handoff as the ready-made picker.
 
 ### How do temporary seat holds work?
 
-The picker creates a server-timed hold that prevents concurrent buyers from
-claiming the same inventory. It reconciles the hold when the app returns to the
-foreground, reports expiry once, and offers to reselect only seats that remain
-available. The server TTL remains authoritative if Android terminates the
-process.
+When a buyer goes to checkout, the SeatLayer picker holds the seats they picked
+for that buyer for a set time, which you can change per event, so no other buyer
+can take them. A hold that is never booked lapses on its own at the server's
+time limit, even if Android stops the app. When the app returns to the
+foreground, the picker checks the hold with the server, tells the buyer once if
+it lapsed, and offers back only the seats that are still free. With the raw
+`SeatLayerView`, your code calls `hold()` itself.
 
 ### Can I use my own payment provider?
 
