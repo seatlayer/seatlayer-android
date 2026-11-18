@@ -59,7 +59,7 @@ Both artifacts ship on the same release train.
 - JDK 17 for local builds
 - AndroidX
 - Android System WebView with the `WEB_MESSAGE_LISTENER` feature, plus `DOCUMENT_START_SCRIPT` for the
-  picker. Without them `SeatLayerView` stops with a transport error that asks for a WebView update.
+  picker. Without them `SeatLayerView` or the picker stops with a transport error that asks for a WebView update.
 - `android:enableOnBackInvokedCallback="true"` on picker activities when
   targeting Android 15 or lower and predictive-back animation is required
 
