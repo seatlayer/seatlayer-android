@@ -322,8 +322,8 @@ class RawMapActivity : ComponentActivity() {
 }
 ```
 
-`load` is a suspending function returning `ReadyInfo`: negotiated protocol,
-event mode (`live` or `test`), transport, and event key. Await it before sending
+`load` is a suspending function returning `ReadyInfo`: `protocolRevision`, the
+event `mode` (`live` or `test`), `transport` and `eventKey`. Await it before sending
 commands. You can call the controller from any thread; the SDK moves the work
 to the main thread itself.
 Collect `controller.events` inside `repeatOnLifecycle` when a raw screen should
