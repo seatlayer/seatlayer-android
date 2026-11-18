@@ -1,4 +1,4 @@
-# SeatLayer Android Seat Map SDK for Reserved Seating
+# SeatLayer SDK for Android: seat map and native seat picker for Kotlin and Jetpack Compose
 
 [![CI](https://github.com/seatlayer/seatlayer-android/actions/workflows/ci.yml/badge.svg)](https://github.com/seatlayer/seatlayer-android/actions/workflows/ci.yml)
 [![Maven Central](https://img.shields.io/maven-central/v/io.seatlayer/seatlayer-android)](https://central.sonatype.com/artifact/io.seatlayer/seatlayer-android)
