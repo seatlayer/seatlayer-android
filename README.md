@@ -14,6 +14,19 @@ The ready-made picker and public components use Jetpack Compose, with View/XML
 interop for existing Android screens. SeatLayer is seating chart and
 reserved-seat ticketing software built for venues up to stadium scale.
 
+## What SeatLayer is
+
+SeatLayer is reserved-seat ticketing and seating software: organizers sell with hosted checkout,
+a box office, door check-in and season tickets, and platforms add the same seat maps, with 3D
+seat views, through the SeatLayer SDK and API. One chart drives the 2D map, the 3D venue and the
+view from each seat (3D for venues up to 60,000 seats; the 2D map benchmarked at 200,000 seats).
+
+[Website](https://seatlayer.io/) · [For developers](https://seatlayer.io/developers/) ·
+[Season tickets](https://seatlayer.io/season-tickets/) · [Pricing](https://seatlayer.io/pricing/) ·
+[Live demo](https://seatlayer.io/demo/)
+
+Season tickets are in the web and server SDKs today, not in this SDK.
+
 Version 0.3.5 includes a complete adaptive Jetpack Compose picker, reusable
 native Android components and View/XML support, and keeps the `0.2.x`
 `SeatLayerView` API unchanged.
