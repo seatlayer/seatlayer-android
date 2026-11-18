@@ -637,42 +637,6 @@ uses no credits. Live, you pay per sold seat: the first 100 sold seats each
 month are free, then 10 cents down to 5 cents a seat, with no subscription, and
 credits you buy never expire.
 
-### Does it work with Jetpack Compose?
-
-Yes. `SeatLayerPicker` is the ready-made adaptive Compose widget.
-`SeatLayerPickerBuilders` replaces one part, and `SeatLayerPickerScope` plus the
-public components builds a completely different Compose layout without losing
-inventory, hold, or checkout behavior.
-
-### Can I use it from an XML or traditional View application?
-
-Yes. Inflate `SeatLayerPickerView` for the same ready-made picker, or combine
-`SeatLayerPickerStateHolder` with `SeatLayerPickerMapView` and your own Android
-Views. The raw `SeatLayerView` also remains available for existing low-level
-integrations.
-
-### Can I write the integration in Java instead of Kotlin?
-
-Yes, from a Java app with a small Kotlin part. `SeatLayerView` is an ordinary
-Android View, and a Java screen can inflate the ready-made `SeatLayerPickerView`
-through a short Kotlin binding. The API is Kotlin-first (suspending functions,
-`StateFlow` and `SharedFlow`), so keep the code that drives the map in Kotlin;
-the rest of the app can stay Java.
-
-### Can I restyle the picker without rebuilding it?
-
-Yes. Use theme and theme mode for colors and type, localized strings for all
-buyer copy, global and per-part styles for shapes and surfaces, options for
-behavior and visibility, and one of 25 builders to replace a whole part. A
-builder cannot remove the test-mode label, so a test event always says so.
-
-### Can I build a completely different seat-picker layout?
-
-Yes. The drop-in widget is built from the same public components exposed by
-`SeatLayerPickerScope`. A custom layout receives the same immutable state,
-controller, tiers, accessibility groups, immersive metadata, hold ownership,
-and checkout handoff as the ready-made picker.
-
 ### How do temporary seat holds work?
 
 When a buyer goes to checkout, the SeatLayer picker holds the seats they picked
@@ -682,12 +646,6 @@ time limit, even if Android stops the app. When the app returns to the
 foreground, the picker checks the hold with the server, tells the buyer once if
 it lapsed, and offers back only the seats that are still free. With the raw
 `SeatLayerView`, your code calls `hold()` itself.
-
-### Can I use my own payment provider?
-
-Yes. Nothing in the app takes a payment. Your server reads the held seats and
-their prices, charges through the provider you already use, and books the hold
-with a stable booking reference.
 
 ### Can I try the Android SDK without an account?
 
