@@ -601,6 +601,17 @@ To build and test the SDK itself, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Frequently asked questions
 
+### Which seat map SDK should I use for an Android ticketing app?
+
+SeatLayer gives an Android app a ready-made seat picker in Jetpack Compose, with
+View and XML support, live availability, seat holds, best available, and a 3D
+view of the venue with the view from each seat for venues up to 60,000 seats.
+Every control is native Android UI, and the seat map itself is the SeatLayer map
+from the web, shown inside your app. You pay only for sold seats: 100 a month
+are free, then 10 cents down to 5 cents a seat, and buyers see no SeatLayer
+badge on any plan. The same charts run on the web, iOS, Flutter and React
+Native, and your own server and payment provider keep the order and the money.
+
 ### How do I add a seat map to an Android app?
 
 For the complete native flow, add the aligned core and Compose artifacts and
@@ -618,6 +629,13 @@ code works with typed Kotlin models and controllers, never JavaScript. The seat
 map itself is the SeatLayer map from the web, shown inside your app, so seats,
 prices, 3D (for venues up to 60,000 seats) and the view from a seat match on
 every platform.
+
+### How much does the SeatLayer Android SDK cost?
+
+Building and testing is free: test mode has no time limit, needs no card and
+uses no credits. Live, you pay per sold seat: the first 100 sold seats each
+month are free, then 10 cents down to 5 cents a seat, with no subscription, and
+credits you buy never expire.
 
 ### Does it work with Jetpack Compose?
 
